@@ -1,0 +1,56 @@
+.bwt-travel-loading-box{
+	display: none;
+}
+.i-amphtml-sidebar-mask {
+    position: static !important;
+}
+#sidebar1,#sidebar{
+	width: 250px !important;
+}
+.i-amphtml-sidebar-mask{
+	width: 0 !important;
+	height: 0 !important;
+}
+amp-sidebar#sidebar1{
+  display: block !important;
+}
+.i-amphtml-sidebar-mask{
+	background-color: transparent !important;
+}
+[class*="amphtml-sidebar-mask"] { background: none; z-index: 999; }
+.datebox{
+    right: 15px;
+    z-index: 9;
+}
+.owl-carousel {
+    display: inline-block !important;
+}
+#successful-events .owl-carousel ,#team .category-box,.propeties-image-box,.services-box{
+	position: relative;
+    float: left;
+    width: 24%;
+    margin: 5px;
+}
+#celebration .category-box,.city-box{
+	width: 19%;
+}
+.agency-box{
+	width: 23%;
+}
+.testimonial-box{
+	width: 47%;
+}
+#latest-news img{
+	display: block !important;
+}
+@media screen and (max-width: 1450px) and (min-width: 0px){
+	#successful-events .owl-carousel ,#team .category-box,.propeties-image-box,.services-box{
+		width:23%;
+	}
+}
+
+@media screen and (max-width:575px) and (min-width:0px){
+	#successful-events .owl-carousel ,#team .category-box,.propeties-image-box,.services-box{
+		width:100%;
+	}
+}

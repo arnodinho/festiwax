@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="6b5a0afa-2791-4206-8ca5-da51a105a7c9" name="festiwax">
+        <fileTransfer rootFolder="/var/www/html/festiwax" accessType="SFTP" host="bantu-dico.com" port="22" sshConfigId="68e675d2-682c-4022-a2b3-2a1f911ef3ca" sshConfig="root@bantu-dico.com:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

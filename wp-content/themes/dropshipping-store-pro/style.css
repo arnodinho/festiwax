@@ -1,0 +1,329 @@
+/*
+Theme Name: Dropshipping Store Pro
+Theme URI: https://www.buywptemplates.com/themes/dropshipping-store-wordpress-theme/
+Author: BuyWpTemplates
+Author URI: https://www.buywptemplates.com/
+Description:
+Version: 0.0.1
+License: GNU General Public License
+License URI:license.txt
+Text Domain: dropshipping-store-pro
+Tags: one-column, right-sidebar, custom-menu, editor-style, featured-images, full-width-template, sticky-post, theme-options, threaded-comments
+Dropshipping Store Pro WordPress Theme has been created by BuyWpTemplates(buywptemplates.com), 2019.
+Dropshipping Store Pro WordPress Theme is released under the terms of GNU GPL
+*/
+/* Basic Style */
+:root {
+  --color-yellow: #FFCC05;
+  --color-black: #000000;
+}
+:root {
+  --font-dosis: "Dosis";
+  --font-exo2: "Exo 2";
+  --font-raleway: "Raleway";
+}
+*{
+  margin:0;
+  padding:0;
+  outline:none;
+}
+html body{
+  margin:0;
+  padding:0;
+  -ms-word-wrap:break-word;
+  word-wrap:break-word;
+  background-color: #fff;
+  position:relative;
+  font-size: 14px;
+  color: #6c6c6c;
+  font-family: var(--font-raleway);
+  font-weight: 300;
+  overflow-x: hidden;
+}
+body a {
+  text-decoration: none;
+}
+img{
+  width: 100%;
+}
+section {
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 60px 0;
+}
+h1{
+  font: 600 32px/50px var(--font-exo2);
+}
+h2{
+  font: 600 32px/45px var(--font-dosis);
+}
+h3,h4,h5,h6{
+  font-family: var(--font-exo2);
+}
+p{
+  font: 400 13px/22px var(--font-raleway);
+}
+.nav-tabs,.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active, .nav-tabs .nav-link{
+  border: none;
+}
+ul li{
+  text-decoration: none;
+  list-style: none;
+}
+ol, ul{
+  padding-left: 0;
+}
+textarea {
+  padding: 5px;
+}
+.theme_button{
+  border-radius: 50px;
+  background: var(--color-pink);
+  color: #fff;
+  font: 400 14px/18px var(--font-raleway);
+  letter-spacing: 0px;
+  color: var(--color-white);
+  border: none;
+  transition:  ease 0.25s all;
+  transition-duration: 1s;
+}
+.theme_button:hover{
+  border-radius: 6px;
+  color: #fff;
+  background-color: var(--color-violent-violet);
+}
+.btn:focus{
+  outline: none;
+  box-shadow: none !important;
+}
+.bwt-scroll{
+  background-attachment: scroll;
+}
+.bwt-fixed{
+  background-attachment: fixed;
+}
+[type=search]{
+    width: 100%;
+}
+.screen-reader-text{
+  display: none;
+}
+.topbar_translate .switcher .selected a:after{
+  background-image: url(assets/images/download-svg.svg) !important;
+}
+/*-----------Button------------------*/
+#slider .first {
+    -webkit-transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
+    transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
+}
+#slider .first:hover {
+    box-shadow: 0 0 40px 40px #fbcc04 inset;
+    color: #fff !important;
+    border-color: var(--color-yellow) !important;
+    transition-duration: 0.3s;
+}
+.effect-1:hover {
+    text-indent: -9999px;
+}
+.effect-1:before {
+    content: "";
+    font-family: FontAwesome;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 30px;
+    transform: scale(0, 1);
+    transition: all 0.2s linear 0s;
+}
+.effect-1:hover:before {
+    transform: scale(1, 1);
+    text-indent: 0;
+}
+/*-------------Spinner----------*/
+.bwt-travel-loading-box{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-yellow);
+  z-index: 2;
+  cursor: pointer;
+  z-index: 9999999999999;
+}
+.loader {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 75px;
+  display: inline-block;
+  vertical-align: middle;
+  top: 45%;
+  margin: 0 auto;
+  display: block;
+}
+.loader-star {
+  position: absolute;
+  top: calc(50% - 12px);
+}
+.loader-1 .loader-outter {
+  position: absolute;
+  border: 4px solid #fff;
+  border-left-color: transparent;
+  border-bottom: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  -webkit-animation: loader-1-outter 1s cubic-bezier(.42, .61, .58, .41) infinite;
+  animation: loader-1-outter 1s cubic-bezier(.42, .61, .58, .41) infinite;
+}
+.loader-1 .loader-inner {
+  position: absolute;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  left: calc(50% - 20px);
+  top: calc(50% - 20px);
+  border-right: 0;
+  border-top-color: transparent;
+  -webkit-animation: loader-1-inner 1s cubic-bezier(.42, .61, .58, .41) infinite;
+  animation: loader-1-inner 1s cubic-bezier(.42, .61, .58, .41) infinite;
+}
+@keyframes loader-1-outter {
+  0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+  }
+  100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loader-1-inner {
+  0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+  }
+  100% {
+      -webkit-transform: rotate(-360deg);
+      transform: rotate(-360deg);
+  }
+}
+@keyframes loader-1-inner {
+  0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+  }
+  100% {
+      -webkit-transform: rotate(-360deg);
+      transform: rotate(-360deg);
+  }
+}
+/*----------------- Product Star Rating--------------*/
+.woocommerce ul.products li.product .star-rating{
+  color: #fec806;
+  margin: 0 auto;
+  display: block;
+  float: none;
+  overflow: hidden;
+  position: relative;
+  height: 1.7em;
+  line-height: 1;
+  font-size: 1em;
+  width: 5.4em;
+  font-family: star;
+}
+.star-rating{
+  color: #fbe018;
+  margin: 0 auto;
+  font-size: .857em;
+  display: block;
+  overflow: hidden;
+  position: relative;
+  height: 1em;
+  line-height: 1;
+  font-size: 1em;
+  width: 5.4em;
+  font-family: star;
+}
+.star-rating:before{
+ content: "\73\73\73\73\73";
+ color: #d3ced2;
+ float: left;
+ top: 0;
+ left: 0;
+ position: absolute;
+}
+.star-rating span{
+ overflow: hidden;
+ float: left;
+ top: 0;
+ left: 0;
+ position: absolute;
+ padding-top: 1.5em;
+}
+.star-rating span:before{
+ content: "\53\53\53\53\53";
+ top: 0;
+ position: absolute;
+ left: 0;
+}
+.woocommerce .loader::before{
+  display: none;
+}
+.yith-wcwl-icon.fa.fa-heart-o{
+  display: none;
+}
+.widget_block,.woocommerce .woocommerce-breadcrumb,
+.woocommerce-result-count,.woocommerce-ordering{
+  display: none;
+}
+.alert.alert-minimalist img {
+  width: 50px;
+  position: absolute;
+}
+.alert.alert-minimalist {
+  background-color: rgb(255, 255, 238);
+  border-color: #ffc107;
+  border-radius: 3px;
+  color: rgb(149, 149, 149);
+  box-shadow: 0px 0px 5px rgba(51, 51, 51, 0.3);
+  padding: 10px;
+  z-index: 1000000 !important;
+  overflow: hidden;
+}
+.alert.alert-minimalist .prod-title{
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  left: 60px;
+  position: relative;
+}
+.alert.alert-minimalist .prod-messg{
+  font-size: 13px;
+  font-weight: 500;
+  color: #5c5959;
+  padding-left: 62px;
+  margin-top: 10px;
+}
+.yith-wcwl-add-button span,.type-product .related ul li i,
+#contentwoocom ul li i,.search-no-results .entry-title-watermark,
+.woocommerce table.shop_table td i,#yith-wcwl-popup-message{
+  display: none !important;
+}
+.type-product .related ul{
+  display: flex;
+}
+.woocommerce-wishlist .yith-wcwl-share i{
+  font: normal normal normal 14px/1 FontAwesome !important;
+}
