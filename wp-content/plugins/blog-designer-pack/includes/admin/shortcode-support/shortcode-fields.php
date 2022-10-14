@@ -443,7 +443,6 @@ function bdp_post_slider_lite_shortcode_fields( $shortcode = '' ) {
 																	'true'		=> __( 'True', 'blog-designer-pack' ),
 																	'false'		=> __( 'False', 'blog-designer-pack' ),
 																),
-											'default'		=> 'false',
 											'desc' 			=> __( 'Display post tags.', 'blog-designer-pack' ),
 										),
 										array(
@@ -474,7 +473,6 @@ function bdp_post_slider_lite_shortcode_fields( $shortcode = '' ) {
 																	'true'	=> __( 'True', 'blog-designer-pack' ),
 																	'false'	=> __( 'False', 'blog-designer-pack' ),
 																),
-											'default'		=> 'false',
 											'desc' 			=> __( 'Display post content.', 'blog-designer-pack' ),
 										),
 										array(
@@ -496,7 +494,6 @@ function bdp_post_slider_lite_shortcode_fields( $shortcode = '' ) {
 																	'true'	=> __( 'True', 'blog-designer-pack' ),
 																	'false'	=> __( 'False', 'blog-designer-pack' ),
 																),
-											'default'		=> 'false',
 											'desc' 			=> __( 'Show read more.', 'blog-designer-pack' ),
 											'dependency' 	=> array(
 																	'element' 	=> 'show_content',
@@ -564,7 +561,7 @@ function bdp_post_slider_lite_shortcode_fields( $shortcode = '' ) {
 											'type' 			=> 'number',
 											'heading' 		=> __( 'Autoplay Interval', 'blog-designer-pack' ),
 											'name' 			=> 'autoplay_interval',
-											'value' 		=> 5000,
+											'value' 		=> 3000,
 											'desc' 			=> __( 'Enter autoplay interval.', 'blog-designer-pack' ),
 											'dependency' 	=> array(
 																	'element' 	=> 'autoplay',
@@ -576,7 +573,7 @@ function bdp_post_slider_lite_shortcode_fields( $shortcode = '' ) {
 											'type' 			=> 'number',
 											'heading' 		=> __( 'Speed', 'blog-designer-pack' ),
 											'name' 			=> 'speed',
-											'value' 		=> 500,
+											'value' 		=> 600,
 											'desc' 			=> __( 'Enter slider speed.', 'blog-designer-pack' ),
 											'dependency' 	=> array(
 																	'element' 	=> 'autoplay',
@@ -949,7 +946,6 @@ function bdp_post_carousel_lite_shortcode_fields( $shortcode = '' ) {
 																	'true'		=> __( 'True', 'blog-designer-pack' ),
 																	'false'		=> __( 'False', 'blog-designer-pack' ),
 																),
-											'default'		=> 'false',
 											'desc' 			=> __( 'Display post tags.', 'blog-designer-pack' ),
 										),
 										array(
@@ -1082,19 +1078,18 @@ function bdp_post_carousel_lite_shortcode_fields( $shortcode = '' ) {
 											'type' 			=> 'number',
 											'heading' 		=> __( 'Autoplay Interval', 'blog-designer-pack' ),
 											'name' 			=> 'autoplay_interval',
-											'value' 		=> 5000,
+											'value' 		=> 3000,
 											'desc' 			=> __( 'Enter autoplay interval.', 'blog-designer-pack' ),
 											'dependency' 	=> array(
 																'element' 	=> 'autoplay',
 																'value' 	=> array( 'true' ),
 															),
 										),
-										
 										array(
 											'type' 			=> 'number',
 											'heading' 		=> __( 'Speed', 'blog-designer-pack' ),
 											'name' 			=> 'speed',
-											'value' 		=> '',
+											'value' 		=> 600,
 											'desc' 			=> __( 'Enter slider speed.', 'blog-designer-pack' ),
 											'dependency' 	=> array(
 																'element' 	=> 'autoplay',
@@ -1454,7 +1449,6 @@ function bdp_post_gridbox_lite_shortcode_fields( $shortcode = '' ) {
 																	'true'		=> __( 'True', 'blog-designer-pack' ),
 																	'false'		=> __( 'False', 'blog-designer-pack' ),
 																),
-											'default'		=> 'false',
 											'desc' 			=> __( 'Display post tags.', 'blog-designer-pack' ),
 										),
 										array(
@@ -1526,7 +1520,7 @@ function bdp_post_gridbox_lite_shortcode_fields( $shortcode = '' ) {
 			// Data Fields
 			'query' => array(
 					'title'		=> __('Query Parameters', 'blog-designer-pack'),
-					'params'    => array(										
+					'params'    => array(
 										array(
 											'type' 			=> 'number',
 											'heading' 		=> __( 'Total Number of Post', 'blog-designer-pack' ),

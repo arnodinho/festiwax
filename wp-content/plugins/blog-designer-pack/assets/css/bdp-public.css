@@ -149,8 +149,8 @@ box-shadow: none;text-shadow: none;font-size: 14px;text-transform: uppercase;bor
 /****************************************************************
 				Categories CSS
 *****************************************************************/
-.bdp-post-categories{display: inline-block;text-transform: uppercase;color: #666;z-index: 9;position: relative; margin-bottom:15px;}
-.bdp-post-categories a{text-decoration: none !important ;  -moz-transition:all 0.5s ease-out 0s;-ms-transition:all 0.5s ease-out 0s;-o-transition:all 0.5s ease-out 0s; transition: all 0.5s ease-out 0s; font-size:13px;text-transform: uppercase;padding: 3px 4px;line-height: normal;display: inline-block; margin: 0 0 5px 0; border-bottom: 3px solid #f1f1f1;}
+.bdp-post-categories{display: inline-block;color: #666;z-index: 9;position: relative; margin-bottom:15px;}
+.bdp-post-categories a{text-decoration: none !important ;  -moz-transition:all 0.5s ease-out 0s;-ms-transition:all 0.5s ease-out 0s;-o-transition:all 0.5s ease-out 0s; transition: all 0.5s ease-out 0s; font-size:13px;padding: 3px 2px;line-height: normal;display: inline-block; margin: 0 0 5px 0; border-bottom: 3px solid #f1f1f1;}
 
 /**************************************************************
 						Read more link bdp-design

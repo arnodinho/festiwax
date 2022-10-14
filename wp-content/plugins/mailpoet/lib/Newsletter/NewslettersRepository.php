@@ -69,6 +69,30 @@ class NewslettersRepository extends Repository {
   }
 
   /**
+   * @return NewsletterEntity[]
+   */
+  public function findActiveByTypeAndGroup(string $type, ?string $group): array {
+    $qb = $this->entityManager
+      ->createQueryBuilder()
+      ->select('n')
+      ->from(NewsletterEntity::class, 'n')
+      ->where('n.status = :status')
+      ->setParameter(':status', NewsletterEntity::STATUS_ACTIVE)
+      ->andWhere('n.deletedAt IS NULL')
+      ->andWhere('n.type = :type')
+      ->setParameter('type', $type);
+
+    if ($group) {
+      $qb->join('n.options', 'o', Join::WITH, 'o.value = :group')
+        ->join('o.optionField', 'f', Join::WITH, 'f.name = :nameGroup AND f.newsletterType = :type')
+        ->setParameter('nameGroup', NewsletterOptionFieldEntity::NAME_GROUP)
+        ->setParameter('group', $group);
+    }
+
+    return $qb->getQuery()->getResult();
+  }
+
+  /**
    * @param string[] $types
    * @return NewsletterEntity[]
    */
@@ -192,7 +216,7 @@ class NewslettersRepository extends Repository {
     if (empty($ids)) {
       return 0;
     }
-    $this->loggerFactory->getLogger(LoggerFactory::TOPIC_NEWSLETTERS, $attachProcessors = true)->addInfo(
+    $this->loggerFactory->getLogger(LoggerFactory::TOPIC_NEWSLETTERS, $attachProcessors = true)->info(
       'trashing newsletters', ['id' => $ids]
     );
     // Fetch children id for trashing
@@ -401,6 +425,24 @@ class NewslettersRepository extends Repository {
     return $result;
   }
 
+  /**
+   * Returns standard newsletters ordered by sentAt
+   * @return NewsletterEntity[]
+   */
+  public function getStandardNewsletterList(): array {
+    return $this->entityManager->createQueryBuilder()
+      ->select('n')
+      ->addSelect('CASE WHEN n.sentAt IS NULL THEN 1 ELSE 0 END as HIDDEN sent_at_is_null')
+      ->from(NewsletterEntity::class, 'n')
+      ->where('n.type = :typeStandard')
+      ->andWhere('n.deletedAt IS NULL')
+      ->orderBy('sent_at_is_null', 'DESC')
+      ->addOrderBy('n.sentAt', 'DESC')
+      ->setParameter('typeStandard', NewsletterEntity::TYPE_STANDARD)
+      ->getQuery()
+      ->getResult();
+  }
+
   public function prefetchOptions(array $newsletters) {
     $this->entityManager->createQueryBuilder()
       ->select('PARTIAL n.{id}, o, opf')
@@ -423,6 +465,42 @@ class NewslettersRepository extends Repository {
       ->setParameter('newsletters', $newsletters)
       ->getQuery()
       ->getResult();
+  }
+
+  /**
+   * Returns a list of emails that are either scheduled standard emails
+   * or active automatic emails of the provided types.
+   *
+   * @param array $automaticEmailTypes
+   *
+   * @return array
+   */
+  public function getScheduledStandardEmailsAndActiveAutomaticEmails(array $automaticEmailTypes): array {
+    $queryBuilder = $this->entityManager->createQueryBuilder();
+
+    $newsletters = $queryBuilder
+      ->select('n')
+      ->from(NewsletterEntity::class, 'n')
+      ->orWhere(
+        $queryBuilder->expr()->andX(
+          $queryBuilder->expr()->eq('n.type', ':typeStandard'),
+          $queryBuilder->expr()->eq('n.status', ':statusScheduled')
+        )
+      )
+      ->orWhere(
+        $queryBuilder->expr()->andX(
+          $queryBuilder->expr()->in('n.type', ':automaticEmailTypes'),
+          $queryBuilder->expr()->eq('n.status', ':statusActive')
+        )
+      )
+      ->setParameter('typeStandard', NewsletterEntity::TYPE_STANDARD)
+      ->setParameter('statusScheduled', NewsletterEntity::STATUS_SCHEDULED)
+      ->setParameter('automaticEmailTypes', $automaticEmailTypes)
+      ->setParameter('statusActive', NewsletterEntity::STATUS_ACTIVE)
+      ->getQuery()
+      ->getResult();
+
+    return $newsletters;
   }
 
   private function fetchChildrenIds(array $parentIds) {

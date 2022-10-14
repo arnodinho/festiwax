@@ -24,10 +24,10 @@ if( get_theme_mod('drop_shipping_pro_category_bgcolor','') ) {
               <?php if(get_theme_mod('drop_shipping_pro_category_title',true) != ''){?>
                 <h3 class="text-center py-3"><?php echo esc_html(get_theme_mod('drop_shipping_pro_category_title')); ?></h3>
               <?php } ?>
-            </div> 
+            </div>
           <?php } ?>
           <div>
-           
+
             <div class="owl-carousel">
 
               <?php
@@ -38,17 +38,18 @@ if( get_theme_mod('drop_shipping_pro_category_bgcolor','') ) {
 
                   <?php $link = get_term_link($pterm->slug, $taxonomyName);  ?>
                  <div>
-                    <a href="<?php echo esc_url($link); ?>" target="_blank" class="text-center d-block"><?php echo $pterm->name ?></a>
-                    <div class="cat-image-bg">
-                      
-                    </div>
-                    <div>
-                    <?php
-                      $thumbnail_id = get_term_meta($pterm->term_id, 'thumbnail_id', true);
-                      $image = wp_get_attachment_url($thumbnail_id);
-                      echo "<img src='{$image}' class='mt-2 mx-auto d-block' alt='' width='400' height='400' />";
-                     ?>
-                   </div>
+                    <a href="<?php echo esc_url($link); ?>"  class="text-center d-block"><?php echo $pterm->name ?>
+                        <div class="cat-image-bg">
+
+                        </div>
+                        <div>
+                        <?php
+                          $thumbnail_id = get_term_meta($pterm->term_id, 'thumbnail_id', true);
+                          $image = wp_get_attachment_url($thumbnail_id);
+                          echo "<img src='{$image}' class='mt-2 mx-auto d-block' alt='' width='400' height='400' />";
+                         ?>
+                       </div>
+                    </a>
                  </div>
 
               <?php }  ?>

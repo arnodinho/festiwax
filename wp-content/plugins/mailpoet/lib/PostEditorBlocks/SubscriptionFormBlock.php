@@ -10,6 +10,7 @@ use MailPoet\Form\FormsRepository;
 use MailPoet\Form\Widget;
 use MailPoet\WP\Functions as WPFunctions;
 
+// phpcs:disable Generic.Files.InlineHTML
 class SubscriptionFormBlock {
   /** @var WPFunctions */
   private $wp;
@@ -45,22 +46,23 @@ class SubscriptionFormBlock {
 
     $this->wp->addAction('admin_head', function() {
       $forms = $this->formsRepository->findAllNotDeleted();
-      $formsEncoded = json_encode(
-        array_map(
-          function(FormEntity $form) {
-            return $form->toArray();
-          },
-          $forms
-        )
-      );
       ?>
       <script type="text/javascript">
-        window.mailpoet_forms = <?php echo $formsEncoded ?>;
+        window.mailpoet_forms = <?php
+        echo wp_json_encode(
+          array_map(
+            function(FormEntity $form) {
+              return $form->toArray();
+            },
+            $forms
+          )
+                                );
+                                ?>;
         window.locale = {
-          selectForm: '<?php echo __('Select a MailPoet form', 'mailpoet') ?>',
-          createForm: '<?php echo __('Create a new form', 'mailpoet') ?>',
-          subscriptionForm: '<?php echo __('MailPoet Subscription Form', 'mailpoet') ?>',
-          inactive: '<?php echo __('inactive', 'mailpoet') ?>',
+          selectForm: '<?php echo esc_js(__('Select a MailPoet form', 'mailpoet')) ?>',
+          createForm: '<?php echo esc_js(__('Create a new form', 'mailpoet')) ?>',
+          subscriptionForm: '<?php echo esc_js(__('MailPoet Subscription Form', 'mailpoet')) ?>',
+          inactive: '<?php echo esc_js(__('inactive', 'mailpoet')) ?>',
         };
       </script>
       <?php

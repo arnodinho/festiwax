@@ -41,7 +41,7 @@ function bdp_post_slider( $atts, $content = null ) {
 		'show_tags'				=> 'true',
 		'show_comments'			=> 'true',
 		), $atts, 'bdp_post_slider'));
-	
+
 	$shortcode_designs 		= bdp_recent_post_slider_designs();
 	
 	$posts_per_page 		= !empty($limit) 						? $limit 						: 20;

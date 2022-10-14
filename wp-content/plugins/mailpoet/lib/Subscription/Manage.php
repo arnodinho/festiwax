@@ -5,20 +5,18 @@ namespace MailPoet\Subscription;
 if (!defined('ABSPATH')) exit;
 
 
+use MailPoet\CustomFields\CustomFieldsRepository;
 use MailPoet\Entities\StatisticsUnsubscribeEntity;
 use MailPoet\Entities\SubscriberEntity;
 use MailPoet\Entities\SubscriberSegmentEntity;
 use MailPoet\Form\Util\FieldNameObfuscator;
-use MailPoet\InvalidStateException;
-use MailPoet\Models\CustomField;
-use MailPoet\Models\Segment;
-use MailPoet\Models\Subscriber;
-use MailPoet\Models\SubscriberSegment;
 use MailPoet\Newsletter\Scheduler\WelcomeScheduler;
+use MailPoet\Segments\SegmentsRepository;
 use MailPoet\Settings\SettingsController;
 use MailPoet\Statistics\Track\Unsubscribes;
 use MailPoet\Subscribers\LinkTokens;
 use MailPoet\Subscribers\NewSubscriberNotificationMailer;
+use MailPoet\Subscribers\SubscriberSaveController;
 use MailPoet\Subscribers\SubscriberSegmentRepository;
 use MailPoet\Subscribers\SubscribersRepository;
 use MailPoet\Util\Url as UrlHelper;
@@ -46,11 +44,20 @@ class Manage {
   /** @var WelcomeScheduler */
   private $welcomeScheduler;
 
+  /** @var CustomFieldsRepository */
+  private $customFieldsRepository;
+
+  /** @var SegmentsRepository */
+  private $segmentsRepository;
+
   /** @var SubscribersRepository */
   private $subscribersRepository;
 
   /** @var SubscriberSegmentRepository */
   private $subscriberSegmentRepository;
+
+  /** @var SubscriberSaveController */
+  private $subscriberSaveController;
 
   public function __construct(
     UrlHelper $urlHelper,
@@ -60,8 +67,11 @@ class Manage {
     SettingsController $settings,
     NewSubscriberNotificationMailer $newSubscriberNotificationMailer,
     WelcomeScheduler $welcomeScheduler,
+    CustomFieldsRepository $customFieldsRepository,
+    SegmentsRepository $segmentsRepository,
     SubscribersRepository $subscribersRepository,
-    SubscriberSegmentRepository $subscriberSegmentRepository
+    SubscriberSegmentRepository $subscriberSegmentRepository,
+    SubscriberSaveController $subscriberSaveController
   ) {
     $this->urlHelper = $urlHelper;
     $this->fieldNameObfuscator = $fieldNameObfuscator;
@@ -70,18 +80,34 @@ class Manage {
     $this->settings = $settings;
     $this->newSubscriberNotificationMailer = $newSubscriberNotificationMailer;
     $this->welcomeScheduler = $welcomeScheduler;
+    $this->segmentsRepository = $segmentsRepository;
     $this->subscribersRepository = $subscribersRepository;
     $this->subscriberSegmentRepository = $subscriberSegmentRepository;
+    $this->customFieldsRepository = $customFieldsRepository;
+    $this->subscriberSaveController = $subscriberSaveController;
   }
 
   public function onSave() {
-    $action = (isset($_POST['action']) ? $_POST['action'] : null);
-    $token = (isset($_POST['token']) ? $_POST['token'] : null);
+    $action = (isset($_POST['action']) ? sanitize_text_field(wp_unslash($_POST['action'])) : '');
+    $token = (isset($_POST['token']) ? sanitize_text_field(wp_unslash($_POST['token'])) : '');
 
     if ($action !== 'mailpoet_subscription_update' || empty($_POST['data'])) {
       $this->urlHelper->redirectBack();
     }
-    $subscriberData = $_POST['data'];
+
+    $sanitize = function($value) {
+      if (is_array($value)) {
+        foreach ($value as $k => $v) {
+          $value[sanitize_text_field($k)] = sanitize_text_field($v);
+        }
+        return $value;
+      };
+      return sanitize_text_field($value);
+    };
+
+    // custom sanitization via $sanitize
+    //phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $subscriberData = array_map($sanitize, wp_unslash((array)$_POST['data']));
     $subscriberData = $this->fieldNameObfuscator->deobfuscateFormPayload($subscriberData);
 
     $result = [];
@@ -100,15 +126,10 @@ class Manage {
       }
 
       if ($subscriber && $this->linkTokens->verifyToken($subscriber, $token)) {
-        $subscriberModel = Subscriber::findOne($subscriber->getId());
-        if (!$subscriberModel instanceof Subscriber) {
-          throw new InvalidStateException();
-        }
         if ($subscriberData['email'] !== Pages::DEMO_EMAIL) {
-          $this->updateSubscriptions($subscriberModel, $subscriberData);
-          unset($subscriberData['segments']);
-          $subscriberModel = Subscriber::createOrUpdate($this->filterOutEmptyMandatoryFields($subscriberData));
-          $subscriberModel->getErrors();
+          $subscriber = $this->subscriberSaveController->createOrUpdate($subscriberData, $subscriber);
+          $this->subscriberSaveController->updateCustomFields($this->filterOutEmptyMandatoryFields($subscriberData), $subscriber);
+          $this->updateSubscriptions($subscriber, $subscriberData);
         }
       }
       $result = ['success' => true];
@@ -117,34 +138,37 @@ class Manage {
     $this->urlHelper->redirectBack($result);
   }
 
-  private function updateSubscriptions(Subscriber $subscriber, array $subscriberData) {
+  private function updateSubscriptions(SubscriberEntity $subscriber, array $subscriberData): void {
     $segmentsIds = [];
     if (isset($subscriberData['segments']) && is_array($subscriberData['segments'])) {
       $segmentsIds = $subscriberData['segments'];
     }
-    $subscriber->withSubscriptions();
     $allowedSegments = $this->settings->get('subscription.segments', false);
 
     // Unsubscribe from all other segments already subscribed to
     // but don't change disallowed segments
-    foreach ($subscriber->subscriptions as $subscription) {
-      $segmentId = $subscription['segment_id'];
-      if ($allowedSegments && !in_array($segmentId, $allowedSegments)) {
+    foreach ($subscriber->getSubscriberSegments() as $subscriberSegment) {
+      $segment = $subscriberSegment->getSegment();
+      if (!$segment) {
         continue;
       }
-      if (!in_array($segmentId, $segmentsIds)) {
-        SubscriberSegment::createOrUpdate([
-          'subscriber_id' => $subscriber->id,
-          'segment_id' => $segmentId,
-          'status' => Subscriber::STATUS_UNSUBSCRIBED,
-        ]);
+
+      if ($allowedSegments && !in_array($segment->getId(), $allowedSegments)) {
+        continue;
+      }
+      if (!in_array($segment->getId(), $segmentsIds)) {
+        $this->subscriberSegmentRepository->createOrUpdate(
+          $subscriber,
+          $segment,
+          SubscriberEntity::STATUS_UNSUBSCRIBED
+        );
       }
     }
 
     // Store new segments for notifications
     $subscriberSegments = $this->subscriberSegmentRepository->findBy([
       'status' => SubscriberEntity::STATUS_SUBSCRIBED,
-      'subscriber' => $subscriber->id,
+      'subscriber' => $subscriber,
     ]);
     $currentSegmentIds = array_filter(array_map(function (SubscriberSegmentEntity $subscriberSegment): ?string {
       $segment = $subscriberSegment->getSegment();
@@ -157,47 +181,57 @@ class Manage {
       $segmentsIds = array_intersect($segmentsIds, $allowedSegments);
     }
     foreach ($segmentsIds as $segmentId) {
-      SubscriberSegment::createOrUpdate([
-        'subscriber_id' => $subscriber->id,
-        'segment_id' => $segmentId,
-        'status' => Subscriber::STATUS_SUBSCRIBED,
-      ]);
+      $segment = $this->segmentsRepository->findOneById($segmentId);
+      if (!$segment) {
+        continue;
+      }
+      $this->subscriberSegmentRepository->createOrUpdate(
+        $subscriber,
+        $segment,
+        SubscriberEntity::STATUS_SUBSCRIBED
+      );
     }
 
-    if ($subscriber->status === SubscriberEntity::STATUS_SUBSCRIBED && $newSegmentIds) {
-      $this->newSubscriberNotificationMailer->send($subscriber, Segment::whereIn('id', $newSegmentIds)->findMany());
+    if ($subscriber->getStatus() === SubscriberEntity::STATUS_SUBSCRIBED && $newSegmentIds) {
+      $newSegments = $this->segmentsRepository->findBy(['id' => $newSegmentIds]);
+      $this->newSubscriberNotificationMailer->send($subscriber, $newSegments);
       $this->welcomeScheduler->scheduleSubscriberWelcomeNotification(
-        $subscriber->id,
+        $subscriber->getId(),
         $newSegmentIds
       );
     }
   }
 
-  private function filterOutEmptyMandatoryFields(array $subscriberData) {
+  private function filterOutEmptyMandatoryFields(array $subscriberData): array {
     $mandatory = $this->getMandatory();
     foreach ($mandatory as $name) {
-      if (strlen(trim($subscriberData[$name])) === 0) {
+      if (!isset($subscriberData[$name])) {
+        continue;
+      }
+      if (is_array($subscriberData[$name]) && count(array_filter($subscriberData[$name])) === 0) {
+        unset($subscriberData[$name]);
+      }
+      if (is_string($subscriberData[$name]) && strlen(trim($subscriberData[$name])) === 0) {
         unset($subscriberData[$name]);
       }
     }
     return $subscriberData;
   }
 
-  private function getMandatory() {
+  /**
+   * @return string[]
+   */
+  private function getMandatory(): array {
     $mandatory = [];
-    $requiredCustomFields = CustomField::findMany();
+    $requiredCustomFields = $this->customFieldsRepository->findAll();
     foreach ($requiredCustomFields as $customField) {
-      if (is_serialized($customField->params)) {
-        $params = unserialize($customField->params);
-      } else {
-        $params = $customField->params;
-      }
+      $params = $customField->getParams();
       if (
         is_array($params)
         && isset($params['required'])
         && $params['required']
       ) {
-        $mandatory[] = 'cf_' . $customField->id;
+        $mandatory[] = 'cf_' . $customField->getId();
       }
     }
     return $mandatory;

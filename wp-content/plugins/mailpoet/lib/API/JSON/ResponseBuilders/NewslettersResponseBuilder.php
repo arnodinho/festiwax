@@ -8,8 +8,8 @@ if (!defined('ABSPATH')) exit;
 use MailPoet\Entities\NewsletterEntity;
 use MailPoet\Entities\SegmentEntity;
 use MailPoet\Entities\SendingQueueEntity;
-use MailPoet\Models\SendingQueue;
 use MailPoet\Newsletter\NewslettersRepository;
+use MailPoet\Newsletter\Sending\SendingQueuesRepository;
 use MailPoet\Newsletter\Statistics\NewsletterStatistics;
 use MailPoet\Newsletter\Statistics\NewsletterStatisticsRepository;
 use MailPoet\Newsletter\Url as NewsletterUrl;
@@ -38,16 +38,21 @@ class NewslettersResponseBuilder {
   /** @var NewsletterUrl */
   private $newsletterUrl;
 
+  /** @var SendingQueuesRepository */
+  private $sendingQueuesRepository;
+
   public function __construct(
     EntityManager $entityManager,
     NewslettersRepository $newslettersRepository,
     NewsletterStatisticsRepository $newslettersStatsRepository,
-    NewsletterUrl $newsletterUrl
+    NewsletterUrl $newsletterUrl,
+    SendingQueuesRepository $sendingQueuesRepository
   ) {
     $this->newslettersStatsRepository = $newslettersStatsRepository;
     $this->newslettersRepository = $newslettersRepository;
     $this->entityManager = $entityManager;
     $this->newsletterUrl = $newsletterUrl;
+    $this->sendingQueuesRepository = $sendingQueuesRepository;
   }
 
   public function build(NewsletterEntity $newsletter, $relations = []) {
@@ -64,7 +69,7 @@ class NewslettersResponseBuilder {
       'preheader' => $newsletter->getPreheader(),
       'body' => $newsletter->getBody(),
       'sent_at' => ($sentAt = $newsletter->getSentAt()) ? $sentAt->format(self::DATE_FORMAT) : null,
-      'created_at' => $newsletter->getCreatedAt()->format(self::DATE_FORMAT),
+      'created_at' => ($createdAt = $newsletter->getCreatedAt()) ? $createdAt->format(self::DATE_FORMAT) : null,
       'updated_at' => $newsletter->getUpdatedAt()->format(self::DATE_FORMAT),
       'deleted_at' => ($deletedAt = $newsletter->getDeletedAt()) ? $deletedAt->format(self::DATE_FORMAT) : null,
       'parent_id' => ($parent = $newsletter->getParent()) ? $parent->getId() : null,
@@ -89,9 +94,10 @@ class NewslettersResponseBuilder {
         $data['children_count'] = $this->newslettersStatsRepository->getChildrenCount($newsletter);
       }
       if ($relation === self::RELATION_SCHEDULED) {
-        $data['total_scheduled'] = (int)SendingQueue::findTaskByNewsletterId($newsletter->getId())
-          ->where('tasks.status', SendingQueue::STATUS_SCHEDULED)
-          ->count();
+        $data['total_scheduled'] = $this->sendingQueuesRepository->countAllByNewsletterAndTaskStatus(
+          $newsletter,
+          SendingQueueEntity::STATUS_SCHEDULED
+        );
       }
 
       if ($relation === self::RELATION_STATISTICS) {
@@ -135,14 +141,11 @@ class NewslettersResponseBuilder {
         ? $statistics->asArray()
         : false,
       'preview_url' => $this->newsletterUrl->getViewInBrowserUrl(
-        (object)[
-          'id' => $newsletter->getId(),
-          'hash' => $newsletter->getHash(),
-        ],
+        $newsletter,
         null,
         in_array($newsletter->getStatus(), [NewsletterEntity::STATUS_SENT, NewsletterEntity::STATUS_SENDING], true)
           ? $latestQueue
-          : false
+          : null
       ),
     ];
 
@@ -153,9 +156,10 @@ class NewslettersResponseBuilder {
       $data['segments'] = [];
       $data['options'] = $this->buildOptions($newsletter);
       $data['total_sent'] = $statistics ? $statistics->getTotalSentCount() : 0;
-      $data['total_scheduled'] = (int)SendingQueue::findTaskByNewsletterId($newsletter->getId())
-        ->where('tasks.status', SendingQueue::STATUS_SCHEDULED)
-        ->count();
+      $data['total_scheduled'] = $this->sendingQueuesRepository->countAllByNewsletterAndTaskStatus(
+        $newsletter,
+        SendingQueueEntity::STATUS_SCHEDULED
+      );
     } elseif ($newsletter->getType() === NewsletterEntity::TYPE_NOTIFICATION) {
       $data['segments'] = $this->buildSegments($newsletter);
       $data['children_count'] = $this->newslettersStatsRepository->getChildrenCount($newsletter);
@@ -207,7 +211,7 @@ class NewslettersResponseBuilder {
       'name' => $segment->getName(),
       'type' => $segment->getType(),
       'description' => $segment->getDescription(),
-      'created_at' => $segment->getCreatedAt()->format(self::DATE_FORMAT),
+      'created_at' => ($createdAt = $segment->getCreatedAt()) ? $createdAt->format(self::DATE_FORMAT) : null,
       'updated_at' => $segment->getUpdatedAt()->format(self::DATE_FORMAT),
       'deleted_at' => ($deletedAt = $segment->getDeletedAt()) ? $deletedAt->format(self::DATE_FORMAT) : null,
     ];
@@ -227,7 +231,7 @@ class NewslettersResponseBuilder {
       'priority' => (string)$task->getPriority(), // (string) for BC
       'scheduled_at' => ($scheduledAt = $task->getScheduledAt()) ? $scheduledAt->format(self::DATE_FORMAT) : null,
       'processed_at' => ($processedAt = $task->getProcessedAt()) ? $processedAt->format(self::DATE_FORMAT) : null,
-      'created_at' => $queue->getCreatedAt()->format(self::DATE_FORMAT),
+      'created_at' => ($createdAt = $queue->getCreatedAt()) ? $createdAt->format(self::DATE_FORMAT) : null,
       'updated_at' => $queue->getUpdatedAt()->format(self::DATE_FORMAT),
       'deleted_at' => ($deletedAt = $queue->getDeletedAt()) ? $deletedAt->format(self::DATE_FORMAT) : null,
       'meta' => $queue->getMeta(),

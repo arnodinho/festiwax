@@ -6,7 +6,6 @@ if (!defined('ABSPATH')) exit;
 
 
 use MailPoet\Util\Helpers;
-use MailPoet\WP\Functions as WPFunctions;
 
 class MailChimp {
   private const API_BASE_URI = 'https://user:%s@%s.api.mailchimp.com/3.0/';
@@ -23,7 +22,7 @@ class MailChimp {
   private $mapper;
 
   public function __construct(
-    $apiKey
+    string $apiKey
   ) {
     $this->apiKey = $this->getAPIKey($apiKey);
     $this->maxPostSize = (int)Helpers::getMaxPostSize('bytes');
@@ -61,7 +60,7 @@ class MailChimp {
     return $lists;
   }
 
-  public function getSubscribers($lists = []): array {
+  public function getSubscribers(array $lists = []): array {
     if (!$this->apiKey || !$this->dataCenter) {
       $this->throwException('API');
     }
@@ -114,13 +113,21 @@ class MailChimp {
     ];
   }
 
+  /**
+   * @param string|false $apiKey
+   * @return false|string
+   */
   public function getDataCenter($apiKey) {
     if (!$apiKey) return false;
     $apiKeyParts = explode('-', $apiKey);
     return end($apiKeyParts);
   }
 
-  public function getAPIKey($apiKey) {
+  /**
+   * @param string $apiKey
+   * @return false|string
+   */
+  public function getAPIKey(string $apiKey) {
     return (preg_match(self::API_KEY_REGEX, $apiKey)) ? $apiKey : false;
   }
 
@@ -129,19 +136,19 @@ class MailChimp {
    * @throws \Exception
    */
   public function throwException(string $error): void {
-    $errorMessage = WPFunctions::get()->__('Unknown MailChimp error.', 'mailpoet');
+    $errorMessage = __('Unknown MailChimp error.', 'mailpoet');
     switch ($error) {
       case 'API':
-        $errorMessage = WPFunctions::get()->__('Invalid API Key.', 'mailpoet');
+        $errorMessage = __('Invalid API Key.', 'mailpoet');
         break;
       case 'size':
-        $errorMessage = WPFunctions::get()->__('The information received from MailChimp is too large for processing. Please limit the number of lists!', 'mailpoet');
+        $errorMessage = __('The information received from MailChimp is too large for processing. Please limit the number of lists!', 'mailpoet');
         break;
       case 'subscribers':
-        $errorMessage = WPFunctions::get()->__('Did not find any active subscribers.', 'mailpoet');
+        $errorMessage = __('Did not find any active subscribers.', 'mailpoet');
         break;
       case 'lists':
-        $errorMessage = WPFunctions::get()->__('Did not find any valid lists.', 'mailpoet');
+        $errorMessage = __('Did not find any valid lists.', 'mailpoet');
         break;
     }
     throw new \Exception($errorMessage);

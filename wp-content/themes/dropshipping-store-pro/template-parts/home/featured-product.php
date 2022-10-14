@@ -48,7 +48,7 @@
           <div class="featured-product-content col-lg-6 col-md-12 mb-4">
             <div class="row">
               <div class="col-lg-6 col-md-4 col-sm-4 col-12 featured-product-img">
-                <?php if (has_post_thumbnail( $loop->post->ID )) echo get_the_post_thumbnail($loop->post->ID, 'shop_catalog'); else echo '<img src="'.esc_url(woocommerce_placeholder_img_src()).'" />'; ?>
+                <?php if (has_post_thumbnail( $loop->post->ID )) echo get_the_post_thumbnail($loop->post->ID,'woocommerce_thumbnail' ); else echo '<img src="'.esc_url(woocommerce_placeholder_img_src()).'" />'; ?>
                 <div class="bwt-wishlist-cart-view textcenter">
                   <ul class="d-flex">
                       <!-- Whishlist -->
@@ -69,7 +69,7 @@
                   </ul>
                 </div>
               </div>
-              <div class="col-lg-6 col-md-8 col-sm-8 col-12 align-self-center text-sm-start text-center">
+              <div class="col-lg-6 col-md-8 col-sm-8 col-12 align-self-center text-sm-start-featured text-center">
                 <div class="py-2">
                   <?php if( $product->is_type( 'simple' ) ){ woocommerce_template_loop_rating( $loop->post, $product ); } ?>
                 </div>
@@ -78,7 +78,7 @@
                   </a></h5>
                 <?php echo $product->get_price_html(); ?>
                 <div class="cart-box mt-1">
-                  <span class="our-product-cart"><?php if( $product->is_type( 'simple' ) ){ woocommerce_template_loop_add_to_cart( $loop->post, $product ); } ?></span>
+                  <span class="our-product-cart"><?php  woocommerce_template_loop_add_to_cart( $loop->post, $product ); ?></span>
                 </div>
               </div>
             </div>

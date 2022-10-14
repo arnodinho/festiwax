@@ -6,9 +6,10 @@ if (!defined('ABSPATH')) exit;
 
 
 use MailPoet\Entities\ScheduledTaskEntity;
-use MailPoet\Models\Subscriber;
 use MailPoet\Settings\SettingsController;
+use MailPoet\Settings\TrackingConfig;
 use MailPoet\Subscribers\InactiveSubscribersController;
+use MailPoet\Subscribers\SubscribersRepository;
 
 class InactiveSubscribers extends SimpleWorker {
   const TASK_TYPE = 'inactive_subscribers';
@@ -21,18 +22,27 @@ class InactiveSubscribers extends SimpleWorker {
   /** @var SettingsController */
   private $settings;
 
+  /** @var TrackingConfig */
+  private $trackingConfig;
+
+  /** @var SubscribersRepository */
+  private $subscribersRepository;
+
   public function __construct(
     InactiveSubscribersController $inactiveSubscribersController,
-    SettingsController $settings
+    SettingsController $settings,
+    TrackingConfig $trackingConfig,
+    SubscribersRepository $subscribersRepository
   ) {
     $this->inactiveSubscribersController = $inactiveSubscribersController;
     $this->settings = $settings;
+    $this->trackingConfig = $trackingConfig;
+    $this->subscribersRepository = $subscribersRepository;
     parent::__construct();
   }
 
   public function processTaskStrategy(ScheduledTaskEntity $task, $timer) {
-    $trackingEnabled = (bool)$this->settings->get('tracking.enabled');
-    if (!$trackingEnabled) {
+    if (!$this->trackingConfig->isEmailTrackingEnabled()) {
       $this->schedule();
       return true;
     }
@@ -46,7 +56,13 @@ class InactiveSubscribers extends SimpleWorker {
     // Handle activation/deactivation within interval
     $meta = $task->getMeta();
     $lastSubscriberId = isset($meta['last_subscriber_id']) ? $meta['last_subscriber_id'] : 0;
-    $maxSubscriberId = isset($meta['max_subscriber_id']) ? $meta['max_subscriber_id'] : (int)Subscriber::max('id');
+
+    if (isset($meta['max_subscriber_id'])) {
+      $maxSubscriberId = $meta['max_subscriber_id'];
+    } else {
+      $maxSubscriberId = $this->subscribersRepository->getMaxSubscriberId();
+    }
+
     while ($lastSubscriberId <= $maxSubscriberId) {
       $count = $this->inactiveSubscribersController->markInactiveSubscribers($daysToInactive, self::BATCH_SIZE, $lastSubscriberId);
       if ($count === false) {

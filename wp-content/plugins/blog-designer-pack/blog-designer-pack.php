@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Blog Designer Pack
  * Plugin URI: https://premium.infornweb.com/news-blog-designer-pack-pro/
- * Version: 2.3.1
+ * Version: 3.1
  * Description: Display blog posts on your website with 6 blog layouts (2 designs for each blog layout) plus 1 Ticker and 2 Widgets
  * Text Domain: blog-designer-pack
  * Domain Path: /languages/
@@ -24,22 +24,22 @@ if ( function_exists( 'bdp_fs' ) ) {
  * @package Blog Designer Pack
  * @since 1.0.0
  */
-if( !defined( 'BDP_VERSION' ) ) {
-	define( 'BDP_VERSION', '2.3.1' ); // Version of plugin
+if( ! defined( 'BDP_VERSION' ) ) {
+	define( 'BDP_VERSION', '3.1' ); // Version of plugin
 }
-if( !defined( 'BDP_DIR' ) ) {
+if( ! defined( 'BDP_DIR' ) ) {
 	define( 'BDP_DIR', dirname( __FILE__ ) ); // Plugin dir
 }
-if( !defined( 'BDP_URL' ) ) {
+if( ! defined( 'BDP_URL' ) ) {
 	define( 'BDP_URL', plugin_dir_url( __FILE__ ) ); // Plugin url
 }
-if( !defined( 'BDP_PLUGIN_BASENAME' ) ) {
+if( ! defined( 'BDP_PLUGIN_BASENAME' ) ) {
 	define( 'BDP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) ); // Plugin base name
 }
-if( !defined('BDP_POST_TYPE') ) {
+if( ! defined('BDP_POST_TYPE') ) {
 	define('BDP_POST_TYPE', 'post'); // Post type name
 }
-if( !defined('BDP_CAT') ) {
+if( ! defined('BDP_CAT') ) {
 	define('BDP_CAT', 'category'); // Plugin category name
 }
 
@@ -121,8 +121,9 @@ function bdp_load_textdomain() {
 		load_textdomain( 'blog-designer-pack', $mofile_global );
 		
 	} else { // Load the default language files
+		
 		load_plugin_textdomain( 'blog-designer-pack', false, $bdp_lang_dir );
-	}	
+	}
 }
 
 /**
@@ -136,11 +137,11 @@ function bdp_plugins_loaded() {
 
 	bdp_load_textdomain();
 
-	if( !defined('BDP_SCREEN_ID') ) {
+	if( ! defined('BDP_SCREEN_ID') ) {
 		define( 'BDP_SCREEN_ID', sanitize_title(__('Blog Designer Pack', 'blog-designer-pack')) );
 	}
 }
-add_action('plugins_loaded', 'bdp_plugins_loaded');
+add_action( 'plugins_loaded', 'bdp_plugins_loaded' );
 
 // Including freemius file
 include_once( BDP_DIR . '/freemius.php' );
@@ -159,7 +160,7 @@ require_once( BDP_DIR . '/includes/admin/class-bdp-admin.php' );
 require_once( BDP_DIR . '/includes/shortcodes/bdp-post.php' );
 require_once( BDP_DIR . '/includes/shortcodes/bdp-post-list.php' );
 require_once( BDP_DIR . '/includes/shortcodes/bdp-post-gridbox.php' );
-require_once( BDP_DIR . '/includes/shortcodes/bdp-recent-post-slider.php' ); 
+require_once( BDP_DIR . '/includes/shortcodes/bdp-recent-post-slider.php' );
 require_once( BDP_DIR . '/includes/shortcodes/bdp-recent-post-carousel.php' );
 require_once( BDP_DIR . '/includes/shortcodes/bdp-post-masonry.php' );
 require_once( BDP_DIR . '/includes/shortcodes/bdp-post-ticker.php' );

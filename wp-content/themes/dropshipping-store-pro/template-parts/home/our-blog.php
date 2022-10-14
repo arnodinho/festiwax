@@ -43,7 +43,7 @@ $new = new WP_Query($args);
                           <div class="our-blog-image position-relative">
                             <?php if (has_post_thumbnail()){ ?>
                               <a href="<?php the_permalink(); ?>">
-                                <img src="<?php the_post_thumbnail_url(); ?>" alt="<?php the_title(); ?>">
+                                <img src="<?php the_post_thumbnail_url(); ?>" alt="<?php the_title(); ?>" width="338" height="368">
                               </a>
                             <?php } ?>
                             <div class="p-2 text-sm-start text-center">

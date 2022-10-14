@@ -14,7 +14,7 @@ use MailPoet\Services\AuthorizedEmailsController;
 use MailPoet\Services\Bridge;
 use MailPoet\Services\Bridge\API;
 
-class MailPoet {
+class MailPoet implements MailerMethod {
   public $api;
   public $sender;
   public $replyTo;
@@ -45,7 +45,7 @@ class MailPoet {
     $this->blacklist = new BlacklistCheck();
   }
 
-  public function send($newsletter, $subscriber, $extraParams = []) {
+  public function send($newsletter, $subscriber, $extraParams = []): array {
     if ($this->servicesChecker->isMailPoetAPIKeyValid() === false) {
       return Mailer::formatMailerErrorResult($this->errorMapper->getInvalidApiKeyError());
     }
@@ -77,7 +77,8 @@ class MailPoet {
   public function processSendError($result, $subscriber, $newsletter) {
     if (!empty($result['code']) && $result['code'] === API::RESPONSE_CODE_KEY_INVALID) {
       Bridge::invalidateKey();
-    } elseif (!empty($result['code'])
+    } elseif (
+      !empty($result['code'])
       && $result['code'] === API::RESPONSE_CODE_CAN_NOT_SEND
       && $result['message'] === MailerError::MESSAGE_EMAIL_NOT_AUTHORIZED
     ) {

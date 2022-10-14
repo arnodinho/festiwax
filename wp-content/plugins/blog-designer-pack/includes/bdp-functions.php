@@ -69,32 +69,48 @@ function bdp_enqueue_script() {
 
 /**
  * Function to get post excerpt
+ * Custom function so some theme filter will not affect it.
  * 
- * @package Blog Designer Pack
- * @since 1.0.0
+ * @since 1.0.3
+ */
+function bdp_post_excerpt( $post = null ) {
+
+	$post = get_post( $post );
+	if ( empty( $post ) ) {
+		return '';
+	}
+ 
+	if ( post_password_required( $post ) ) {
+		return __( 'There is no excerpt because this is a protected post.', 'blog-designer-pack' );
+	}
+
+	return apply_filters( 'bdpp_post_excerpt', $post->post_excerpt, $post );
+}
+
+/**
+ * Function to get post short content either via excerpt or content.
+ * 
+ * @since 1.0
  */
 function bdp_get_post_excerpt( $post_id = null, $content = '', $word_length = '55', $more = '...' ) {
-	
-	$has_excerpt 	= false;
-	$word_length 	= !empty($word_length) ? $word_length : '55';
-	
+
+	global $post;
+
+	$word_length = ! empty( $word_length ) ? $word_length : 55;
+
 	// If post id is passed
-	if( !empty($post_id) ) {
-		if (has_excerpt($post_id)) {
-
-			$has_excerpt 	= true;
-			$content 		= get_the_excerpt();
-
+	if( ! empty( $post_id ) ) {
+		if( has_excerpt( $post_id ) ) {
+		  $content = bdp_post_excerpt( $post );
 		} else {
-			$content = !empty($content) ? $content : get_the_content();
+		  $content = ! empty( $content ) ? $content : get_the_content();
 		}
 	}
 
-	if( !empty($content) && (!$has_excerpt) ) {
+	if( $content ) {
 		$content = strip_shortcodes( $content ); // Strip shortcodes
 		$content = wp_trim_words( $content, $word_length, $more );
 	}
-	
 	return $content;
 }
 

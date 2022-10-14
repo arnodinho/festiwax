@@ -19,29 +19,24 @@
  *
  * @package WordPress
  */
-
 // ** Réglages MySQL - Votre hébergeur doit vous fournir ces informations. ** //
 /** Nom de la base de données de WordPress. */
+define('WP_CACHE', true);
+define( 'WPCACHEHOME', '/var/www/html/festiwax/wp-content/plugins/wp-super-cache/' );
 define( 'DB_NAME', 'festiwax' );
-
 /** Utilisateur de la base de données MySQL. */
 define( 'DB_USER', 'admin' );
-
 /** Mot de passe de la base de données MySQL. */
 define( 'DB_PASSWORD', 'Gj7y5mSL' );
-
 /** Adresse de l’hébergement MySQL. */
 define( 'DB_HOST', '127.0.0.1' );
-
 /** Jeu de caractères à utiliser par la base de données lors de la création des tables. */
 define( 'DB_CHARSET', 'utf8mb4' );
-
 /**
  * Type de collation de la base de données.
  * N’y touchez que si vous savez ce que vous faites.
  */
 define( 'DB_COLLATE', '' );
-
 /**#@+
  * Clés uniques d’authentification et salage.
  *
@@ -62,7 +57,6 @@ define( 'SECURE_AUTH_SALT', 'JR [ezEAsm7^vI,C4.e41U+zlZ0f>R y&(I~i:Jm?VbM>Wj _,b
 define( 'LOGGED_IN_SALT',   'x/Q;{m7u4e: pRY!R}ugq0wf>zs{r#F3eT1s}`=QZ*R+$|L#,;H0PYxw|-dv1.WG' );
 define( 'NONCE_SALT',       'jd@Mu7=2uo|?4mE+vsp.-H(~h/N]z,vuyLMJACQ4iHU&*PT-K.VGD.XA=n0``Q83' );
 /**#@-*/
-
 /**
  * Préfixe de base de données pour les tables de WordPress.
  *
@@ -71,7 +65,6 @@ define( 'NONCE_SALT',       'jd@Mu7=2uo|?4mE+vsp.-H(~h/N]z,vuyLMJACQ4iHU&*PT-K.V
  * N’utilisez que des chiffres, des lettres non-accentuées, et des caractères soulignés !
  */
 $table_prefix = 'wp_';
-
 /**
  * Pour les développeurs : le mode déboguage de WordPress.
  *
@@ -87,12 +80,9 @@ $table_prefix = 'wp_';
  * @link https://fr.wordpress.org/support/article/debugging-in-wordpress/
  */
 define( 'WP_DEBUG', false );
-
 /* C’est tout, ne touchez pas à ce qui suit ! Bonne publication. */
-
 /** Chemin absolu vers le dossier de WordPress. */
 if ( ! defined( 'ABSPATH' ) )
   define( 'ABSPATH', dirname( __FILE__ ) . '/' );
-
 /** Réglage des variables de WordPress et de ses fichiers inclus. */
 require_once( ABSPATH . 'wp-settings.php' );

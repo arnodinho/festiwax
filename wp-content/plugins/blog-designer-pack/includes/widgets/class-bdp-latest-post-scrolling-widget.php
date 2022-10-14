@@ -19,9 +19,30 @@ add_action( 'widgets_init', 'bdp_post_scroll_widget' );
 
 class Wpspw_Pro_Post_scrolling_Widget extends WP_Widget {
 
+	// Widget variables
+	var $defaults;
+
 	function __construct() {
+		
 		$widget_ops = array('classname' => 'bdp_post_scrolling_widget', 'description' => __('Display Latest WP Post in a sidebar with vertical slider.', 'blog-designer-pack') );
-		parent::__construct( 'bdp_post_scrolling_widget', __('BDP-Post Scrolling Widget', 'blog-designer-pack'), $widget_ops);
+		parent::__construct( 'bdp_post_scrolling_widget', __('BDP - Post Scrolling Widget', 'blog-designer-pack'), $widget_ops);
+
+		// Widgets defaults
+		$this->defaults = array(
+				'num_items'				=> 5,
+				'title'					=> __( 'Latest Posts Scrolling', 'blog-designer-pack' ),
+				'date'					=> 1, 
+				'show_category'			=> 1,
+				'show_thumb'			=> 1,
+				'category'				=> 0,
+				'height'				=> 400,
+				'pause'					=> 2000,
+				'speed'					=> 500,
+				'link_target'			=> 0,
+				'query_offset'			=> '',
+				'content_words_limit'	=> 20,
+				'show_content'			=> 0,
+			);
 	}
 
 	/**
@@ -30,9 +51,10 @@ class Wpspw_Pro_Post_scrolling_Widget extends WP_Widget {
 	 * @package Blog Designer Pack
 	 * @since 1.0.0
 	*/
-	function update($new_instance, $old_instance) {
+	function update( $new_instance, $old_instance ) {
 
-		$instance = $old_instance;
+		$instance		= $old_instance;
+		$new_instance 	= wp_parse_args( (array) $new_instance, $this->defaults );
 
 		$instance['title']			= sanitize_text_field($new_instance['title']);
 		$instance['num_items']		= $new_instance['num_items'];
@@ -57,34 +79,18 @@ class Wpspw_Pro_Post_scrolling_Widget extends WP_Widget {
 	* @package Blog Designer Pack
 	* @since 1.0.0
 	*/
-	function form($instance) {
-		$defaults = array(
-				'num_items'				=> 5,
-				'title'					=> esc_html__( 'Latest Posts Scrolling', 'blog-designer-pack' ),
-				'date'					=> 1, 
-				'show_category'			=> 1,
-				'show_thumb'			=> 1,
-				'category'				=> 0,
-				'height'				=> 400,
-				'pause'					=> 2000,
-				'speed'					=> 500,
-				'link_target'			=> 0,
-				'query_offset'			=> '',
-				'content_words_limit'	=> 20,
-				'show_content'			=> 0,
-			);
-
-		$instance = wp_parse_args( (array) $instance, $defaults );
+	function form( $instance ) {
+		$instance = wp_parse_args( (array) $instance, $this->defaults );
 	?>
 		<!-- Title -->
 		<p>
-			<label for="<?php echo $this->get_field_id('title'); ?>"><?php esc_html_e( 'Title', 'blog-designer-pack' ); ?>:</label>
-			<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($instance['title']); ?>" />
+			<label for="<?php echo esc_attr( $this->get_field_id('title') ); ?>"><?php esc_html_e( 'Title', 'blog-designer-pack' ); ?>:</label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id('title') ); ?>" name="<?php echo esc_attr( $this->get_field_name('title') ); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
 		</p>
 
 		<!-- Display Category -->
 		<p>
-			<label for="<?php echo $this->get_field_id( 'category' ); ?>"><?php _e( 'Category', 'blog-designer-pack' ); ?>:</label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'category' ) ); ?>"><?php esc_html_e( 'Category', 'blog-designer-pack' ); ?>:</label>
 			<?php
 				$dropdown_args = array(
 										'taxonomy'          => BDP_CAT,
@@ -100,74 +106,74 @@ class Wpspw_Pro_Post_scrolling_Widget extends WP_Widget {
 
 		<!-- Number of Items -->
 		<p>
-			<label for="<?php echo $this->get_field_id('num_items'); ?>"><?php esc_html_e( 'Number of Items', 'blog-designer-pack' ); ?>:</label>
-			<input class="widefat" id="<?php echo $this->get_field_id('num_items'); ?>" name="<?php echo $this->get_field_name('num_items'); ?>" type="number" value="<?php echo $instance['num_items']; ?>" />
+			<label for="<?php echo esc_attr( $this->get_field_id('num_items') ); ?>"><?php esc_html_e( 'Number of Items', 'blog-designer-pack' ); ?>:</label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id('num_items') ); ?>" name="<?php echo esc_attr( $this->get_field_name('num_items') ); ?>" type="number" value="<?php echo esc_attr( $instance['num_items'] ); ?>" />
 		</p>
 
 		<!-- Query Offset -->
 		<p>
-			<label for="<?php echo $this->get_field_id('query_offset'); ?>"><?php esc_html_e( 'Query Offset', 'blog-designer-pack' ); ?>:</label>
-			<input class="widefat" id="<?php echo $this->get_field_id('query_offset'); ?>" name="<?php echo $this->get_field_name('query_offset'); ?>" type="number" value="<?php echo $instance['query_offset']; ?>"  />
-			<span class="description"><em><?php _e('Query `offset` parameter to exclude number of post. Leave empty for default.', 'blog-designer-pack'); ?></em></span><br/>
+			<label for="<?php echo esc_attr( $this->get_field_id('query_offset') ); ?>"><?php esc_html_e( 'Query Offset', 'blog-designer-pack' ); ?>:</label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id('query_offset') ); ?>" name="<?php echo esc_attr( $this->get_field_name('query_offset') ); ?>" type="number" value="<?php echo esc_attr( $instance['query_offset'] ); ?>"  />
+			<span class="description"><em><?php esc_html_e('Query `offset` parameter to exclude number of post. Leave empty for default.', 'blog-designer-pack'); ?></em></span><br/>
 			<span class="description"><em><?php _e('Note: This parameter will not work when Number of Items is set to -1.', 'blog-designer-pack'); ?></em></span>
 		</p>
 
 		<!-- Display Date -->
 		<p>
-			<input id="<?php echo $this->get_field_id( 'date' ); ?>" name="<?php echo $this->get_field_name( 'date' ); ?>" type="checkbox" value="1" <?php checked( $instance['date'], 1 ); ?> />
-			<label for="<?php echo $this->get_field_id( 'date' ); ?>"><?php _e( 'Display Date', 'blog-designer-pack' ); ?></label>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'date' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'date' ) ); ?>" type="checkbox" value="1" <?php checked( $instance['date'], 1 ); ?> />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'date' ) ); ?>"><?php esc_html_e( 'Display Date', 'blog-designer-pack' ); ?></label>
 		</p>
 
 		<!-- Display Category -->
 		<p>
-			<input id="<?php echo $this->get_field_id( 'show_category' ); ?>" name="<?php echo $this->get_field_name( 'show_category' ); ?>" type="checkbox" value="1" <?php checked( $instance['show_category'], 1 ); ?> />
-			<label for="<?php echo $this->get_field_id( 'show_category' ); ?>"><?php _e( 'Display Category', 'blog-designer-pack' ); ?></label>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'show_category' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show_category' ) ); ?>" type="checkbox" value="1" <?php checked( $instance['show_category'], 1 ); ?> />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'show_category' ) ); ?>"><?php esc_html_e( 'Display Category', 'blog-designer-pack' ); ?></label>
 		</p>
-		 <!--  Display Short Content -->
+		
+		<!--  Display Short Content -->
 		<p>
-			<input type="checkbox" value="1" id="<?php echo $this->get_field_id( 'show_content' ); ?>" name="<?php echo $this->get_field_name( 'show_content' ); ?>" <?php checked( $instance['show_content'], 1 ); ?> />
-			<label for="<?php echo $this->get_field_id( 'show_content' ); ?>"><?php _e( 'Display Short Content', 'blog-designer-pack' ); ?></label>
+			<input type="checkbox" value="1" id="<?php echo esc_attr( $this->get_field_id( 'show_content' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show_content' ) ); ?>" <?php checked( $instance['show_content'], 1 ); ?> />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'show_content' ) ); ?>"><?php esc_html_e( 'Display Short Content', 'blog-designer-pack' ); ?></label>
 		</p>
 		
 		<!-- Number of content_words_limit -->
 		<p>
-			<label for="<?php echo $this->get_field_id('content_words_limit'); ?>"><?php esc_html_e( 'Content words limit', 'blog-designer-pack' ); ?>:</label>
-			<input class="widefat" id="<?php echo $this->get_field_id('content_words_limit'); ?>" name="<?php echo $this->get_field_name('content_words_limit'); ?>" type="number" value="<?php echo $instance['content_words_limit']; ?>"  />
-			 <span class="description"><em><?php _e('Content words limit will only work if Display Short Content checked', 'blog-designer-pack'); ?></em></span>
+			<label for="<?php echo esc_attr( $this->get_field_id('content_words_limit') ); ?>"><?php esc_html_e( 'Content words limit', 'blog-designer-pack' ); ?>:</label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id('content_words_limit') ); ?>" name="<?php echo esc_attr( $this->get_field_name('content_words_limit') ); ?>" type="number" value="<?php echo esc_attr( $instance['content_words_limit'] ); ?>"  />
+			<span class="description"><em><?php esc_html_e('Content words limit will only work if Display Short Content checked', 'blog-designer-pack'); ?></em></span>
 	   </p>
 
 		<!-- Show Thumb -->
 		<p>
-			<input id="<?php echo $this->get_field_id( 'show_thumb' ); ?>" name="<?php echo $this->get_field_name( 'show_thumb' ); ?>" type="checkbox" value="1" <?php checked( $instance['show_thumb'], 1 ); ?> />
-			<label for="<?php echo $this->get_field_id( 'show_thumb' ); ?>"><?php _e( 'Display Thumbnail in left side', 'blog-designer-pack' ); ?></label>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'show_thumb' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show_thumb' ) ); ?>" type="checkbox" value="1" <?php checked( $instance['show_thumb'], 1 ); ?> />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'show_thumb' ) ); ?>"><?php esc_html_e( 'Display Thumbnail in left side', 'blog-designer-pack' ); ?></label>
 		</p>
 
 		<!-- Open Link in a New Tab -->
 		<p>
-			<input id="<?php echo $this->get_field_id( 'link_target' ); ?>" name="<?php echo $this->get_field_name( 'link_target' ); ?>" type="checkbox"<?php checked( $instance['link_target'], 1 ); ?> />
-			<label for="<?php echo $this->get_field_id( 'link_target' ); ?>"><?php _e( 'Open Link in a New Tab', 'blog-designer-pack' ); ?></label>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'link_target' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'link_target' ) ); ?>" type="checkbox"<?php checked( $instance['link_target'], 1 ); ?> />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'link_target' ) ); ?>"><?php esc_html_e( 'Open Link in a New Tab', 'blog-designer-pack' ); ?></label>
 		</p>
 
 		<!-- Height -->
 		<p>
-			<label for="<?php echo $this->get_field_id( 'height' ); ?>"><?php _e( 'Height', 'blog-designer-pack' ); ?>:</label>
-			<input type="number" name="<?php echo $this->get_field_name( 'height' ); ?>"  value="<?php echo $instance['height']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'height' ); ?>" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'height' ) ); ?>"><?php esc_html_e( 'Height', 'blog-designer-pack' ); ?>:</label>
+			<input type="number" name="<?php echo esc_attr( $this->get_field_name( 'height' ) ); ?>"  value="<?php echo esc_attr( $instance['height'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'height' ) ); ?>" />
 		</p>
 
 		<!-- Pause -->
 		<p>
-			<label for="<?php echo $this->get_field_id( 'pause' ); ?>"><?php _e( 'Pause', 'blog-designer-pack' ); ?>:</label>
-			<input type="number" name="<?php echo $this->get_field_name( 'pause' ); ?>"  value="<?php echo $instance['pause']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'pause' ); ?>" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'pause' ) ); ?>"><?php esc_html_e( 'Pause', 'blog-designer-pack' ); ?>:</label>
+			<input type="number" name="<?php echo esc_attr( $this->get_field_name( 'pause' ) ); ?>"  value="<?php echo esc_attr( $instance['pause'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'pause' ) ); ?>" />
 		</p>
 
 		<!-- Speed -->
 		<p>
-			<label for="<?php echo $this->get_field_id( 'speed' ); ?>"><?php _e( 'Speed', 'blog-designer-pack' ); ?>:</label>
-			<input type="number" name="<?php echo $this->get_field_name( 'speed' ); ?>"  value="<?php echo $instance['speed']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'speed' ); ?>" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'speed' ) ); ?>"><?php esc_html_e( 'Speed', 'blog-designer-pack' ); ?>:</label>
+			<input type="number" name="<?php echo esc_attr( $this->get_field_name( 'speed' ) ); ?>"  value="<?php echo esc_attr( $instance['speed'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'speed' ) ); ?>" />
 		</p>
 	<?php
   }
-
 
 	/**
 	 * Outputs the content for the current widget instance.
@@ -175,9 +181,10 @@ class Wpspw_Pro_Post_scrolling_Widget extends WP_Widget {
 	 * @package Blog Designer Pack
 	 * @since 1.0.0
 	*/
-	function widget($args, $instance) {
+	function widget( $widget_args, $instance ) {
 
-		extract($args, EXTR_SKIP);
+		$instance = wp_parse_args( (array) $instance, $this->defaults );
+		extract( $widget_args, EXTR_SKIP );
 
 		$title          = apply_filters( 'widget_title', isset( $instance['title'] ) ? $instance['title'] : __( 'Latest Posts', 'blog-designer-pack' ), $instance, $this->id_base );
 		$num_items      = $instance['num_items'];
@@ -190,8 +197,8 @@ class Wpspw_Pro_Post_scrolling_Widget extends WP_Widget {
 		$pause          = $instance['pause'];
 		$speed          = $instance['speed'];
 		$link_target    = (isset($instance['link_target']) && $instance['link_target'] == 1) ? '_blank' : '_self';
-		$words_limit        = $instance['content_words_limit'];
-		$show_content       = ( isset($instance['show_content']) && ($instance['show_content'] == 1) ) ? "true" : "false";
+		$words_limit    = $instance['content_words_limit'];
+		$show_content   = ( isset($instance['show_content']) && ($instance['show_content'] == 1) ) ? "true" : "false";
 		$unique         = bdp_get_unique();
 
 		// Slider configuration
@@ -210,13 +217,13 @@ class Wpspw_Pro_Post_scrolling_Widget extends WP_Widget {
 					'post_type'             => BDP_POST_TYPE,
 					'post_status'           => array( 'publish' ),
 					'posts_per_page'        => $num_items,
+					'offset'                => $query_offset,
 					'order'                 => 'DESC',
 					'ignore_sticky_posts'   => true,
-					'offset'                => $query_offset,
 				);
 
 		// Category Parameter
-		if( !empty($category) ) {
+		if( ! empty( $category ) ) {
 			$post_args['tax_query'] = array(
 										array(
 											'taxonomy'  => BDP_CAT,
@@ -226,22 +233,22 @@ class Wpspw_Pro_Post_scrolling_Widget extends WP_Widget {
 		}
 
 		// WP Query
-		$cust_loop = new WP_Query($post_args);
+		$cust_loop = new WP_Query( $post_args );
 
 		// Start Widget Output
-		echo $before_widget;
+		echo $before_widget; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
 
 		if ( $title ) {
-			echo $before_title . $title . $after_title;
+			echo $before_title . $title . $after_title; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
 		}
 
 		// If Post is there
-		if ($cust_loop->have_posts()) {
+		if ( $cust_loop->have_posts() ) {
 	?>
 
 	<div class="bdp-widget-wrp bdp-recent-post-items">
 		<div class="recent-bdppost-items">
-			<div class="post-ticker-jcarousellite" id="bdp-post-ticker-<?php echo $unique; ?>">
+			<div class="post-ticker-jcarousellite" id="bdp-post-ticker-<?php echo esc_attr( $unique ); ?>">
 				<ul>
 					<?php while ($cust_loop->have_posts()) : $cust_loop->the_post();
 						
@@ -250,77 +257,51 @@ class Wpspw_Pro_Post_scrolling_Widget extends WP_Widget {
 						$post_link      = bdp_get_post_link( $post->ID );
 						$terms          = get_the_terms( $post->ID, BDP_CAT );
 						
-						if($terms) {
+						if( $terms ) {
 						  foreach ( $terms as $term ) {
 								$term_link      = get_term_link( $term );
-								$cat_links[]    = '<a href="' . esc_url( $term_link ) . '">'.$term->name.'</a>';
+								$cat_links[]    = '<a href="' . esc_url( $term_link ) . '">'.wp_kses_post( $term->name ).'</a>';
 							}
 						}
 						$cate_name = join( " ", $cat_links );
 					?>
 
 					<li class="bdp-post-li bdp-clearfix">
-					<?php if($show_thumb == 'true') { ?>
 						<div class="bdp-post-list-content">
-							 <?php if( !empty($feat_image) ) { ?>
-								<div class="bdp-post-left-img">
-									<div class="bdp-post-image-bg">
-										<a  href="<?php echo esc_url( $post_link ); ?>" target="<?php echo $link_target; ?>">                                       
-												<img src="<?php echo esc_url( $feat_image ); ?>" alt="<?php the_title_attribute(); ?>" />                                       
-										</a>
-									</div>
+							<?php if( $show_thumb == 'true' && ! empty( $feat_image ) ) { ?>
+							<div class="bdp-post-left-img">
+								<div class="bdp-post-image-bg">
+									<a  href="<?php echo esc_url( $post_link ); ?>" target="<?php echo esc_attr( $link_target ); ?>">
+										<img src="<?php echo esc_url( $feat_image ); ?>" alt="<?php the_title_attribute(); ?>" />
+									</a>
 								</div>
-							 <?php } ?>
+							</div>
+							<?php } ?>
 
-							<div class="bdp-post-right-content <?php if( empty($feat_image) ) { echo 'bdp-post-full-content'; } ?>">
-								<?php if($show_category == 'true' && $cate_name !='') { ?>
+							<div class="bdp-post-right-content <?php if( empty( $feat_image ) ) { echo 'bdp-post-full-content'; } ?>">
+								<?php if( $show_category == 'true' && $cate_name != '' ) { ?>
 								<div class="bdp-post-categories">	
-									<?php echo $cate_name; ?>
+									<?php echo wp_kses_post( $cate_name ); ?>
 								</div>
 								<?php } ?>
-								
+
 								<h4 class="bdp-post-title">
-									<a href="<?php echo esc_url( $post_link ); ?>" target="<?php echo $link_target; ?>"><?php the_title(); ?></a>
+									<a href="<?php echo esc_url( $post_link ); ?>" target="<?php echo esc_attr($link_target); ?>"><?php the_title(); ?></a>
 								</h4>
 
-								<?php if($date == "true") { ?>
-								<div class="bdp-post-meta" <?php if($show_content != "true") { ?>  style="margin:0px;" <?php } ?>>
-								   <span class="bdp-post-meta-innr bdp-time"> <?php echo get_the_date(); ?></span>
+								<?php if( $date == "true" ) { ?>
+								<div class="bdp-post-meta" <?php if( $show_content != "true" ) { ?> style="margin:0px;" <?php } ?>>
+								   <span class="bdp-post-meta-innr bdp-time"><?php echo get_the_date(); ?></span>
 								</div>
-								<?php } 
-								if($show_content == "true") { ?>
-									<div class="bdp-post-content">    
-										<div><?php echo bdp_get_post_excerpt( $post->ID, get_the_content(), $words_limit ); ?></div>
-									</div>
+								<?php }
+
+								if( $show_content == "true" ) { ?>
+								<div class="bdp-post-content">
+									<?php echo bdp_get_post_excerpt( $post->ID, get_the_content(), $words_limit ); ?>
+								</div>
 							<?php } ?>
 							</div>
 						</div>
-
-					<?php } else { ?>
-						 <div class="bdp-post-list-content">
-							<?php if($show_category == 'true' && $cate_name !='') { ?>
-							<div class="bdp-post-categories">
-								<?php echo $cate_name; ?>
-							</div>
-							<?php } ?>
-							
-							<h4 class="bdp-post-title"> 
-								<a href="<?php echo esc_url( $post_link ); ?>" target="<?php echo $link_target; ?>"><?php the_title(); ?></a>
-							</h4>
-
-							<?php if($date == "true") { ?>
-							<div class="bdp-post-meta" <?php if($show_content != "true") { ?>  style="margin:0px;" <?php } ?>>
-								 <span class="bdp-post-meta-innr bdp-time"><?php echo get_the_date(); ?></span>
-							</div>
-							<?php }
-
-							if($show_content == "true") { ?>
-							<div class="bdp-post-content">
-								<div><?php echo bdp_get_post_excerpt( $post->ID, get_the_content(), $words_limit ); ?></div>
-							</div>
-							<?php } ?>
-						</div>
-					<?php } ?>
 					</li>
 					<?php endwhile; ?>
 			   </ul>
@@ -333,6 +314,6 @@ class Wpspw_Pro_Post_scrolling_Widget extends WP_Widget {
 
 		wp_reset_postdata(); // Reset WP Query
 
-		echo $after_widget;
+		echo $after_widget; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
 	}
 }

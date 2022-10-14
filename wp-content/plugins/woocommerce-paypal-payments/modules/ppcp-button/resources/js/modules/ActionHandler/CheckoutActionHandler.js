@@ -1,3 +1,4 @@
+import 'formdata-polyfill';
 import onApprove from '../OnApproveHandler/onApproveForPayNow.js';
 import {payerData} from "../Helper/PayerData";
 import {getCurrentPaymentMethod} from "../Helper/CheckoutMethodState";
@@ -20,21 +21,27 @@ class CheckoutActionHandler {
             const errorHandler = this.errorHandler;
 
             const formSelector = this.config.context === 'checkout' ? 'form.checkout' : 'form#order_review';
-            const formValues = jQuery(formSelector).serialize();
+            const formData = new FormData(document.querySelector(formSelector));
+            // will not handle fields with multiple values (checkboxes, <select multiple>), but we do not care about this here
+            const formJsonObj = Object.fromEntries(formData.entries());
 
             const createaccount = jQuery('#createaccount').is(":checked") ? true : false;
 
+            const paymentMethod = getCurrentPaymentMethod();
+            const fundingSource = window.ppcpFundingSource;
+
             return fetch(this.config.ajax.create_order.endpoint, {
                 method: 'POST',
+                credentials: 'same-origin',
                 body: JSON.stringify({
                     nonce: this.config.ajax.create_order.nonce,
                     payer,
                     bn_code:bnCode,
                     context:this.config.context,
                     order_id:this.config.order_id,
-                    payment_method: getCurrentPaymentMethod(),
-                    funding_source: window.ppcpFundingSource,
-                    form:formValues,
+                    payment_method: paymentMethod,
+                    funding_source: fundingSource,
+                    form: formJsonObj,
                     createaccount: createaccount
                 })
             }).then(function (res) {
@@ -59,13 +66,13 @@ class CheckoutActionHandler {
                         }
                     }
 
-                    return;
+                    throw new Error(data.data.message);
                 }
                 const input = document.createElement('input');
                 input.setAttribute('type', 'hidden');
                 input.setAttribute('name', 'ppcp-resume-order');
                 input.setAttribute('value', data.data.purchase_units[0].custom_id);
-                document.querySelector(formSelector).append(input);
+                document.querySelector(formSelector).appendChild(input);
                 return data.data.id;
             });
         }

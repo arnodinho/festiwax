@@ -7,7 +7,6 @@ if (!defined('ABSPATH')) exit;
 
 use MailPoet\Entities\SubscriberEntity;
 use MailPoet\Models\Newsletter;
-use MailPoet\Models\Subscriber;
 
 class MetaInfo {
   public function getSendingTestMetaInfo() {
@@ -30,16 +29,16 @@ class MetaInfo {
     );
   }
 
-  public function getConfirmationMetaInfo(Subscriber $subscriber) {
-    return $this->makeMetaInfo('confirmation', $subscriber->status, $subscriber->source);
+  public function getConfirmationMetaInfo(SubscriberEntity $subscriber) {
+    return $this->makeMetaInfo('confirmation', $subscriber->getStatus(), $subscriber->getSource());
   }
 
   public function getNewSubscriberNotificationMetaInfo() {
     return $this->makeMetaInfo('new_subscriber_notification', 'unknown', 'administrator');
   }
 
-  public function getNewsletterMetaInfo($newsletter, Subscriber $subscriber) {
-    $type = 'unknown';
+  public function getNewsletterMetaInfo($newsletter, SubscriberEntity $subscriber) {
+    $type = $newsletter->type ?? 'unknown';
     switch ($newsletter->type) {
       case Newsletter::TYPE_AUTOMATIC:
         $group = isset($newsletter->options['group']) ? $newsletter->options['group'] : 'unknown';
@@ -57,10 +56,10 @@ class MetaInfo {
         $type = 'post_notification';
         break;
     }
-    return $this->makeMetaInfo($type, $subscriber->status, $subscriber->source);
+    return $this->makeMetaInfo($type, $subscriber->getStatus(), $subscriber->getSource());
   }
 
-  private function makeMetaInfo($emailType,  $subscriberStatus, $subscriberSource) {
+  private function makeMetaInfo($emailType, $subscriberStatus, $subscriberSource) {
     return [
       'email_type' => $emailType,
       'subscriber_status' => $subscriberStatus,

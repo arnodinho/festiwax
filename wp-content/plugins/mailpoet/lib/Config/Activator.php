@@ -22,47 +22,63 @@ class Activator {
   /** @var WPFunctions */
   private $wp;
 
+  /** @var Migrator */
+  private $migrator;
+
   public function __construct(
     SettingsController $settings,
     Populator $populator,
-    WPFunctions $wp
+    WPFunctions $wp,
+    Migrator $migrator
   ) {
     $this->settings = $settings;
     $this->populator = $populator;
     $this->wp = $wp;
+    $this->migrator = $migrator;
   }
 
   public function activate() {
     $isRunning = $this->wp->getTransient(self::TRANSIENT_ACTIVATE_KEY);
     if ($isRunning === false) {
-      $this->wp->setTransient(self::TRANSIENT_ACTIVATE_KEY, '1', self::TRANSIENT_EXPIRATION);
+      $this->lockActivation();
       try {
         $this->processActivate();
       } finally {
-        $this->wp->deleteTransient(self::TRANSIENT_ACTIVATE_KEY);
+        $this->unlockActivation();
       }
     } else {
       throw new InvalidStateException(__('MailPoet version update is in progress, please refresh the page in a minute.', 'mailpoet'));
     }
   }
 
+  private function lockActivation(): void {
+    $this->wp->setTransient(self::TRANSIENT_ACTIVATE_KEY, '1', self::TRANSIENT_EXPIRATION);
+  }
+
+  private function unlockActivation(): void {
+    $this->wp->deleteTransient(self::TRANSIENT_ACTIVATE_KEY);
+  }
+
   private function processActivate(): void {
-    $migrator = new Migrator();
-    $migrator->up();
+    $this->migrator->up();
 
     $this->populator->up();
     $this->updateDbVersion();
 
     $caps = new Capabilities();
     $caps->setupWPCapabilities();
+
+    $localizer = new Localizer();
+    $localizer->forceInstallLanguagePacks($this->wp);
   }
 
   public function deactivate() {
-    $migrator = new Migrator();
-    $migrator->down();
+    $this->lockActivation();
+    $this->migrator->down();
 
     $caps = new Capabilities();
     $caps->removeWPCapabilities();
+    $this->unlockActivation();
   }
 
   public function updateDbVersion() {
@@ -75,7 +91,7 @@ class Activator {
     $this->settings->set('db_version', Env::$version);
 
     // if current db version and plugin version differ, log an update
-    if (version_compare($currentDbVersion, Env::$version) !== 0) {
+    if (version_compare((string)$currentDbVersion, Env::$version) !== 0) {
       $updatesLog = (array)$this->settings->get('updates_log', []);
       $updatesLog[] = [
         'previous_version' => $currentDbVersion,

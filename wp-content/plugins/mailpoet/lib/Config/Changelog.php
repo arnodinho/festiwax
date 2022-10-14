@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) exit;
 
 
 use MailPoet\Settings\SettingsController;
+use MailPoet\Settings\TrackingConfig;
 use MailPoet\Util\Url;
 use MailPoet\WooCommerce\Helper;
 use MailPoet\WP\Functions as WPFunctions;
@@ -23,21 +24,21 @@ class Changelog {
   /** @var Url */
   private $urlHelper;
 
-  /** @var MP2Migrator */
-  private $mp2Migrator;
+  /** @var TrackingConfig */
+  private $trackingConfig;
 
   public function __construct(
     SettingsController $settings,
     WPFunctions $wp,
     Helper $wooCommerceHelper,
     Url $urlHelper,
-    MP2Migrator $mp2Migrator
+    TrackingConfig $trackingConfig
   ) {
     $this->wooCommerceHelper = $wooCommerceHelper;
     $this->settings = $settings;
     $this->wp = $wp;
     $this->urlHelper = $urlHelper;
-    $this->mp2Migrator = $mp2Migrator;
+    $this->trackingConfig = $trackingConfig;
   }
 
   public function init() {
@@ -52,7 +53,10 @@ class Changelog {
     if (
       !(isset($_GET['page']))
       or
-      (isset($_GET['page']) && strpos($_GET['page'], 'mailpoet') !== 0)
+      (isset($_GET['page']) && strpos(
+        sanitize_text_field(wp_unslash($_GET['page'])),
+        'mailpoet'
+      ) !== 0)
     ) {
       return;
     }
@@ -65,7 +69,6 @@ class Changelog {
 
   public function check() {
     $version = $this->settings->get('version');
-    $this->checkMp2Migration($version);
     if ($version === null) {
       $this->setupNewInstallation();
       $this->checkWelcomeWizard();
@@ -74,15 +77,28 @@ class Changelog {
     $this->checkRevenueTrackingPermissionPage();
   }
 
-  private function checkMp2Migration($version) {
-    if (!in_array($_GET['page'], ['mailpoet-migration', 'mailpoet-settings']) && $this->mp2Migrator->isMigrationStartedAndNotCompleted()) {
-      // Force the redirection if the migration has started but is not completed
-      return $this->terminateWithRedirect($this->wp->adminUrl('admin.php?page=mailpoet-migration'));
+  public function shouldShowWelcomeWizard() {
+    if ($this->wp->applyFilters('mailpoet_skip_welcome_wizard', false)) {
+      return false;
     }
+    return $this->settings->get('version') === null;
+  }
 
-    if ($version === null && $this->mp2Migrator->isMigrationNeeded()) {
-       $this->terminateWithRedirect($this->wp->adminUrl('admin.php?page=mailpoet-migration'));
+  public function shouldShowWooCommerceListImportPage() {
+    if ($this->wp->applyFilters('mailpoet_skip_woocommerce_import_page', false)) {
+      return false;
     }
+    return !$this->settings->get('woocommerce_import_screen_displayed')
+      && $this->wooCommerceHelper->isWooCommerceActive()
+      && $this->wooCommerceHelper->getOrdersCountCreatedBefore($this->settings->get('installed_at')) > 0
+      && $this->wp->currentUserCan('administrator');
+  }
+
+  public function shouldShowRevenueTrackingPermissionPage() {
+    return ($this->settings->get('woocommerce.accept_cookie_revenue_tracking.set') === null)
+      && $this->trackingConfig->isEmailTrackingEnabled()
+      && $this->wooCommerceHelper->isWooCommerceActive()
+      && $this->wp->currentUserCan('administrator');
   }
 
   private function setupNewInstallation() {
@@ -90,22 +106,23 @@ class Changelog {
   }
 
   private function checkWelcomeWizard() {
-    $skipWizard = $this->wp->applyFilters('mailpoet_skip_welcome_wizard', false);
-    if (!$skipWizard) {
+    if ($this->shouldShowWelcomeWizard()) {
       $this->terminateWithRedirect($this->wp->adminUrl('admin.php?page=mailpoet-welcome-wizard'));
     }
   }
 
   private function checkWooCommerceListImportPage() {
-    if ($this->wp->applyFilters('mailpoet_skip_woocommerce_import_page', false)) {
-      return;
-    }
     if (
-      !in_array($_GET['page'], ['mailpoet-woocommerce-setup', 'mailpoet-welcome-wizard', 'mailpoet-migration'])
-      && !$this->settings->get('woocommerce_import_screen_displayed')
-      && $this->wooCommerceHelper->isWooCommerceActive()
-      && $this->wooCommerceHelper->getOrdersCountCreatedBefore($this->settings->get('installed_at')) > 0
-      && $this->wp->currentUserCan('administrator')
+      !isset($_GET['page']) ||
+      !in_array(
+        sanitize_text_field(wp_unslash($_GET['page'])),
+        [
+          'mailpoet-woocommerce-setup',
+          'mailpoet-welcome-wizard',
+          'mailpoet-migration',
+        ]
+      )
+      && $this->shouldShowWooCommerceListImportPage()
     ) {
       $this->urlHelper->redirectTo($this->wp->adminUrl('admin.php?page=mailpoet-woocommerce-setup'));
     }
@@ -113,11 +130,16 @@ class Changelog {
 
   private function checkRevenueTrackingPermissionPage() {
     if (
-      !in_array($_GET['page'], ['mailpoet-woocommerce-setup', 'mailpoet-welcome-wizard', 'mailpoet-migration'])
-      && ($this->settings->get('woocommerce.accept_cookie_revenue_tracking.set') === null)
-      && $this->settings->get('tracking.enabled')
-      && $this->wooCommerceHelper->isWooCommerceActive()
-      && $this->wp->currentUserCan('administrator')
+      !isset($_GET['page']) ||
+      !in_array(
+        sanitize_text_field(wp_unslash($_GET['page'])),
+        [
+          'mailpoet-woocommerce-setup',
+          'mailpoet-welcome-wizard',
+          'mailpoet-migration',
+        ]
+      )
+      && $this->shouldShowRevenueTrackingPermissionPage()
     ) {
       $this->urlHelper->redirectTo($this->wp->adminUrl('admin.php?page=mailpoet-woocommerce-setup'));
     }

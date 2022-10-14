@@ -9,16 +9,22 @@ use MailPoet\API\JSON\Endpoint as APIEndpoint;
 use MailPoet\API\JSON\Error as APIError;
 use MailPoet\API\JSON\Response;
 use MailPoet\Config\AccessControl;
+use MailPoet\Cron\ActionScheduler\Actions\DaemonTrigger;
+use MailPoet\Cron\CronTrigger;
 use MailPoet\Cron\Triggers\WordPress;
 use MailPoet\Entities\NewsletterEntity;
+use MailPoet\Entities\ScheduledTaskEntity;
 use MailPoet\Entities\SendingQueueEntity;
+use MailPoet\Mailer\MailerFactory;
 use MailPoet\Models\Newsletter;
 use MailPoet\Models\SendingQueue as SendingQueueModel;
 use MailPoet\Newsletter\NewslettersRepository;
+use MailPoet\Newsletter\NewsletterValidator;
 use MailPoet\Newsletter\Scheduler\Scheduler;
+use MailPoet\Newsletter\Sending\ScheduledTasksRepository;
 use MailPoet\Newsletter\Sending\SendingQueuesRepository;
 use MailPoet\Segments\SubscribersFinder;
-use MailPoet\Services\Bridge;
+use MailPoet\Settings\SettingsController;
 use MailPoet\Tasks\Sending as SendingTask;
 use MailPoet\Util\License\Features\Subscribers as SubscribersFeature;
 
@@ -36,24 +42,49 @@ class SendingQueue extends APIEndpoint {
   /** @var NewslettersRepository */
   private $newsletterRepository;
 
-  /** @var Bridge */
-  private $bridge;
-
   /** @var SendingQueuesRepository */
   private $sendingQueuesRepository;
+
+  /** @var ScheduledTasksRepository */
+  private $scheduledTasksRepository;
+
+  /** @var MailerFactory */
+  private $mailerFactory;
+
+  /** @var NewsletterValidator */
+  private $newsletterValidator;
+
+  /** @var Scheduler */
+  private $scheduler;
+
+  /** @var SettingsController */
+  private $settings;
+
+  /** @var DaemonTrigger */
+  private $actionSchedulerDaemonTriggerAction;
 
   public function __construct(
     SubscribersFeature $subscribersFeature,
     NewslettersRepository $newsletterRepository,
     SendingQueuesRepository $sendingQueuesRepository,
-    Bridge $bridge,
-    SubscribersFinder $subscribersFinder
+    SubscribersFinder $subscribersFinder,
+    ScheduledTasksRepository $scheduledTasksRepository,
+    MailerFactory $mailerFactory,
+    Scheduler $scheduler,
+    SettingsController $settings,
+    DaemonTrigger $actionSchedulerDaemonTriggerAction,
+    NewsletterValidator $newsletterValidator
   ) {
     $this->subscribersFeature = $subscribersFeature;
     $this->subscribersFinder = $subscribersFinder;
     $this->newsletterRepository = $newsletterRepository;
-    $this->bridge = $bridge;
     $this->sendingQueuesRepository = $sendingQueuesRepository;
+    $this->scheduledTasksRepository = $scheduledTasksRepository;
+    $this->mailerFactory = $mailerFactory;
+    $this->scheduler = $scheduler;
+    $this->settings = $settings;
+    $this->actionSchedulerDaemonTriggerAction = $actionSchedulerDaemonTriggerAction;
+    $this->newsletterValidator = $newsletterValidator;
   }
 
   public function add($data = []) {
@@ -82,17 +113,16 @@ class SendingQueue extends APIEndpoint {
       ]);
     }
 
-    $validationError = $this->validateNewsletter($newsletterEntity);
+    $validationError = $this->newsletterValidator->validate($newsletterEntity);
     if ($validationError) {
       return $this->errorResponse([
         APIError::BAD_REQUEST => $validationError,
       ]);
     }
 
-    // check that the sending method has been configured properly
+    // check that the sending method has been configured properly by verifying that default mailer can be build
     try {
-      $mailer = new \MailPoet\Mailer\Mailer();
-      $mailer->init();
+      $this->mailerFactory->getDefaultMailer();
     } catch (\Exception $e) {
       return $this->errorResponse([
         $e->getCode() => $e->getMessage(),
@@ -129,11 +159,17 @@ class SendingQueue extends APIEndpoint {
 
       // set queue status
       $queue->status = SendingQueueModel::STATUS_SCHEDULED;
-      $queue->scheduledAt = Scheduler::formatDatetimeString($newsletterEntity->getOptionValue('scheduledAt'));
+      $queue->scheduledAt = $this->scheduler->formatDatetimeString($newsletterEntity->getOptionValue('scheduledAt'));
     } else {
-      $segments = $newsletter->segments()->findMany();
-      $subscribersCount = $this->subscribersFinder->addSubscribersToTaskFromSegments($queue->task(), $segments);
-      if (!$subscribersCount) {
+      $segments = $newsletterEntity->getSegmentIds();
+      $taskModel = $queue->task();
+      $taskEntity = $this->scheduledTasksRepository->findOneById($taskModel->id);
+
+      if ($taskEntity instanceof ScheduledTaskEntity) {
+        $subscribersCount = $this->subscribersFinder->addSubscribersToTaskFromSegments($taskEntity, $segments);
+      }
+
+      if (!isset($subscribersCount) || !$subscribersCount) {
         return $this->errorResponse([
           APIError::UNKNOWN => __('There are no subscribers in that list!', 'mailpoet'),
         ]);
@@ -152,34 +188,11 @@ class SendingQueue extends APIEndpoint {
     if (!empty($errors)) {
       return $this->errorResponse($errors);
     } else {
+      $this->triggerSending($newsletterEntity);
       return $this->successResponse(
         $newsletter->getQueue()->asArray()
       );
     }
-  }
-
-  private function validateNewsletter(NewsletterEntity $newsletterEntity): ?string {
-    if (
-      $newsletterEntity->getBody()
-      && is_array($newsletterEntity->getBody())
-      && $newsletterEntity->getBody()['content']
-    ) {
-      $body = json_encode($newsletterEntity->getBody()['content']);
-      if ($body === false) {
-        return __('Poet, please add prose to your masterpiece before you send it to your followers.');
-      }
-
-      if (
-        $this->bridge->isMailpoetSendingServiceEnabled()
-        && (strpos($body, '[link:subscription_unsubscribe_url]') === false)
-        && (strpos($body, '[link:subscription_unsubscribe]') === false)
-      ) {
-        return __('All emails must include an "Unsubscribe" link. Add a footer widget to your email to continue.');
-      }
-    } else {
-      return __('Poet, please add prose to your masterpiece before you send it to your followers.');
-    }
-    return null;
   }
 
   public function pause($data = []) {
@@ -228,12 +241,26 @@ class SendingQueue extends APIEndpoint {
         ]);
       } else {
         $this->sendingQueuesRepository->resume($queue);
+        $this->triggerSending($newsletter);
         return $this->successResponse();
       }
     } else {
       return $this->errorResponse([
         APIError::NOT_FOUND => __('This newsletter does not exist.', 'mailpoet'),
       ]);
+    }
+  }
+
+  /**
+   * In case the newsletter was switched to sending trigger the background job immediately.
+   * This is done so that user immediately sees that email is sending and doesn't have to wait on WP Cron to start it.
+   */
+  private function triggerSending(NewsletterEntity $newsletter): void {
+    if (
+      $newsletter->getStatus() === NewsletterEntity::STATUS_SENDING
+      && $this->settings->get('cron_trigger.method') === CronTrigger::METHOD_ACTION_SCHEDULER
+    ) {
+      $this->actionSchedulerDaemonTriggerAction->process();
     }
   }
 }

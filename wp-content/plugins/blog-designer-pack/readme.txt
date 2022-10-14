@@ -1,20 +1,20 @@
-﻿=== News & Blog Designer Pack - WordPress Blog Plugin ===
+﻿=== News & Blog Designer Pack – WordPress Blog Plugin -- (Blog Post Grid, Blog Post Slider, Blog Post Carousel, Blog Post Ticker, Blog Post Masonry) ===
 Contributors: infornweb, pluginandplay 
-Tags: blog, blog design, blog layout, post ticker, news, news page, blog template, modify blog design, post slider, post carousel, custom blog template, blog layout design, custom blog layout, modify blog design, blog,  posts in page, blog in page, grid blog template, list blog template, masonry blog template, slider blog template, carousel blog template, blog widgets, post filter
+Tags: blog, news, blog design, blog layout, blog grid, blog list, blog slider, blog page builder, post ticker, news, news page, blog template, modify blog design, post slider, post carousel, custom blog template, blog layout design, custom blog layout, modify blog design, blog,  posts in page, blog in page, grid blog template, list blog template, masonry blog template, slider blog template, carousel blog template, blog widgets, post filter
 Requires at least: 4.0
-Tested up to: 5.9.1
+Tested up to: 6.0.1
 Requires PHP: 5.4
-Stable tag: 2.3.1
+Stable tag: 3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Display blog posts on your website with 6 blog layouts (2 designs for each blog layout) plus 1 Ticker and 2 Widgets
+Create News, Magazine and Blogs with post grid, post slider, post carousel, post list, post masonry, recent posts, popular posts, custom post grid, post ticker, post grid box, post timeline, featured posts, etc.
 
 == Description ==
 
-Blog Designer Pack is useful to create a news page or blog page for your website. Blog Designer Pack display WordPress posts with multiple designs. 
+News & Blog Designer Pack – WordPress Blog Plugin can be use as a news & blog page builder to create a news page or blog page for your website. Blog Designer Pack display WordPress posts with multiple designs. 
 
-Blog Designer Pack is also useful to create a news magazine website.
+News & Blog Designer Pack is also useful to create a news magazine website.
 
 = ✅ Blog Designer Pack having 7 blog layouts/shortcodes: =
 
@@ -31,14 +31,20 @@ Checkout [Premium Version Demo](https://premium.infornweb.com/news-blog-designer
 
 = ✅ Blog Designer Pack is perfect for: =
 
-* Post Grid 
-* Post Carousel
-* Post Slider
-* Post List
-* Post Masonry
-* Post Grid Box
-* Post Ticker
-* Post Vertical Scrolling
+* Post Grid, News Grid or Blog Grid 
+* Post Carousel, News Carousel or Blog Carousel
+* Post Slider, News Slider or Blog Slider
+* Post List, News List or Blog List
+* Post Masonry, News Masonry or Blog Masonry
+* Post Grid Box, News Grid Box or Blog Grid Box
+* Post Ticker, News Ticker or Blog Ticker
+* Post Vertical Scrolling, News Vertical Scrolling or Blog Vertical Scrolling
+
+News & Blog Designer Pack is the #1 plugin for creating fully customized News, Magazines, Review Websites, Personal Blogs, Travel Blogs, Fashion Blogs, Viral News, Food Reviews, Recipes Blogs, etc.
+
+= ✅ Best News, Magazine & Blog Building Tool =
+
+News & Blog Designer Pack is mostly used for creating News Magazine sites. So, It is also well known as News Plugin. However, it is a multi-functional plugin that fulfills all required features for creating blogs along with news and magazine sites.
 
 = ✅ Blog Designer Pack contains 7 shortcodes =
 
@@ -56,7 +62,7 @@ Checkout [Premium Version Demo](https://premium.infornweb.com/news-blog-designer
 limit="10" ( i.e. Display 5 blog posts on your website and then pagination. To show all posts use limit="-1" )
 
 * **Display by Category**
-category="category_ID" OR category="category_slug" ( ie Display blog posts by their category ID OR Slug )
+category="category_ID" OR category="category_slug" ( i.e. Display blog posts by their category ID OR Slug )
 
 * **Design:**
 design="design-1" (Select design for blog post. There are 2 designs. design-1 and design-2 )
@@ -99,7 +105,7 @@ show_comments="true" (Show comments of blog post. Values are true or false)
 <code>[bdp_post]</code>
 
 * **Post Grid :**
-[bdp_post grid="2"] (Set blog post grid ie 1 or 2 or 3 or 4 or 5 )
+[bdp_post grid="2"] (Set blog post grid i.e. 1 or 2 or 3 or 4 or 5 )
 
 * **Post Pagination :**
 [bdp_post pagination="true"] (Show blog post pagination or not. Values are true or false )
@@ -204,7 +210,7 @@ show_comments="true" (Show comments of blog post. Values are true or false)
 * **Ticker Speed :**
 [bdp_ticker speed="3000"]
 
-Others parameter for ticker ie 'category', 'order' and 	'orderby' you can use from common shortcodes.
+Others parameter for ticker i.e. 'category', 'order' and 	'orderby' you can use from common shortcodes.
 
 Blog Designer Pack is a good handy and free solution for everyone who is looking for a responsive blog page with the website. Blog Designer pack provides you with a variety of 6 different blog templates to setup your blog page for any WordPress websites. Sometimes, we always stick with one blog layout as per theme, but it’s not easy to change or modify only blog layout very easily, only you can do it by modifying code and CSS files.
 
@@ -239,6 +245,17 @@ However, using Blog Designer Pack plugin you can design your blog page as per yo
 >
 > View [PRO DEMO and Features](https://premium.infornweb.com/news-blog-designer-pack-pro/) for additional information.
 >
+
+= ✅ Ajax Pagination =
+
+Ajax Pagination is similar to the Ajax filter that helps to explore posts or blog without reloading the whole page. Blog Designer Pack offers 6 types of pagination, which include:
+
+* Numeric
+* Numeric with Ajax 
+* Prev & Next
+* Prev & Next with Ajax
+* Load More
+* Infinite Scroll
 
 = ✅ Where Blog Designer Pack plugin is useful ? =
 
@@ -330,6 +347,18 @@ Yes, Blog Designer Pack will work with any WordPress themes, but may require som
 
 == Changelog ==
 
+= 3.1 (13 Aug, 2022) =
+* [*] Fix 'content_words_limit' shortcode parameter is not working for post excerpt.
+* [*] Fix some undefined variable warning within Widget.
+* [*] Fix shortcode builder default parameter issue.
+
+= 3.0 (05 Aug, 2022) =
+* [*] Updated Freemius SDK to latest version 2.4.5
+* [*] Taken care of data sanitization & data escaping for better security.
+
+= 2.3.2 (29 May, 2022) =
+* [*] Check compatibility with WordPress 6.0
+
 = 2.3.1 (26 Feb, 2022) =
 * [*] Check compatibility with WordPress 5.9.1
 * [*] Update Freemius SDK to latest version 2.4.3
@@ -344,7 +373,7 @@ Yes, Blog Designer Pack will work with any WordPress themes, but may require som
 = 2.2.8 (22 Nov, 2021) =
 * [*] Tested with WP 5.8.2
 * [*] Fixed Masonry layout load more issue when category slug used.
-* [*] Updated freemius SDK to latest version.
+* [*] Updated Freemius SDK to latest version.
 
 = 2.2.7 (07 April, 2021) =
 * [*] Code optimization.
@@ -356,7 +385,7 @@ Yes, Blog Designer Pack will work with any WordPress themes, but may require som
 * [-] Removed one admin notice.
 
 = 2.2.5 (14 Dec, 2020) =
-* [*] Updated freemius SDK to latest version.
+* [*] Updated Freemius SDK to latest version.
 * [*] Tested up to WordPress 5.6
 * [+] Added blog-designer-pack-es_MX.po file
 

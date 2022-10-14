@@ -14,6 +14,7 @@ use CreativeMail\Modules\Contacts\Models\OptActionBy;
 use CreativeMail\Models\Order;
 use CreativeMail\Models\OrderBilling;
 use CreativeMail\Models\RequestItem;
+use Exception;
 use WC_Coupon;
 use WC_Order;
 
@@ -46,6 +47,8 @@ class CheckoutManager
     const BILLING_EMAIL_NO_CONSENT = 'billing_email_no_consent';
     const CHECKOUT_UUID_PARAM = 'checkout_uuid = %s';
     const COUPONS = 'coupons';
+    const SHIPPING_TOTAL = 'shipping_total';
+    const SHIPPING_TAXES = 'shipping_taxes';
     const PRODUCT_ID = 'product_id';
     const VARIATION_ID = 'variation_id';
     const QUANTITY = 'quantity';
@@ -191,7 +194,7 @@ class CheckoutManager
                 CreativeMail::get_instance()->get_database_manager()->remove_checkout_data($checkout_data->checkout_uuid);
             }
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             RaygunManager::get_instance()->exception_handler($e);
         }
@@ -218,9 +221,9 @@ class CheckoutManager
             return;
         }
 
-        // try find recovery date from order meta data
+        // Try to find recovery date from order metadata
         $recovery_date = $order->get_meta( self::META_CHECKOUT_RECOVERED, true );
-        // Remote post to ce4wp marking checkout as completed/created
+        // Remote post to CE4WP marking checkout as completed/created
         $requestItem = new Checkout();
         $requestItem->uuid = $uuid;
         $requestItem->order_id = $order->get_id();
@@ -455,17 +458,21 @@ class CheckoutManager
 
         $cart_products = WC()->cart->get_cart();
         $cart_coupons = WC()->cart->get_applied_coupons();
+        $shipping_total = WC()->cart->get_shipping_total();
+        $shipping_taxes = WC()->cart->get_shipping_taxes();
 
         $checkout_content = [
             self::PRODUCTS        => array_values( $cart_products ),
             self::COUPONS         => $cart_coupons,
+            self::SHIPPING_TOTAL  => $shipping_total,
+            self::SHIPPING_TAXES  => $shipping_taxes
         ];
 
         CreativeMail::get_instance()->get_database_manager()->upsert_checkout( $uuid, $user_id, $billing_email, $checkout_content, $current_time );
 
-        // Remote post to ce4wp create or update cart if email is provided
+        // Remote post to CE4WP create or update cart if email is provided.
         $requestItem = new CheckoutSave();
-        $requestItem->data = wp_json_encode($this->get_cart_data_for_endpoint( $cart_products, $cart_coupons ) );
+        $requestItem->data = wp_json_encode($this->get_cart_data_for_endpoint( $cart_products, $cart_coupons, $shipping_total, $shipping_taxes ) );
         $requestItem->uuid = $uuid;
         $requestItem->user_id = $user_id;
         $requestItem->billing_email = $billing_email;
@@ -483,12 +490,14 @@ class CheckoutManager
      *
      * @since 1.3.0
      */
-    private function get_cart_data_for_endpoint( $cart_products, $cart_coupons ) {
+    private function get_cart_data_for_endpoint( $cart_products, $cart_coupons, $shipping_total=0.00, $shipping_taxes=array() ) {
         $data = new CartData();
         $data->products = array();
         $data->coupons = array();
         $data->currency_symbol = get_woocommerce_currency_symbol();
         $data->currency = get_woocommerce_currency();
+        $data->shipping_total = $shipping_total;
+        $data->shipping_taxes = $shipping_taxes;
 
         $data->user = new User();
         try
@@ -565,7 +574,7 @@ class CheckoutManager
                 }
             }
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             RaygunManager::get_instance()->exception_handler( $e );
         }
@@ -639,7 +648,7 @@ class CheckoutManager
         // Update totals.
         WC()->cart->calculate_totals();
 
-        // Redirect to checkout page.
+        // Redirect to check out page.
         wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 
         exit();
@@ -736,7 +745,7 @@ class CheckoutManager
                     )
                 );
             }
-        } catch ( \Exception $e ) {
+        } catch ( Exception $e ) {
             RaygunManager::get_instance()->exception_handler( $e );
         }
     }
@@ -752,8 +761,8 @@ class CheckoutManager
                     )
                 )
             );
-        } catch ( \Exception $e ) {
-            // silent
+        } catch ( Exception $e ) {
+            RaygunManager::get_instance()->exception_handler( $e );
         }
     }
 
@@ -909,7 +918,7 @@ class CheckoutManager
                         );
                     }
                 }
-            } catch ( \Exception $ex ) {
+            } catch ( Exception $ex ) {
                 RaygunManager::get_instance()->exception_handler( $ex );
             }
 
@@ -956,7 +965,7 @@ class CheckoutManager
                     'body' => wp_json_encode( $requestItem )
                 )
             );
-        } catch ( \Exception $e ) {
+        } catch ( Exception $e ) {
             RaygunManager::get_instance()->exception_handler( $e );
         }
     }

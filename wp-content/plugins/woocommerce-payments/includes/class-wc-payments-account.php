@@ -71,6 +71,9 @@ class WC_Payments_Account {
 
 		// Add capital offer redirection.
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_capital_offer' ] );
+
+		// Add server links handler.
+		add_action( 'admin_init', [ $this, 'maybe_redirect_to_server_link' ] );
 	}
 
 	/**
@@ -177,9 +180,7 @@ class WC_Payments_Account {
 			];
 		}
 
-		if ( ! isset( $account['status'] )
-			|| ! isset( $account['payments_enabled'] )
-			|| ! isset( $account['deposits_status'] ) ) {
+		if ( ! isset( $account['status'], $account['payments_enabled'] ) ) {
 			// return an error if any of the account data is missing.
 			return [
 				'error' => true,
@@ -191,7 +192,8 @@ class WC_Payments_Account {
 			'country'             => $account['country'] ?? 'US',
 			'status'              => $account['status'],
 			'paymentsEnabled'     => $account['payments_enabled'],
-			'depositsStatus'      => $account['deposits_status'],
+			'deposits'            => $account['deposits'] ?? [],
+			'depositsStatus'      => $account['deposits']['status'] ?? $account['deposits_status'] ?? '',
 			'currentDeadline'     => isset( $account['current_deadline'] ) ? $account['current_deadline'] : false,
 			'pastDue'             => isset( $account['has_overdue_requirements'] ) ? $account['has_overdue_requirements'] : false,
 			'accountLink'         => $this->get_login_url(),
@@ -300,6 +302,66 @@ class WC_Payments_Account {
 	}
 
 	/**
+	 * Gets the deposit schedule interval.
+	 *
+	 * @return string interval e.g. weekly, monthly.
+	 */
+	public function get_deposit_schedule_interval(): string {
+		$account = $this->get_cached_account_data();
+		return $account['deposits']['interval'] ?? '';
+	}
+
+	/**
+	 * Gets the deposit schedule weekly anchor.
+	 *
+	 * @return string weekly anchor e.g. monday, tuesday.
+	 */
+	public function get_deposit_schedule_weekly_anchor(): string {
+		$account = $this->get_cached_account_data();
+		return $account['deposits']['weekly_anchor'] ?? '';
+	}
+
+	/**
+	 * Gets the deposit schedule monthly anchor.
+	 *
+	 * @return int|null monthly anchor e.g. 1, 2.
+	 */
+	public function get_deposit_schedule_monthly_anchor() {
+		$account = $this->get_cached_account_data();
+		return ! empty( $account['deposits']['monthly_anchor'] ) ? $account['deposits']['monthly_anchor'] : null;
+	}
+
+	/**
+	 * Gets the number of days payments are delayed for.
+	 *
+	 * @return int|null e.g. 2, 7.
+	 */
+	public function get_deposit_delay_days() {
+		$account = $this->get_cached_account_data();
+		return $account['deposits']['delay_days'] ?? null;
+	}
+
+	/**
+	 * Gets the deposit status
+	 *
+	 * @return string  e.g. disabled, blocked, enabled.
+	 */
+	public function get_deposit_status(): string {
+		$account = $this->get_cached_account_data();
+		return $account['deposits']['status'] ?? '';
+	}
+
+	/**
+	 * Gets whether the account has completed the deposit waiting period.
+	 *
+	 * @return bool
+	 */
+	public function get_deposit_completed_waiting_period(): bool {
+		$account = $this->get_cached_account_data();
+		return $account['deposits']['completed_waiting_period'] ?? false;
+	}
+
+	/**
 	 * Get card present eligible flag account
 	 *
 	 * @return bool
@@ -307,6 +369,16 @@ class WC_Payments_Account {
 	public function is_card_present_eligible(): bool {
 		$account = $this->get_cached_account_data();
 		return $account['card_present_eligible'] ?? false;
+	}
+
+	/**
+	 * Get has account connected readers flag
+	 *
+	 * @return bool
+	 */
+	public function has_card_readers_available(): bool {
+		$account = $this->get_cached_account_data();
+		return $account['has_card_readers_available'] ?? false;
 	}
 
 	/**
@@ -423,6 +495,47 @@ class WC_Payments_Account {
 	}
 
 	/**
+	 * Checks if the request is for the server links handler, and redirects to the link if it's valid.
+	 *
+	 * Only admins are be able to perform this action. The redirect doesn't happen if the request is an AJAX request.
+	 * This method will end execution after the redirect if the user is allowed to view the link and the link is valid.
+	 */
+	public function maybe_redirect_to_server_link() {
+		if ( wp_doing_ajax() ) {
+			return;
+		}
+
+		// Safety check to prevent non-admin users to be redirected to the view offer page.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		// This is an automatic redirection page, used to authenticate users that come from an email link. For this reason
+		// we're not using a nonce. The GET parameter accessed here is just to indicate that we should process the redirection.
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['wcpay-link-handler'] ) ) {
+			return;
+		}
+
+		// Get all request arguments to be forwarded and remove the link handler identifier.
+		$args = $_GET;
+		unset( $args['wcpay-link-handler'] );
+
+		try {
+			$link = $this->payments_api_client->get_link( $args );
+
+			$this->redirect_to( $link['url'] );
+		} catch ( API_Exception $e ) {
+			$error_url = add_query_arg(
+				[ 'wcpay-server-link-error' => '1' ],
+				self::get_overview_page_url()
+			);
+
+			$this->redirect_to( $error_url );
+		}
+	}
+
+	/**
 	 * Utility function to immediately redirect to the main "Welcome to WooCommerce Payments" onboarding page.
 	 * Note that this function immediately ends the execution.
 	 *
@@ -457,7 +570,7 @@ class WC_Payments_Account {
 		}
 
 		$is_on_settings_page           = WC_Payment_Gateway_WCPay::is_current_page_settings();
-		$should_redirect_to_onboarding = get_option( 'wcpay_should_redirect_to_onboarding', false );
+		$should_redirect_to_onboarding = (bool) get_option( 'wcpay_should_redirect_to_onboarding', false );
 
 		if (
 			// If not loading the settings page...
@@ -529,9 +642,22 @@ class WC_Payments_Account {
 		$redirect_param = sanitize_text_field( wp_unslash( $_GET['wcpay-connect-redirect'] ) );
 
 		// Let's record in Tracks merchants returning via the KYC reminder email.
+		if ( 'initial' === $redirect_param ) {
+			$offset      = 1;
+			$description = 'initial';
+		} elseif ( 'second' === $redirect_param ) {
+			$offset      = 3;
+			$description = 'second';
+		} else {
+			$follow_number = in_array( $redirect_param, [ '1', '2', '3', '4' ], true ) ? $redirect_param : '0';
+			// offset is recorded in days, $follow_number maps to the week number.
+			$offset      = (int) $follow_number * 7;
+			$description = 'weekly-' . $follow_number;
+		}
+
 		$track_props = [
-			'type'          => 'initial' === $redirect_param ? 'initial' : 'follow',
-			'follow_number' => in_array( $redirect_param, [ '1', '2', '3', '4' ], true ) ? $redirect_param : '0',
+			'offset'      => $offset,
+			'description' => $description,
 		];
 		wc_admin_record_tracks_event( 'wcpay_kyc_reminder_merchant_returned', $track_props );
 

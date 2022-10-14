@@ -25,6 +25,30 @@ class Subscription {
   const OPTIN_SEGMENTS_SETTING_NAME = 'woocommerce.optin_on_checkout.segments';
   const OPTIN_MESSAGE_SETTING_NAME = 'woocommerce.optin_on_checkout.message';
 
+  private $allowedHtml = [
+    'input' => [
+      'type' => true,
+      'name' => true,
+      'id' => true,
+      'class' => true,
+      'value' => true,
+      'checked' => true,
+    ],
+    'span' => [
+      'class' => true,
+    ],
+    'label' => [
+      'class' => true,
+      'data-automation-id' => true,
+      'for' => true,
+    ],
+    'p' => [
+      'class' => true,
+      'id' => true,
+      'data-priority' => true,
+    ],
+  ];
+
   /** @var SettingsController */
   private $settings;
 
@@ -66,16 +90,22 @@ class Subscription {
       $checked = true;
     }
     $labelString = $this->settings->get(self::OPTIN_MESSAGE_SETTING_NAME);
-    $template = $this->wp->applyFilters(
+    $template = (string)$this->wp->applyFilters(
       'mailpoet_woocommerce_checkout_optin_template',
-      $this->getSubscriptionField($inputName, $checked, $labelString),
+      wp_kses(
+        $this->getSubscriptionField($inputName, $checked, $labelString),
+        $this->allowedHtml
+      ),
       $inputName,
       $checked,
       $labelString
     );
+    // The template has been sanitized above and can be considered safe.
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPressDotOrg.sniffs.OutputEscaping.UnescapedOutputParameter
     echo $template;
     if ($template) {
-      echo $this->getSubscriptionPresenceCheckField();
+      $field = $this->getSubscriptionPresenceCheckField();
+      echo wp_kses($field, $this->allowedHtml);
     }
   }
 
@@ -116,10 +146,10 @@ class Subscription {
       ],
       1
     );
-    return str_replace('type="text', 'type="hidden"', $field);
+    return str_replace('type="text"', 'type="hidden"', $field);
   }
 
-  private function isCurrentUserSubscribed() {
+  public function isCurrentUserSubscribed() {
     $subscriber = $this->subscribersRepository->getCurrentWPUser();
     if (!$subscriber instanceof SubscriberEntity) {
       return false;
@@ -151,29 +181,53 @@ class Subscription {
     $subscriber = Subscriber::where('email', $data['billing_email'])
       ->where('is_woocommerce_user', 1)
       ->findOne();
+
     if (!$subscriber) {
       // no subscriber: WooCommerce sync didn't work
       return null;
     }
 
     $checkoutOptinEnabled = (bool)$this->settings->get(self::OPTIN_ENABLED_SETTING_NAME);
+    $checkoutOptin = !empty($_POST[self::CHECKOUT_OPTIN_INPUT_NAME]);
+
+    return $this->handleSubscriberOptin($subscriber, $checkoutOptinEnabled, $checkoutOptin);
+  }
+
+  /**
+   * Subscribe or unsubscribe a subscriber.
+   *
+   * @param Subscriber $subscriber Subscriber object
+   * @param bool $checkoutOptinEnabled
+   * @param bool $checkoutOptin
+   */
+  public function handleSubscriberOptin(Subscriber $subscriber, bool $checkoutOptinEnabled, bool $checkoutOptin): bool {
     $wcSegment = Segment::getWooCommerceSegment();
     $moreSegmentsToSubscribe = (array)$this->settings->get(self::OPTIN_SEGMENTS_SETTING_NAME, []);
-    if (!$checkoutOptinEnabled || empty($_POST[self::CHECKOUT_OPTIN_INPUT_NAME])) {
+    $signupConfirmation = $this->settings->get('signup_confirmation');
+
+    if (!$checkoutOptin) {
       // Opt-in is disabled or checkbox is unchecked
       SubscriberSegment::unsubscribeFromSegments(
         $subscriber,
         [$wcSegment->id]
       );
+      // Unsubscribe from configured segment only when opt-in is enabled
+      if ($checkoutOptinEnabled && $moreSegmentsToSubscribe) {
+        SubscriberSegment::unsubscribeFromSegments(
+          $subscriber,
+          $moreSegmentsToSubscribe
+        );
+      }
+      // Update global status only in case the opt-in is enabled
       if ($checkoutOptinEnabled) {
         $this->updateSubscriberStatus($subscriber);
       }
+
       return false;
     }
+
     $subscriber->source = Source::WOOCOMMERCE_CHECKOUT;
 
-    $signupConfirmation = $this->settings->get('signup_confirmation');
-    // checkbox is checked
     if (
       ($subscriber->status === Subscriber::STATUS_SUBSCRIBED)
       || ((bool)$signupConfirmation['enabled'] === false)
@@ -201,10 +255,22 @@ class Subscription {
   }
 
   private function requireSubscriptionConfirmation(Subscriber $subscriber) {
-    $subscriber->status = Subscriber::STATUS_UNCONFIRMED;
+    // we need to save the subscriber here since handleSubscriberOptin() sets the source but doesn't save the model.
+    // when we migrate this class to use Doctrine we can probably remove this call to save() as the call to persist() below should be enough.
     $subscriber->save();
+    $subscriberEntity = $this->subscribersRepository->findOneById($subscriber->id);
 
-    $this->confirmationEmailMailer->sendConfirmationEmailOnce($subscriber);
+    if ($subscriberEntity instanceof SubscriberEntity) {
+      $subscriberEntity->setStatus(Subscriber::STATUS_UNCONFIRMED);
+      $this->subscribersRepository->persist($subscriberEntity);
+      $this->subscribersRepository->flush();
+
+      try {
+        $this->confirmationEmailMailer->sendConfirmationEmailOnce($subscriberEntity);
+      } catch (\Exception $e) {
+        // ignore errors
+      }
+    }
   }
 
   private function updateSubscriberStatus(Subscriber $subscriber) {

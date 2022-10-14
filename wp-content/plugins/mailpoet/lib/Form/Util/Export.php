@@ -12,9 +12,9 @@ use MailPoet\WP\Functions as WPFunctions;
 class Export {
   public static function getAll() {
     return [
-      'html'      => static::get('html'),
-      'php'       => static::get('php'),
-      'iframe'    => static::get('iframe'),
+      'html' => static::get('html'),
+      'php' => static::get('php'),
+      'iframe' => static::get('iframe'),
       'shortcode' => static::get('shortcode'),
     ];
   }
@@ -25,8 +25,9 @@ class Export {
         // generate url to load iframe's content
         $iframeUrl = WPFunctions::get()->addQueryArg([
           'mailpoet_form_iframe' => ':form_id:',
-        ], WPFunctions::get()->siteUrl());
+        ], WPFunctions::get()->trailingslashit(WPFunctions::get()->siteUrl()));
 
+        $onload = "var _this = this; window.addEventListener('message', function(e) {if(e.data.MailPoetIframeHeight){_this.style.height = e.data.MailPoetIframeHeight;}})";
         // generate iframe
         return join(' ', [
           '<iframe',
@@ -34,12 +35,12 @@ class Export {
           'height="100%"',
           'scrolling="no"',
           'frameborder="0"',
-          'src="' . $iframeUrl . '"',
+          'src="' . esc_url($iframeUrl) . '"',
           'class="mailpoet_form_iframe"',
           'id="mailpoet_form_iframe"',
           'vspace="0"',
           'tabindex="0"',
-          'onload="if (window[\'MailPoet\']) MailPoet.Iframe.autoSize(this);"',
+          sprintf('onload="%s"', $onload),
           'marginwidth="0"',
           'marginheight="0"',
           'hspace="0"',
@@ -59,7 +60,7 @@ class Export {
         $output = [];
 
         $output[] = '<!-- ' .
-          WPFunctions::get()->__(
+          __(
             'BEGIN Scripts: you should place them in the header of your theme',
             'mailpoet'
           ) .
@@ -91,7 +92,7 @@ class Export {
         $output[] = '   };';
         $output[] = '</script>';
         $output[] = '<!-- ' .
-          WPFunctions::get()->__('END Scripts', 'mailpoet') .
+          __('END Scripts', 'mailpoet') .
         '-->';
 
         $formWidget = new Widget();

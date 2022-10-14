@@ -6,8 +6,6 @@ if (!defined('ABSPATH')) exit;
 
 
 use MailPoet\Entities\SubscriberEntity;
-use MailPoet\Models\Segment;
-use MailPoet\Models\Subscriber;
 use MailPoet\Newsletter\Scheduler\WelcomeScheduler;
 use MailPoet\Segments\SegmentsRepository;
 use MailPoet\Settings\SettingsController;
@@ -107,14 +105,15 @@ class SubscriberActions {
     $segments = $this->segmentsRepository->findBy(['id' => $segmentIds]);
     $this->subscriberSegmentRepository->subscribeToSegments($subscriber, $segments);
 
-    $subscriberModel = Subscriber::findOne($subscriber->getId());
-    if ($subscriberModel) {
-      $this->confirmationEmailMailer->sendConfirmationEmailOnce($subscriberModel);
+    try {
+      $this->confirmationEmailMailer->sendConfirmationEmailOnce($subscriber);
+    } catch (\Exception $e) {
+      // ignore errors
     }
 
     // We want to send the notification on subscribe only when signupConfirmation is disabled
-    if ($signupConfirmationEnabled === false && $subscriber->getStatus() === SubscriberEntity::STATUS_SUBSCRIBED && $subscriberModel) {
-      $this->newSubscriberNotificationMailer->send($subscriberModel, Segment::whereIn('id', $segmentIds)->findMany());
+    if ($signupConfirmationEnabled === false && $subscriber->getStatus() === SubscriberEntity::STATUS_SUBSCRIBED) {
+      $this->newSubscriberNotificationMailer->send($subscriber, $this->segmentsRepository->findBy(['id' => $segmentIds]));
 
       $this->welcomeScheduler->scheduleSubscriberWelcomeNotification(
         $subscriber->getId(),

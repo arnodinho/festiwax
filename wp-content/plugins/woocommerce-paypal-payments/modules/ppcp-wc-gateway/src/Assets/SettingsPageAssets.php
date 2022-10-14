@@ -9,8 +9,7 @@ declare(strict_types=1);
 
 namespace WooCommerce\PayPalCommerce\WcGateway\Assets;
 
-use WooCommerce\PayPalCommerce\ApiClient\Authentication\Bearer;
-use WooCommerce\PayPalCommerce\ApiClient\Exception\RuntimeException;
+use WooCommerce\PayPalCommerce\Subscription\Helper\SubscriptionHelper;
 
 /**
  * Class SettingsPageAssets
@@ -32,33 +31,32 @@ class SettingsPageAssets {
 	private $version;
 
 	/**
-	 * The bearer.
+	 * The subscription helper.
 	 *
-	 * @var Bearer
+	 * @var SubscriptionHelper
 	 */
-	private $bearer;
+	protected $subscription_helper;
 
 	/**
 	 * Assets constructor.
 	 *
-	 * @param string $module_url The url of this module.
-	 * @param string $version                            The assets version.
-	 * @param Bearer $bearer The bearer.
+	 * @param string             $module_url The url of this module.
+	 * @param string             $version                            The assets version.
+	 * @param SubscriptionHelper $subscription_helper The subscription helper.
 	 */
-	public function __construct( string $module_url, string $version, Bearer $bearer ) {
-		$this->module_url = $module_url;
-		$this->version    = $version;
-		$this->bearer     = $bearer;
+	public function __construct( string $module_url, string $version, SubscriptionHelper $subscription_helper ) {
+		$this->module_url          = $module_url;
+		$this->version             = $version;
+		$this->subscription_helper = $subscription_helper;
 	}
 
 	/**
 	 * Register assets provided by this module.
 	 */
 	public function register_assets() {
-		$bearer = $this->bearer;
 		add_action(
 			'admin_enqueue_scripts',
-			function() use ( $bearer ) {
+			function() {
 				if ( ! is_admin() || wp_doing_ajax() ) {
 					return;
 				}
@@ -67,7 +65,7 @@ class SettingsPageAssets {
 					return;
 				}
 
-				$this->register_admin_assets( $bearer );
+				$this->register_admin_assets();
 			}
 		);
 
@@ -98,10 +96,8 @@ class SettingsPageAssets {
 
 	/**
 	 * Register assets for admin pages.
-	 *
-	 * @param Bearer $bearer The bearer.
 	 */
-	private function register_admin_assets( Bearer $bearer ) {
+	private function register_admin_assets() {
 		wp_enqueue_script(
 			'ppcp-gateway-settings',
 			trailingslashit( $this->module_url ) . 'assets/js/gateway-settings.js',
@@ -110,17 +106,13 @@ class SettingsPageAssets {
 			true
 		);
 
-		try {
-			$token = $bearer->bearer();
-			wp_localize_script(
-				'ppcp-gateway-settings',
-				'PayPalCommerceGatewaySettings',
-				array(
-					'vaulting_features_available' => $token->vaulting_available(),
-				)
-			);
-		} catch ( RuntimeException $exception ) {
-			return;
-		}
+		// Intent is configured with Authorize and Capture Virtual-Only Orders is not set.
+		wp_localize_script(
+			'ppcp-gateway-settings',
+			'PayPalCommerceGatewaySettings',
+			array(
+				'is_subscriptions_plugin_active' => $this->subscription_helper->plugin_is_active(),
+			)
+		);
 	}
 }

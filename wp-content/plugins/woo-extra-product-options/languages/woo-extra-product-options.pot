@@ -687,7 +687,7 @@ msgstr ""
 
 #. translators: %s: field name
 #: public/class-thwepof-public.php:434
-msgid "%s Le champ de personnalisation est requis."
+msgid "%s is a required field."
 msgstr ""
 
 #. translators: %s: number field value

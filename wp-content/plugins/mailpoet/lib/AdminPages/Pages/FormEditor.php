@@ -230,7 +230,7 @@ class FormEditor {
       return;
     }
     if (isset($_GET['template_id'])) {
-      $template = $this->templatesRepository->getFormTemplate($_GET['template_id']);
+      $template = $this->templatesRepository->getFormTemplate(sanitize_text_field(wp_unslash($_GET['template_id'])));
       $form = $template->toFormEntity();
     } else {
       $form = $this->getFormData((int)$_GET['id']);
@@ -243,8 +243,8 @@ class FormEditor {
     $data = [
       'form' => $form->toArray(),
       'form_exports' => [
-          'php'       => Export::get('php'),
-          'iframe'    => Export::get('iframe'),
+          'php' => Export::get('php'),
+          'iframe' => Export::get('iframe'),
           'shortcode' => Export::get('shortcode'),
       ],
       'segments' => $this->segmentsListRepository->getListWithSubscribedSubscribersCounts([SegmentEntity::TYPE_DEFAULT]),

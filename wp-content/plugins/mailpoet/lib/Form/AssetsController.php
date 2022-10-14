@@ -23,7 +23,11 @@ class AssetsController {
 
   const RECAPTCHA_API_URL = 'https://www.google.com/recaptcha/api.js?render=explicit';
 
-  public function __construct(WPFunctions $wp, BasicRenderer $renderer, SettingsController $settings) {
+  public function __construct(
+    WPFunctions $wp,
+    BasicRenderer $renderer,
+    SettingsController $settings
+  ) {
     $this->wp = $wp;
     $this->renderer = $renderer;
     $this->settings = $settings;
@@ -36,14 +40,14 @@ class AssetsController {
   public function printScripts() {
     ob_start();
     $captcha = $this->settings->get('captcha');
-    if (!empty($captcha['type']) && $captcha['type'] === Captcha::TYPE_RECAPTCHA) {
-      echo '<script src="' . self::RECAPTCHA_API_URL . '" async defer></script>';
+    if (!empty($captcha['type']) && Captcha::isReCaptcha($captcha['type'])) {
+      echo '<script src="' . esc_attr(self::RECAPTCHA_API_URL) . '" async defer></script>';
     }
 
     $this->wp->wpPrintScripts('jquery');
     $this->wp->wpPrintScripts('mailpoet_vendor');
     $this->wp->wpPrintScripts('mailpoet_public');
-    
+
     $scripts = ob_get_contents();
     ob_end_clean();
     if ($scripts === false) {
@@ -65,7 +69,7 @@ class AssetsController {
 
   public function setupFrontEndDependencies() {
     $captcha = $this->settings->get('captcha');
-    if (!empty($captcha['type']) && $captcha['type'] === Captcha::TYPE_RECAPTCHA) {
+    if (!empty($captcha['type']) && Captcha::isRecaptcha($captcha['type'])) {
       $this->wp->wpEnqueueScript(
         'mailpoet_recaptcha',
         self::RECAPTCHA_API_URL
@@ -90,7 +94,7 @@ class AssetsController {
       'is_rtl' => (function_exists('is_rtl') ? (bool)is_rtl() : false),
     ]);
 
-    $ajaxFailedErrorMessage = $this->wp->__('An error has happened while performing a request, please try again later.');
+    $ajaxFailedErrorMessage = __('An error has happened while performing a request, please try again later.', 'mailpoet');
 
     $inlineScript = <<<EOL
 function initMailpoetTranslation() {

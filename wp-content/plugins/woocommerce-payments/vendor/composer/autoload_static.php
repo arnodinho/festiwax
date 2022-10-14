@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit855e668979c63c99670c99f1bda4b3fa
+class ComposerStaticInit9735feb45e6b103ab9db56f90627395c
 {
     public static $files = array (
         '3773ef3f09c37da5478d578e32b03a4b' => __DIR__ . '/..' . '/automattic/jetpack-assets/actions.php',
@@ -265,6 +265,7 @@ class ComposerStaticInit855e668979c63c99670c99f1bda4b3fa
         'WCPay\\MultiCurrency\\Compatibility\\WooCommerceDeposits' => __DIR__ . '/../..' . '/includes/multi-currency/Compatibility/WooCommerceDeposits.php',
         'WCPay\\MultiCurrency\\Compatibility\\WooCommerceFedEx' => __DIR__ . '/../..' . '/includes/multi-currency/Compatibility/WooCommerceFedEx.php',
         'WCPay\\MultiCurrency\\Compatibility\\WooCommerceNameYourPrice' => __DIR__ . '/../..' . '/includes/multi-currency/Compatibility/WooCommerceNameYourPrice.php',
+        'WCPay\\MultiCurrency\\Compatibility\\WooCommercePointsAndRewards' => __DIR__ . '/../..' . '/includes/multi-currency/Compatibility/WooCommercePointsAndRewards.php',
         'WCPay\\MultiCurrency\\Compatibility\\WooCommercePreOrders' => __DIR__ . '/../..' . '/includes/multi-currency/Compatibility/WooCommercePreOrders.php',
         'WCPay\\MultiCurrency\\Compatibility\\WooCommerceProductAddOns' => __DIR__ . '/../..' . '/includes/multi-currency/Compatibility/WooCommerceProductAddOns.php',
         'WCPay\\MultiCurrency\\Compatibility\\WooCommerceSubscriptions' => __DIR__ . '/../..' . '/includes/multi-currency/Compatibility/WooCommerceSubscriptions.php',
@@ -291,9 +292,9 @@ class ComposerStaticInit855e668979c63c99670c99f1bda4b3fa
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit855e668979c63c99670c99f1bda4b3fa::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit855e668979c63c99670c99f1bda4b3fa::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit855e668979c63c99670c99f1bda4b3fa::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit9735feb45e6b103ab9db56f90627395c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit9735feb45e6b103ab9db56f90627395c::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit9735feb45e6b103ab9db56f90627395c::$classMap;
 
         }, null, ClassLoader::class);
     }

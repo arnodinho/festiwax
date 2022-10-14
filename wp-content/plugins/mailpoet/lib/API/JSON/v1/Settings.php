@@ -9,9 +9,7 @@ use MailPoet\API\JSON\Endpoint as APIEndpoint;
 use MailPoet\API\JSON\Error as APIError;
 use MailPoet\Config\AccessControl;
 use MailPoet\Config\ServicesChecker;
-use MailPoet\Cron\Workers\InactiveSubscribers;
 use MailPoet\Cron\Workers\SubscribersEngagementScore;
-use MailPoet\Cron\Workers\WooCommerceSync;
 use MailPoet\Entities\NewsletterEntity;
 use MailPoet\Entities\ScheduledTaskEntity;
 use MailPoet\Form\FormMessageController;
@@ -20,8 +18,11 @@ use MailPoet\Newsletter\NewslettersRepository;
 use MailPoet\Newsletter\Sending\ScheduledTasksRepository;
 use MailPoet\Segments\SegmentsRepository;
 use MailPoet\Services\AuthorizedEmailsController;
+use MailPoet\Services\AuthorizedSenderDomainController;
 use MailPoet\Services\Bridge;
+use MailPoet\Settings\SettingsChangeHandler;
 use MailPoet\Settings\SettingsController;
+use MailPoet\Settings\TrackingConfig;
 use MailPoet\Statistics\StatisticsOpensRepository;
 use MailPoet\Subscribers\SubscribersCountsController;
 use MailPoet\WooCommerce\TransactionalEmails;
@@ -39,6 +40,9 @@ class Settings extends APIEndpoint {
 
   /** @var AuthorizedEmailsController */
   private $authorizedEmailsController;
+
+  /** @var AuthorizedSenderDomainController */
+  private $senderDomainController;
 
   /** @var TransactionalEmails */
   private $wcTransactionalEmails;
@@ -73,10 +77,17 @@ class Settings extends APIEndpoint {
   /**  @var NewslettersRepository */
   private $newsletterRepository;
 
+  /** @var TrackingConfig */
+  private $trackingConfig;
+
+  /** @var SettingsChangeHandler */
+  private $settingsChangeHandler;
+
   public function __construct(
     SettingsController $settings,
     Bridge $bridge,
     AuthorizedEmailsController $authorizedEmailsController,
+    AuthorizedSenderDomainController $senderDomainController,
     TransactionalEmails $wcTransactionalEmails,
     WPFunctions $wp,
     EntityManager $entityManager,
@@ -86,11 +97,14 @@ class Settings extends APIEndpoint {
     FormMessageController $messageController,
     ServicesChecker $servicesChecker,
     SegmentsRepository $segmentsRepository,
-    SubscribersCountsController $subscribersCountsController
+    SettingsChangeHandler $settingsChangeHandler,
+    SubscribersCountsController $subscribersCountsController,
+    TrackingConfig $trackingConfig
   ) {
     $this->settings = $settings;
     $this->bridge = $bridge;
     $this->authorizedEmailsController = $authorizedEmailsController;
+    $this->senderDomainController = $senderDomainController;
     $this->wcTransactionalEmails = $wcTransactionalEmails;
     $this->servicesChecker = $servicesChecker;
     $this->wp = $wp;
@@ -100,7 +114,9 @@ class Settings extends APIEndpoint {
     $this->scheduledTasksRepository = $scheduledTasksRepository;
     $this->messageController = $messageController;
     $this->segmentsRepository = $segmentsRepository;
+    $this->settingsChangeHandler = $settingsChangeHandler;
     $this->subscribersCountsController = $subscribersCountsController;
+    $this->trackingConfig = $trackingConfig;
   }
 
   public function get() {
@@ -112,7 +128,7 @@ class Settings extends APIEndpoint {
       return $this->badRequest(
         [
           APIError::BAD_REQUEST =>
-            WPFunctions::get()->__('You have not specified any settings to be saved.', 'mailpoet'),
+            __('You have not specified any settings to be saved.', 'mailpoet'),
         ]);
     } else {
       $oldSettings = $this->settings->getAll();
@@ -136,7 +152,7 @@ class Settings extends APIEndpoint {
 
       // Tracking and re-engagement Emails
       $meta['showNotice'] = false;
-      if ($oldSettings['tracking'] !== $this->settings->get('tracking') ) {
+      if ($oldSettings['tracking'] !== $this->settings->get('tracking')) {
         try {
           $meta = $this->updateReEngagementEmailStatus($this->settings->get('tracking'));
         } catch (\Exception $e) {
@@ -171,7 +187,7 @@ class Settings extends APIEndpoint {
     $address = $data['address'] ?? null;
     if (!$address) {
       return $this->badRequest([
-        APIError::BAD_REQUEST => WPFunctions::get()->__('No email address specified.', 'mailpoet'),
+        APIError::BAD_REQUEST => __('No email address specified.', 'mailpoet'),
       ]);
     }
     $address = trim($address);
@@ -180,7 +196,7 @@ class Settings extends APIEndpoint {
       $this->authorizedEmailsController->setFromEmailAddress($address);
     } catch (\InvalidArgumentException $e) {
       return $this->badRequest([
-        APIError::UNAUTHORIZED => WPFunctions::get()->__('Can’t use this email yet! Please authorize it first.', 'mailpoet'),
+        APIError::UNAUTHORIZED => __('Can’t use this email yet! Please authorize it first.', 'mailpoet'),
       ]);
     }
 
@@ -190,18 +206,163 @@ class Settings extends APIEndpoint {
     return $this->successResponse();
   }
 
+  /**
+   * Create POST request to Bridge endpoint to add email to user email authorization list
+   */
+  public function authorizeSenderEmailAddress($data = []) {
+    $emailAddress = $data['email'] ?? null;
+
+    if (!$emailAddress) {
+      return $this->badRequest([
+        APIError::BAD_REQUEST => __('No email address specified.', 'mailpoet'),
+      ]);
+    }
+
+    $emailAddress = trim($emailAddress);
+
+    try {
+      $response = $this->authorizedEmailsController->createAuthorizedEmailAddress($emailAddress);
+    } catch (\InvalidArgumentException $e) {
+      if (
+        $e->getMessage() === AuthorizedEmailsController::AUTHORIZED_EMAIL_ERROR_ALREADY_AUTHORIZED ||
+        $e->getMessage() === AuthorizedEmailsController::AUTHORIZED_EMAIL_ERROR_PENDING_CONFIRMATION
+      ) {
+        // return true if the email is already authorized or pending confirmation
+        $response = ['status' => true];
+      } else {
+        return $this->badRequest([
+          APIError::BAD_REQUEST => $e->getMessage(),
+        ]);
+      }
+    }
+
+    return $this->successResponse($response);
+  }
+
+  public function confirmSenderEmailAddressIsAuthorized($data = []) {
+    $emailAddress = $data['email'] ?? null;
+
+    if (!$emailAddress) {
+      return $this->badRequest([
+        APIError::BAD_REQUEST => __('No email address specified.', 'mailpoet'),
+      ]);
+    }
+
+    $emailAddress = trim($emailAddress);
+
+    $response = ['isAuthorized' => $this->authorizedEmailsController->isEmailAddressAuthorized($emailAddress)];
+
+    return $this->successResponse($response);
+  }
+
+  public function checkDomainDmarcPolicy($data = []) {
+    $domain = $data['domain'] ?? null;
+
+    if (!$domain) {
+      return $this->badRequest([
+        APIError::BAD_REQUEST => __('No sender domain specified.', 'mailpoet'),
+      ]);
+    }
+
+    $domain = strtolower(trim($domain));
+
+    $response = ['isDmarcPolicyRestricted' => $this->senderDomainController->isDomainDmarcRestricted($domain)];
+
+    return $this->successResponse($response);
+  }
+
+  public function getAuthorizedSenderDomains($data = []) {
+    $domain = $data['domain'] ?? null;
+
+    if (!$domain) {
+      return $this->badRequest([
+        APIError::BAD_REQUEST => __('No sender domain specified.', 'mailpoet'),
+      ]);
+    }
+
+    $domain = strtolower(trim($domain));
+
+    $records = $this->bridge->getAuthorizedSenderDomains($domain);
+    return $this->successResponse($records);
+  }
+
+  public function createAuthorizedSenderDomain($data = []) {
+    $domain = $data['domain'] ?? null;
+
+    if (!$domain) {
+      return $this->badRequest([
+        APIError::BAD_REQUEST => __('No sender domain specified.', 'mailpoet'),
+      ]);
+    }
+
+    $domain = strtolower(trim($domain));
+
+    try {
+      $response = $this->senderDomainController->createAuthorizedSenderDomain($domain);
+    } catch (\InvalidArgumentException $e) {
+      if (
+        $e->getMessage() === AuthorizedSenderDomainController::AUTHORIZED_SENDER_DOMAIN_ERROR_ALREADY_CREATED
+      ) {
+        // domain already created
+        $response = $this->senderDomainController->getDomainRecords($domain);
+      } else {
+        return $this->badRequest([
+          APIError::BAD_REQUEST => $e->getMessage(),
+        ]);
+      }
+    }
+
+    return $this->successResponse($response);
+  }
+
+  public function verifyAuthorizedSenderDomain($data = []) {
+    $domain = $data['domain'] ?? null;
+
+    if (!$domain) {
+      return $this->badRequest([
+        APIError::BAD_REQUEST => __('No sender domain specified.', 'mailpoet'),
+      ]);
+    }
+
+    $domain = strtolower(trim($domain));
+
+    try {
+      $response = $this->senderDomainController->verifyAuthorizedSenderDomain($domain);
+    } catch (\InvalidArgumentException $e) {
+      if (
+        $e->getMessage() === AuthorizedSenderDomainController::AUTHORIZED_SENDER_DOMAIN_ERROR_ALREADY_VERIFIED
+      ) {
+        // domain already verified, we have to wrap this in the format returned by the api
+        $response = ['ok' => true, 'dns' => $this->senderDomainController->getDomainRecords($domain)];
+      } else {
+        return $this->badRequest([
+          APIError::BAD_REQUEST => $e->getMessage(),
+        ]);
+      }
+    }
+
+    if (!$response['ok']) {
+      // sender domain verification error. probably an improper setup
+      return $this->badRequest([
+        APIError::BAD_REQUEST => $response['error'] ?? __('Sender domain verification failed.', 'mailpoet'),
+      ], $response);
+    }
+
+    return $this->successResponse($response);
+  }
+
   private function onSettingsChange($oldSettings, $newSettings) {
     // Recalculate inactive subscribers
     $oldInactivationInterval = $oldSettings['deactivate_subscriber_after_inactive_days'];
     $newInactivationInterval = $newSettings['deactivate_subscriber_after_inactive_days'];
     if ($oldInactivationInterval !== $newInactivationInterval) {
-      $this->onInactiveSubscribersIntervalChange();
+      $this->settingsChangeHandler->onInactiveSubscribersIntervalChange();
     }
 
     $oldSendingMethod = $oldSettings['mta_group'];
     $newSendingMethod = $newSettings['mta_group'];
     if (($oldSendingMethod !== $newSendingMethod) && ($newSendingMethod === 'mailpoet')) {
-      $this->onMSSActivate($newSettings);
+      $this->settingsChangeHandler->onMSSActivate($newSettings);
     }
 
     // Sync WooCommerce Customers list
@@ -212,64 +373,12 @@ class Settings extends APIEndpoint {
       ? $newSettings['mailpoet_subscribe_old_woocommerce_customers']['enabled']
       : '0';
     if ($oldSubscribeOldWoocommerceCustomers !== $newSubscribeOldWoocommerceCustomers) {
-      $this->onSubscribeOldWoocommerceCustomersChange();
+      $this->settingsChangeHandler->onSubscribeOldWoocommerceCustomersChange();
     }
 
     if (!empty($newSettings['woocommerce']['use_mailpoet_editor'])) {
       $this->wcTransactionalEmails->init();
     }
-  }
-
-  private function onMSSActivate($newSettings) {
-    // see mailpoet/assets/js/src/wizard/create_sender_settings.jsx:freeAddress
-    $domain = str_replace('www.', '', $_SERVER['HTTP_HOST']);
-    if (
-      isset($newSettings['sender']['address'])
-      && !empty($newSettings['reply_to']['address'])
-      && ($newSettings['sender']['address'] === ('wordpress@' . $domain))
-    ) {
-      $sender = [
-        'name' => $newSettings['reply_to']['name'] ?? '',
-        'address' => $newSettings['reply_to']['address'],
-      ];
-      $this->settings->set('sender', $sender);
-      $this->settings->set('reply_to', null);
-    }
-  }
-
-  public function onSubscribeOldWoocommerceCustomersChange(): void {
-    $task = $this->scheduledTasksRepository->findOneBy([
-      'type' => WooCommerceSync::TASK_TYPE,
-      'status' => ScheduledTaskEntity::STATUS_SCHEDULED,
-    ]);
-    if (!($task instanceof ScheduledTaskEntity)) {
-      $task = $this->createScheduledTask(WooCommerceSync::TASK_TYPE);
-    }
-    $datetime = Carbon::createFromTimestamp((int)WPFunctions::get()->currentTime('timestamp'));
-    $task->setScheduledAt($datetime->subMinute());
-    $this->scheduledTasksRepository->persist($task);
-    $this->scheduledTasksRepository->flush();
-  }
-
-  public function onInactiveSubscribersIntervalChange(): void {
-    $task = $this->scheduledTasksRepository->findOneBy([
-      'type' => InactiveSubscribers::TASK_TYPE,
-      'status' => ScheduledTaskEntity::STATUS_SCHEDULED,
-    ]);
-    if (!($task instanceof ScheduledTaskEntity)) {
-      $task = $this->createScheduledTask(InactiveSubscribers::TASK_TYPE);
-    }
-    $datetime = Carbon::createFromTimestamp((int)WPFunctions::get()->currentTime('timestamp'));
-    $task->setScheduledAt($datetime->subMinute());
-    $this->scheduledTasksRepository->persist($task);
-    $this->scheduledTasksRepository->flush();
-  }
-
-  private function createScheduledTask(string $type): ScheduledTaskEntity {
-    $task = new ScheduledTaskEntity();
-    $task->setType($type);
-    $task->setStatus(ScheduledTaskEntity::STATUS_SCHEDULED);
-    return $task;
   }
 
   public function recalculateSubscribersCountsCache() {
@@ -290,14 +399,19 @@ class Settings extends APIEndpoint {
    * @throws \Exception
    */
   public function updateReEngagementEmailStatus($newTracking): array {
-    if (!empty($newTracking['enabled']) && $newTracking['enabled'] === "1" ) {
+    if (!empty($newTracking['level']) && $this->trackingConfig->isEmailTrackingEnabled($newTracking['level'])) {
       return $this->reactivateReEngagementEmails();
     }
     try {
       return $this->deactivateReEngagementEmails();
     } catch (\Exception $e) {
       throw new \Exception(
-        __('Unable to deactivate re-engagement emails: ' . $e->getMessage(), 'mailpoet'));
+        sprintf(
+          // translators: %s is the error message.
+          __('Unable to deactivate re-engagement emails: %s', 'mailpoet'),
+          $e->getMessage()
+        )
+      );
     }
   }
 

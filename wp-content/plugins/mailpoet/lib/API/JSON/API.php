@@ -12,7 +12,6 @@ use MailPoet\Subscription\Captcha;
 use MailPoet\Tracy\ApiPanel\ApiPanel;
 use MailPoet\Tracy\DIPanel\DIPanel;
 use MailPoet\Util\Helpers;
-use MailPoet\Util\Security;
 use MailPoet\WP\Functions as WPFunctions;
 use MailPoetVendor\Psr\Container\ContainerInterface;
 use Throwable;
@@ -109,8 +108,8 @@ class API {
       $this->requestMethod === 'subscribe'
     );
 
-    if (!$ignoreToken && $this->checkToken() === false) {
-      $errorMessage = WPFunctions::get()->__("Sorry, but we couldn't connect to the MailPoet server. Please refresh the web page and try again.", 'mailpoet');
+    if (!$ignoreToken && $this->wp->wpVerifyNonce($this->requestToken, 'mailpoet_token') === false) {
+      $errorMessage = __("Sorry, but we couldn't connect to the MailPoet server. Please refresh the web page and try again.", 'mailpoet');
       $errorResponse = $this->createErrorResponse(Error::UNAUTHORIZED, $errorMessage, Response::STATUS_UNAUTHORIZED);
       return $errorResponse->send();
     }
@@ -138,7 +137,7 @@ class API {
       : null;
 
     if (!$this->requestEndpoint || !$this->requestMethod || !$this->requestApiVersion) {
-      $errorMessage = WPFunctions::get()->__('Invalid API request.', 'mailpoet');
+      $errorMessage = __('Invalid API request.', 'mailpoet');
       $errorResponse = $this->createErrorResponse(Error::BAD_REQUEST, $errorMessage, Response::STATUS_BAD_REQUEST);
       return $errorResponse;
     } else if (!empty($this->endpointNamespaces[$this->requestApiVersion])) {
@@ -178,7 +177,8 @@ class API {
 
   public function processRoute() {
     try {
-      if (empty($this->requestEndpointClass) ||
+      if (
+        empty($this->requestEndpointClass) ||
         !$this->container->has($this->requestEndpointClass)
       ) {
         throw new \Exception(__('Invalid API endpoint.', 'mailpoet'));
@@ -205,7 +205,7 @@ class API {
       // check the accessibility of the requested endpoint's action
       // by default, an endpoint's action is considered "private"
       if (!$this->validatePermissions($this->requestMethod, $endpoint->permissions)) {
-        $errorMessage = WPFunctions::get()->__('You do not have the required permissions.', 'mailpoet');
+        $errorMessage = __('You do not have the required permissions.', 'mailpoet');
         $errorResponse = $this->createErrorResponse(Error::FORBIDDEN, $errorMessage, Response::STATUS_FORBIDDEN);
         return $errorResponse;
       }
@@ -230,24 +230,19 @@ class API {
       $this->accessControl->validatePermission($permissions['global']);
   }
 
-  public function checkToken() {
-    return WPFunctions::get()->wpVerifyNonce($this->requestToken, 'mailpoet_token');
-  }
-
   public function setTokenAndAPIVersion() {
-    $global = '<script type="text/javascript">';
-    $global .= 'var mailpoet_token = "%s";';
-    $global .= 'var mailpoet_api_version = "%s";';
-    $global .= '</script>';
     echo sprintf(
-      $global,
-      Security::generateToken(),
-      self::CURRENT_VERSION
+      '<script type="text/javascript">' .
+      'var mailpoet_token = "%s";' .
+      'var mailpoet_api_version = "%s";' .
+      '</script>',
+      esc_js($this->wp->wpCreateNonce('mailpoet_token')),
+      esc_js(self::CURRENT_VERSION)
     );
   }
 
   public function addTokenToHeartbeatResponse($response) {
-    $response['mailpoet_token'] = Security::generateToken();
+    $response['mailpoet_token'] = $this->wp->wpCreateNonce('mailpoet_token');
     return $response;
   }
 

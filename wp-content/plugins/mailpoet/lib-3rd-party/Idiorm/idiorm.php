@@ -13,7 +13,6 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use PDO;
 use PDOStatement;
-use Serializable;
 
 /**
      *
@@ -551,7 +550,13 @@ use Serializable;
                 $bound_query = $query;
             } else {
                 // Escape the parameters
-                $parameters = array_map(array(self::get_db($connection_name), 'quote'), $parameters);
+                $parameters = array_map(function($parameter) use ($connection_name) {
+                  // Escape the parameter only when it is not empty value due to compatibility in PHP8.1
+                  if ($parameter) {
+                    return self::get_db($connection_name)->quote($parameter);
+                  }
+                  return $parameter;
+                }, $parameters);
 
                 if (array_values($parameters) === $parameters) {
                     // ? placeholders
@@ -2224,22 +2229,23 @@ use Serializable;
         // ---  ArrayAccess  --- //
         // --------------------- //
 
-        public function offsetExists($key) {
+        public function offsetExists($key): bool {
             return array_key_exists($key, $this->_data);
         }
 
+        #[\ReturnTypeWillChange] // Need to use annotation since mixed was added in 8.0
         public function offsetGet($key) {
             return $this->get($key);
         }
 
-        public function offsetSet($key, $value) {
+        public function offsetSet($key, $value): void {
             if(is_null($key)) {
                 throw new InvalidArgumentException('You must specify a key/array index.');
             }
             $this->set($key, $value);
         }
 
-        public function offsetUnset($key) {
+        public function offsetUnset($key): void {
             unset($this->_data[$key]);
             unset($this->_dirty_fields[$key]);
         }
@@ -2417,7 +2423,7 @@ use Serializable;
      * @method null setResults(array $results)
      * @method array getResults()
      */
-    class IdiormResultSet implements Countable, IteratorAggregate, ArrayAccess, Serializable {
+    class IdiormResultSet implements Countable, IteratorAggregate, ArrayAccess {
         /**
          * The current result set as an array
          * @var array
@@ -2460,7 +2466,7 @@ use Serializable;
          * Get the number of records in the result set
          * @return int
          */
-        public function count() {
+        public function count(): int {
             return count($this->_results);
         }
 
@@ -2469,7 +2475,7 @@ use Serializable;
          * over the result set.
          * @return \ArrayIterator
          */
-        public function getIterator() {
+        public function getIterator(): \Traversable {
             return new ArrayIterator($this->_results);
         }
 
@@ -2478,7 +2484,7 @@ use Serializable;
          * @param int|string $offset
          * @return bool
          */
-        public function offsetExists($offset) {
+        public function offsetExists($offset): bool {
             return isset($this->_results[$offset]);
         }
 
@@ -2487,6 +2493,7 @@ use Serializable;
          * @param int|string $offset
          * @return mixed
          */
+        #[\ReturnTypeWillChange] // Can't use mixed return typehint since it was added in 8.0
         public function offsetGet($offset) {
             return $this->_results[$offset];
         }
@@ -2496,7 +2503,7 @@ use Serializable;
          * @param int|string $offset
          * @param mixed $value
          */
-        public function offsetSet($offset, $value) {
+        public function offsetSet($offset, $value): void {
             $this->_results[$offset] = $value;
         }
 
@@ -2504,7 +2511,7 @@ use Serializable;
          * ArrayAccess
          * @param int|string $offset
          */
-        public function offsetUnset($offset) {
+        public function offsetUnset($offset): void {
             unset($this->_results[$offset]);
         }
 
@@ -2516,6 +2523,10 @@ use Serializable;
             return serialize($this->_results);
         }
 
+        public function __serialize() {
+          return $this->serialize();
+        }
+
         /**
          * Serializable
          * @param string $serialized
@@ -2523,6 +2534,10 @@ use Serializable;
          */
         public function unserialize($serialized) {
             return unserialize($serialized);
+        }
+
+        public function __unserialize($serialized) {
+          return $this->unserialize($serialized);
         }
 
         /**

@@ -5,6 +5,7 @@ namespace MailPoet\Tasks;
 if (!defined('ABSPATH')) exit;
 
 
+use MailPoet\Cron\Workers\SendingQueue\SendingQueue as SendingQueueAlias;
 use MailPoet\Logging\LoggerFactory;
 use MailPoet\Models\ScheduledTask;
 use MailPoet\Models\ScheduledTaskSubscriber;
@@ -26,7 +27,7 @@ use MailPoetVendor\Carbon\Carbon;
  * @property int $priority
  */
 class Sending {
-  const TASK_TYPE = 'sending';
+  const TASK_TYPE = SendingQueueAlias::TASK_TYPE;
   const RESULT_BATCH_SIZE = 5;
 
   /** @var ScheduledTask */
@@ -113,7 +114,7 @@ class Sending {
 
   public static function handleInvalidTask(ScheduledTask $task) {
     $loggerFactory = LoggerFactory::getInstance();
-    $loggerFactory->getLogger(LoggerFactory::TOPIC_NEWSLETTERS)->addError(
+    $loggerFactory->getLogger(LoggerFactory::TOPIC_NEWSLETTERS)->error(
       'invalid sending task found',
       ['task_id' => $task->id]
     );
@@ -174,7 +175,7 @@ class Sending {
     $errors = $this->getErrors();
     if ($errors) {
       $loggerFactory = LoggerFactory::getInstance();
-      $loggerFactory->getLogger(LoggerFactory::TOPIC_NEWSLETTERS)->addError(
+      $loggerFactory->getLogger(LoggerFactory::TOPIC_NEWSLETTERS)->error(
         'error saving sending task',
         ['task_id' => $this->task->id, 'queue_id' => $this->queue->id, 'errors' => $errors]
       );
@@ -312,17 +313,6 @@ class Sending {
       ->whereLte('tasks.scheduled_at', Carbon::createFromTimestamp($wp->currentTime('timestamp')))
       ->where('tasks.type', 'sending')
       ->orderByAsc('tasks.updated_at')
-      ->limit($amount)
-      ->findMany();
-    return static::createManyFromTasks($tasks);
-  }
-
-  public static function getRunningQueues($amount = self::RESULT_BATCH_SIZE) {
-    $tasks = ScheduledTask::orderByAsc('priority')
-      ->orderByAsc('updated_at')
-      ->whereNull('deleted_at')
-      ->whereNull('status')
-      ->where('type', 'sending')
       ->limit($amount)
       ->findMany();
     return static::createManyFromTasks($tasks);

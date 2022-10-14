@@ -5,7 +5,8 @@ namespace MailPoet\Tasks\Subscribers;
 if (!defined('ABSPATH')) exit;
 
 
-use MailPoet\Models\ScheduledTaskSubscriber;
+use MailPoet\DI\ContainerWrapper;
+use MailPoet\Newsletter\Sending\ScheduledTaskSubscribersRepository;
 
 /**
  * @implements \Iterator<null, array>
@@ -15,6 +16,9 @@ class BatchIterator implements \Iterator, \Countable {
   private $batchSize;
   private $lastProcessedId = 0;
   private $batchLastId;
+
+  /** @var ScheduledTaskSubscribersRepository */
+  private $scheduledTaskSubscribersRepository;
 
   public function __construct(
     $taskId,
@@ -27,42 +31,40 @@ class BatchIterator implements \Iterator, \Countable {
     }
     $this->taskId = (int)$taskId;
     $this->batchSize = (int)$batchSize;
+    $this->scheduledTaskSubscribersRepository = ContainerWrapper::getInstance()->get(ScheduledTaskSubscribersRepository::class);
   }
 
-  public function rewind() {
+  public function rewind(): void {
     $this->lastProcessedId = 0;
   }
 
+  /**
+   * @return mixed - it's required for PHP8.1 to prevent using ReturnTypeWillChange that cause an error in PHPStan with PHP7
+   */
+  #[\ReturnTypeWillChange]
   public function current() {
-    $subscribers = $this->getSubscribers()
-      ->orderByAsc('subscriber_id')
-      ->limit($this->batchSize)
-      ->findArray();
-    $subscribers = array_column($subscribers, 'subscriber_id');
+    $subscribers = $this->scheduledTaskSubscribersRepository->getSubscriberIdsBatchForTask($this->taskId, $this->lastProcessedId, $this->batchSize);
     $this->batchLastId = end($subscribers);
     return $subscribers;
   }
 
+  /**
+   * @return string|float|int|bool|null - it's required for PHP8.1 to prevent using ReturnTypeWillChange that cause an error in PHPStan with PHP7
+   */
+  #[\ReturnTypeWillChange]
   public function key() {
     return null;
   }
 
-  public function next() {
+  public function next(): void {
     $this->lastProcessedId = $this->batchLastId;
   }
 
-  public function valid() {
+  public function valid(): bool {
     return $this->count() > 0;
   }
 
-  public function count() {
-    return $this->getSubscribers()->count();
-  }
-
-  private function getSubscribers() {
-    return ScheduledTaskSubscriber::select('subscriber_id')
-      ->where('task_id', $this->taskId)
-      ->whereGt('subscriber_id', $this->lastProcessedId)
-      ->where('processed', ScheduledTaskSubscriber::STATUS_UNPROCESSED);
+  public function count(): int {
+    return $this->scheduledTaskSubscribersRepository->countSubscriberIdsBatchForTask($this->taskId, $this->lastProcessedId);
   }
 }

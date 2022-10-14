@@ -13,6 +13,7 @@ use MailPoet\Doctrine\EntityTraits\UpdatedAtTrait;
 use MailPoet\Util\Helpers;
 use MailPoetVendor\Doctrine\Common\Collections\ArrayCollection;
 use MailPoetVendor\Doctrine\Common\Collections\Collection;
+use MailPoetVendor\Doctrine\Common\Collections\Criteria;
 use MailPoetVendor\Doctrine\ORM\Mapping as ORM;
 use MailPoetVendor\Symfony\Component\Validator\Constraints as Assert;
 
@@ -148,13 +149,39 @@ class SubscriberEntity {
   private $lastEngagementAt;
 
   /**
+   * @ORM\Column(type="datetimetz", nullable=true)
+   * @var DateTimeInterface|null
+   */
+  private $woocommerceSyncedAt;
+
+  /**
+   * @ORM\Column(type="integer")
+   * @var int
+   */
+  private $emailCount = 0;
+
+  /**
    * @ORM\OneToMany(targetEntity="MailPoet\Entities\SubscriberSegmentEntity", mappedBy="subscriber", orphanRemoval=true)
    * @var Collection<int, SubscriberSegmentEntity>
    */
   private $subscriberSegments;
 
+  /**
+   * @ORM\OneToMany(targetEntity="MailPoet\Entities\SubscriberCustomFieldEntity", mappedBy="subscriber", orphanRemoval=true)
+   * @var Collection<int, SubscriberCustomFieldEntity>
+   */
+  private $subscriberCustomFields;
+
+  /**
+   * @ORM\OneToMany(targetEntity="MailPoet\Entities\SubscriberTagEntity", mappedBy="subscriber", orphanRemoval=true)
+   * @var Collection<int, SubscriberTagEntity>
+   */
+  private $subscriberTags;
+
   public function __construct() {
     $this->subscriberSegments = new ArrayCollection();
+    $this->subscriberCustomFields = new ArrayCollection();
+    $this->subscriberTags = new ArrayCollection();
   }
 
   /**
@@ -254,13 +281,15 @@ class SubscriberEntity {
    * @param string $status
    */
   public function setStatus($status) {
-    if (!in_array($status, [
-      self::STATUS_BOUNCED,
-      self::STATUS_INACTIVE,
-      self::STATUS_SUBSCRIBED,
-      self::STATUS_UNCONFIRMED,
-      self::STATUS_UNSUBSCRIBED,
-    ])) {
+    if (
+      !in_array($status, [
+        self::STATUS_BOUNCED,
+        self::STATUS_INACTIVE,
+        self::STATUS_SUBSCRIBED,
+        self::STATUS_UNCONFIRMED,
+        self::STATUS_UNSUBSCRIBED,
+      ])
+    ) {
       throw new \InvalidArgumentException("Invalid status '{$status}' given to subscriber!");
     }
     $this->status = $status;
@@ -347,16 +376,18 @@ class SubscriberEntity {
    * @param string $source
    */
   public function setSource($source) {
-    if (!in_array($source, [
-      'api',
-      'form',
-      'unknown',
-      'imported',
-      'administrator',
-      'wordpress_user',
-      'woocommerce_user',
-      'woocommerce_checkout',
-    ])) {
+    if (
+      !in_array($source, [
+        'api',
+        'form',
+        'unknown',
+        'imported',
+        'administrator',
+        'wordpress_user',
+        'woocommerce_user',
+        'woocommerce_checkout',
+      ])
+    ) {
       throw new \InvalidArgumentException("Invalid source '{$source}' given to subscriber!");
     }
     $this->source = $source;
@@ -420,6 +451,27 @@ class SubscriberEntity {
   }
 
   /**
+   * @return Collection<int, SubscriberCustomFieldEntity>
+   */
+  public function getSubscriberCustomFields() {
+    return $this->subscriberCustomFields;
+  }
+
+  /**
+   * @return Collection<int, SubscriberTagEntity>
+   */
+  public function getSubscriberTags() {
+    return $this->subscriberTags;
+  }
+
+  public function getSubscriberTag(TagEntity $tag): ?SubscriberTagEntity {
+    $criteria = Criteria::create()
+      ->where(Criteria::expr()->eq('tag', $tag))
+      ->setMaxResults(1);
+    return $this->getSubscriberTags()->matching($criteria)->first() ?: null;
+  }
+
+  /**
    * @return float|null
    */
   public function getEngagementScore(): ?float {
@@ -453,6 +505,22 @@ class SubscriberEntity {
 
   public function setLastEngagementAt(DateTimeInterface $lastEngagementAt): void {
     $this->lastEngagementAt = $lastEngagementAt;
+  }
+
+  public function setWoocommerceSyncedAt(?DateTimeInterface $woocommerceSyncedAt): void {
+    $this->woocommerceSyncedAt = $woocommerceSyncedAt;
+  }
+
+  public function getWoocommerceSyncedAt(): ?DateTimeInterface {
+    return $this->woocommerceSyncedAt;
+  }
+
+  public function getEmailCount(): int {
+    return $this->emailCount;
+  }
+
+  public function setEmailCount(int $emailCount): void {
+    $this->emailCount = $emailCount;
   }
 
   /** @ORM\PreFlush */

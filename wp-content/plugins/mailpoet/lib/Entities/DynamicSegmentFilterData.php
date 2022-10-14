@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) exit;
 
 
 use MailPoet\Segments\DynamicSegments\Filters\UserRole;
+use MailPoet\Segments\DynamicSegments\Filters\WooCommerceProduct;
 use MailPoetVendor\Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,10 +16,15 @@ class DynamicSegmentFilterData {
   const TYPE_USER_ROLE = 'userRole';
   const TYPE_EMAIL = 'email';
   const TYPE_WOOCOMMERCE = 'woocommerce';
+  const TYPE_WOOCOMMERCE_MEMBERSHIP = 'woocommerceMembership';
   const TYPE_WOOCOMMERCE_SUBSCRIPTION = 'woocommerceSubscription';
 
   public const CONNECT_TYPE_AND = 'and';
   public const CONNECT_TYPE_OR = 'or';
+
+  public const OPERATOR_ALL = 'all';
+  public const OPERATOR_ANY = 'any';
+  public const OPERATOR_NONE = 'none';
 
   /**
    * @ORM\Column(type="serialized_array")
@@ -77,5 +83,21 @@ class DynamicSegmentFilterData {
       return UserRole::TYPE;
     }
     return $this->filterData['action'] ?? null;
+  }
+
+  public function getOperator(): ?string {
+    $operator = $this->filterData['operator'] ?? null;
+    if (!$operator) {
+      return $this->getDefaultOperator();
+    }
+
+    return $operator;
+  }
+
+  private function getDefaultOperator(): ?string {
+    if ($this->getFilterType() === self::TYPE_WOOCOMMERCE && $this->getAction() === WooCommerceProduct::ACTION_PRODUCT) {
+      return self::OPERATOR_ANY;
+    }
+    return null;
   }
 }

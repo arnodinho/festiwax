@@ -12,14 +12,10 @@ use MailPoet\Entities\SubscriberCustomFieldEntity;
 use MailPoet\Entities\SubscriberEntity;
 use MailPoet\Statistics\StatisticsUnsubscribesRepository;
 use MailPoet\Subscribers\SubscriberCustomFieldRepository;
-use MailPoet\Subscribers\SubscriberSegmentRepository;
 use MailPoetVendor\Doctrine\ORM\EntityManager;
 
 class SubscribersResponseBuilder {
   const DATE_FORMAT = 'Y-m-d H:i:s';
-
-  /** @var SubscriberSegmentRepository */
-  private $subscriberSegmentRepository;
 
   /** @var StatisticsUnsubscribesRepository */
   private $statisticsUnsubscribesRepository;
@@ -35,12 +31,10 @@ class SubscribersResponseBuilder {
 
   public function __construct(
     EntityManager $entityManager,
-    SubscriberSegmentRepository $subscriberSegmentRepository,
     CustomFieldsRepository $customFieldsRepository,
     SubscriberCustomFieldRepository $subscriberCustomFieldRepository,
     StatisticsUnsubscribesRepository $statisticsUnsubscribesRepository
   ) {
-    $this->subscriberSegmentRepository = $subscriberSegmentRepository;
     $this->statisticsUnsubscribesRepository = $statisticsUnsubscribesRepository;
     $this->customFieldsRepository = $customFieldsRepository;
     $this->subscriberCustomFieldRepository = $subscriberCustomFieldRepository;
@@ -48,7 +42,7 @@ class SubscribersResponseBuilder {
   }
 
   public function buildForListing(array $subscribers): array {
-    $this->prefetchSegments($subscribers);
+    $this->prefetchRelations($subscribers);
     $data = [];
     foreach ($subscribers as $subscriber) {
       $data[] = $this->buildListingItem($subscriber);
@@ -67,8 +61,9 @@ class SubscribersResponseBuilder {
       'count_confirmations' => $subscriber->getConfirmationsCount(),
       'wp_user_id' => $subscriber->getWpUserId(),
       'is_woocommerce_user' => $subscriber->getIsWoocommerceUser(),
-      'created_at' => $subscriber->getCreatedAt()->format(self::DATE_FORMAT),
+      'created_at' => ($createdAt = $subscriber->getCreatedAt()) ? $createdAt->format(self::DATE_FORMAT) : null,
       'engagement_score' => $subscriber->getEngagementScore(),
+      'tags' => $this->buildTags($subscriber),
     ];
   }
 
@@ -83,7 +78,7 @@ class SubscribersResponseBuilder {
       'last_name' => $subscriberEntity->getLastName(),
       'first_name' => $subscriberEntity->getFirstName(),
       'email' => $subscriberEntity->getEmail(),
-      'created_at' => $subscriberEntity->getCreatedAt()->format(self::DATE_FORMAT),
+      'created_at' => ($createdAt = $subscriberEntity->getCreatedAt()) ? $createdAt->format(self::DATE_FORMAT) : null,
       'updated_at' => $subscriberEntity->getUpdatedAt()->format(self::DATE_FORMAT),
       'deleted_at' => ($deletedAt = $subscriberEntity->getDeletedAt()) ? $deletedAt->format(self::DATE_FORMAT) : null,
       'subscribed_ip' => $subscriberEntity->getSubscribedIp(),
@@ -95,21 +90,24 @@ class SubscribersResponseBuilder {
       'count_confirmations' => $subscriberEntity->getConfirmationsCount(),
       'unsubscribe_token' => $subscriberEntity->getUnsubscribeToken(),
       'link_token' => $subscriberEntity->getLinkToken(),
+      'tags' => $this->buildTags($subscriberEntity),
     ];
-    $data = $this->buildCustomFields($subscriberEntity, $data);
-    return $data;
+
+    return $this->buildCustomFields($subscriberEntity, $data);
   }
 
   private function buildSubscriptions(SubscriberEntity $subscriberEntity): array {
     $result = [];
-    $subscriptions = $this->subscriberSegmentRepository->findBy(['subscriber' => $subscriberEntity]);
-    foreach ($subscriptions as $subscription) {
-      $segment = $subscription->getSegment();
+    foreach ($subscriberEntity->getSubscriberSegments() as $subscriberSegment) {
+      $segment = $subscriberSegment->getSegment();
       if ($segment instanceof SegmentEntity) {
         $result[] = [
+          'id' => $subscriberSegment->getId(),
+          'subscriber_id' => (string)$subscriberEntity->getId(),
+          'created_at' => ($createdAt = $subscriberSegment->getCreatedAt()) ? $createdAt->format(self::DATE_FORMAT) : null,
           'segment_id' => (string)$segment->getId(),
-          'status' => $subscription->getStatus(),
-          'updated_at' => $subscription->getUpdatedAt()->format(self::DATE_FORMAT),
+          'status' => $subscriberSegment->getStatus(),
+          'updated_at' => $subscriberSegment->getUpdatedAt()->format(self::DATE_FORMAT),
         ];
       }
     }
@@ -153,15 +151,45 @@ class SubscribersResponseBuilder {
     return $data;
   }
 
+  private function buildTags(SubscriberEntity $subscriber): array {
+    $result = [];
+    foreach ($subscriber->getSubscriberTags() as $subscriberTag) {
+      $tag = $subscriberTag->getTag();
+      if (!$tag) {
+        continue;
+      }
+      $result[] = [
+        'id' => $subscriberTag->getId(),
+        'subscriber_id' => (string)$subscriber->getId(),
+        'tag_id' => (string)$tag->getId(),
+        'created_at' => ($createdAt = $subscriberTag->getCreatedAt()) ? $createdAt->format(self::DATE_FORMAT) : null,
+        'updated_at' => $subscriberTag->getUpdatedAt()->format(self::DATE_FORMAT),
+        'name' => $tag->getName(),
+      ];
+    }
+    return $result;
+  }
+
   /**
    * @param SubscriberEntity[] $subscribers
    */
-  private function prefetchSegments(array $subscribers) {
+  private function prefetchRelations(array $subscribers): void {
+    // Prefetch subscriptions
     $this->entityManager->createQueryBuilder()
       ->select('PARTIAL s.{id}, ssg, sg')
       ->from(SubscriberEntity::class, 's')
-      ->join('s.subscriberSegments', 'ssg')
-      ->join('ssg.segment', 'sg')
+      ->leftJoin('s.subscriberSegments', 'ssg')
+      ->leftJoin('ssg.segment', 'sg')
+      ->where('s.id IN (:subscribers)')
+      ->setParameter('subscribers', $subscribers)
+      ->getQuery()
+      ->getResult();
+    // Prefetch tags
+    $this->entityManager->createQueryBuilder()
+      ->select('PARTIAL s.{id}, st, t')
+      ->from(SubscriberEntity::class, 's')
+      ->leftJoin('s.subscriberTags', 'st')
+      ->leftJoin('st.tag', 't')
       ->where('s.id IN (:subscribers)')
       ->setParameter('subscribers', $subscribers)
       ->getQuery()

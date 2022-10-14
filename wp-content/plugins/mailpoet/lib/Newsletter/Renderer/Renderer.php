@@ -6,15 +6,10 @@ if (!defined('ABSPATH')) exit;
 
 
 use MailPoet\Config\Env;
+use MailPoet\Config\ServicesChecker;
 use MailPoet\Entities\NewsletterEntity;
-use MailPoet\InvalidStateException;
-use MailPoet\Models\Newsletter;
-use MailPoet\Newsletter\NewslettersRepository;
 use MailPoet\Newsletter\Renderer\EscapeHelper as EHelper;
-use MailPoet\RuntimeException;
-use MailPoet\Services\Bridge;
 use MailPoet\Tasks\Sending as SendingTask;
-use MailPoet\Util\License\License;
 use MailPoet\Util\pQuery\DomNode;
 use MailPoet\WP\Functions as WPFunctions;
 
@@ -34,61 +29,32 @@ class Renderer {
   /** @var \MailPoetVendor\CSS */
   private $cSSInliner;
 
-  /** @var Bridge */
-  private $bridge;
-
-  /** @var License */
-  private $license;
-
-  /** @var NewslettersRepository */
-  private $newslettersRepository;
+  /** @var ServicesChecker */
+  private $servicesChecker;
 
   public function __construct(
     Blocks\Renderer $blocksRenderer,
     Columns\Renderer $columnsRenderer,
     Preprocessor $preprocessor,
     \MailPoetVendor\CSS $cSSInliner,
-    Bridge $bridge,
-    NewslettersRepository $newslettersRepository,
-    License $license
+    ServicesChecker $servicesChecker
   ) {
     $this->blocksRenderer = $blocksRenderer;
     $this->columnsRenderer = $columnsRenderer;
     $this->preprocessor = $preprocessor;
     $this->cSSInliner = $cSSInliner;
-    $this->bridge = $bridge;
-    $this->license = $license;
-    $this->newslettersRepository = $newslettersRepository;
+    $this->servicesChecker = $servicesChecker;
   }
 
-  /**
-   * This is only temporary, when all calls are refactored to doctrine and only entity is passed we don't need this
-   * @param \MailPoet\Models\Newsletter|NewsletterEntity $newsletter
-   * @return NewsletterEntity|null
-   */
-  private function getNewsletter($newsletter) {
-    if ($newsletter instanceof Newsletter) {
-      return $this->newslettersRepository->findOneById($newsletter->id);
-    }
-    if (!$newsletter instanceof NewsletterEntity) {
-      throw new InvalidStateException();
-    }
-    return $newsletter;
-  }
-
-  public function render($newsletter, SendingTask $sendingTask = null, $type = false) {
+  public function render(NewsletterEntity $newsletter, SendingTask $sendingTask = null, $type = false) {
     return $this->_render($newsletter, $sendingTask, $type);
   }
 
-  public function renderAsPreview($newsletter, $type = false, ?string $subject = null) {
+  public function renderAsPreview(NewsletterEntity $newsletter, $type = false, ?string $subject = null) {
     return $this->_render($newsletter, null, $type, true, $subject);
   }
 
-  private function _render($newsletter, SendingTask $sendingTask = null, $type = false, $preview = false, $subject = null) {
-    $newsletter = $this->getNewsletter($newsletter);
-    if (!$newsletter instanceof NewsletterEntity) {
-      throw new RuntimeException('Newsletter was not found');
-    }
+  private function _render(NewsletterEntity $newsletter, SendingTask $sendingTask = null, $type = false, $preview = false, $subject = null) {
     $body = (is_array($newsletter->getBody()))
       ? $newsletter->getBody()
       : [];
@@ -100,13 +66,12 @@ class Renderer {
       : [];
 
     if (
-      !$this->license->hasLicense()
-      && !$this->bridge->isMailpoetSendingServiceEnabled()
-      && !$preview
+      !$this->servicesChecker->isUserActivelyPaying() && !$preview
     ) {
       $content = $this->addMailpoetLogoContentBlock($content, $styles);
     }
 
+    $metaRobots = $preview ? '<meta name="robots" content="noindex, nofollow" />' : '';
     $content = $this->preprocessor->process($newsletter, $content, $preview, $sendingTask);
     $renderedBody = $this->renderBody($newsletter, $content);
     $renderedStyles = $this->renderStyles($styles);
@@ -115,6 +80,7 @@ class Renderer {
     $template = $this->injectContentIntoTemplate(
       (string)file_get_contents(dirname(__FILE__) . '/' . self::NEWSLETTER_TEMPLATE),
       [
+        $metaRobots,
         htmlspecialchars($subject ?: $newsletter->getSubject()),
         $renderedStyles,
         $customFontsLinks,
@@ -264,10 +230,10 @@ class Renderer {
           'blocks' => [
             [
               'type' => 'image',
-              'link' => 'http://www.mailpoet.com',
+              'link' => 'https://www.mailpoet.com/?ref=free-plan-user-email&utm_source=free_plan_user_email&utm_medium=email',
               'src' => Env::$assetsUrl . '/img/mailpoet_logo_newsletter.png',
               'fullWidth' => false,
-              'alt' => 'MailPoet',
+              'alt' => 'Email Marketing Powered by MailPoet',
               'width' => '108px',
               'height' => '65px',
               'styles' => [

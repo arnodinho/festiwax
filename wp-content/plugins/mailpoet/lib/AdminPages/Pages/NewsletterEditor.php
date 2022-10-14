@@ -7,10 +7,9 @@ if (!defined('ABSPATH')) exit;
 
 use MailPoet\AdminPages\PageRenderer;
 use MailPoet\Config\Menu;
-use MailPoet\Config\ServicesChecker;
 use MailPoet\Entities\SubscriberEntity;
+use MailPoet\Form\Util\CustomFonts;
 use MailPoet\Newsletter\Shortcodes\ShortcodesHelper;
-use MailPoet\Services\Bridge;
 use MailPoet\Settings\SettingsController;
 use MailPoet\Settings\UserFlagsController;
 use MailPoet\Subscribers\SubscribersRepository;
@@ -40,9 +39,6 @@ class NewsletterEditor {
   /** @var TransactionalEmails */
   private $wcTransactionalEmails;
 
-  /** @var ServicesChecker */
-  private $servicesChecker;
-
   /** @var ShortcodesHelper */
   private $shortcodesHelper;
 
@@ -52,6 +48,9 @@ class NewsletterEditor {
   /** @var TransactionalEmailHooks */
   private $wooEmailHooks;
 
+  /** @var CustomFonts  */
+  private $customFonts;
+
   public function __construct(
     PageRenderer $pageRenderer,
     SettingsController $settings,
@@ -60,9 +59,9 @@ class NewsletterEditor {
     WPFunctions $wp,
     TransactionalEmails $wcTransactionalEmails,
     ShortcodesHelper $shortcodesHelper,
-    ServicesChecker $servicesChecker,
     SubscribersRepository $subscribersRepository,
-    TransactionalEmailHooks $wooEmailHooks
+    TransactionalEmailHooks $wooEmailHooks,
+    CustomFonts $customFonts
   ) {
     $this->pageRenderer = $pageRenderer;
     $this->settings = $settings;
@@ -70,10 +69,10 @@ class NewsletterEditor {
     $this->woocommerceHelper = $woocommerceHelper;
     $this->wp = $wp;
     $this->wcTransactionalEmails = $wcTransactionalEmails;
-    $this->servicesChecker = $servicesChecker;
     $this->shortcodesHelper = $shortcodesHelper;
     $this->subscribersRepository = $subscribersRepository;
     $this->wooEmailHooks = $wooEmailHooks;
+    $this->customFonts = $customFonts;
   }
 
   public function render() {
@@ -86,7 +85,7 @@ class NewsletterEditor {
     ) {
       $location = 'admin.php?page=mailpoet-settings&enable-customizer-notice#woocommerce';
       if (headers_sent()) {
-        echo '<script>window.location = "' . $location . '";</script>';
+        echo '<script>window.location = "' . esc_js($location) . '";</script>';
       } else {
         header('Location: ' . $location, true, 302);
       }
@@ -110,17 +109,14 @@ class NewsletterEditor {
     }
 
     $data = [
+      'customFontsEnabled' => $this->customFonts->displayCustomFonts(),
       'shortcodes' => $this->shortcodesHelper->getShortcodes(),
       'settings' => $this->settings->getAll(),
       'editor_tutorial_seen' => $this->userFlags->get('editor_tutorial_seen'),
       'current_wp_user' => array_merge($subscriberData, $this->wp->wpGetCurrentUser()->to_array()),
       'sub_menu' => Menu::MAIN_PAGE_SLUG,
-      'mss_active' => Bridge::isMPSendingServiceEnabled(),
       'woocommerce' => $woocommerceData,
       'is_wc_transactional_email' => $newsletterId === $woocommerceTemplateId,
-      'site_name' => $this->wp->wpSpecialcharsDecode($this->wp->getOption('blogname'), ENT_QUOTES),
-      'site_address' => $this->wp->wpParseUrl($this->wp->homeUrl(), PHP_URL_HOST),
-      'mss_key_pending_approval' => $this->servicesChecker->isMailPoetAPIKeyPendingApproval(),
     ];
     $this->wp->wpEnqueueMedia();
     $this->wp->wpEnqueueStyle('editor', $this->wp->includesUrl('css/editor.css'));
@@ -141,7 +137,7 @@ class NewsletterEditor {
       'confirmed_ip' => $subscriber->getConfirmedIp(),
       'confirmed_at' => ($confirmedAt = $subscriber->getConfirmedAt()) ? $confirmedAt->format(self::DATE_FORMAT) : null,
       'last_subscribed_at' => ($lastSubscribedAt = $subscriber->getLastSubscribedAt()) ? $lastSubscribedAt->format(self::DATE_FORMAT) : null,
-      'created_at' => $subscriber->getCreatedAt()->format(self::DATE_FORMAT),
+      'created_at' => ($createdAt = $subscriber->getCreatedAt()) ? $createdAt->format(self::DATE_FORMAT) : null,
       'updated_at' => $subscriber->getUpdatedAt()->format(self::DATE_FORMAT),
       'deleted_at' => ($deletedAt = $subscriber->getDeletedAt()) ? $deletedAt->format(self::DATE_FORMAT) : null,
       'unconfirmed_data' => $subscriber->getUnconfirmedData(),

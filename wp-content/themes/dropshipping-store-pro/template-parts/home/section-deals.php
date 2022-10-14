@@ -37,8 +37,8 @@
       <?php if ( class_exists( 'WooCommerce' ) ) {?>
         <div class="owl-carousel">
           <?php
-          $args = array( 
-          'post_type' => 'product', 
+          $args = array(
+          'post_type' => 'product',
           'product_tag' => get_theme_mod('drop_shipping_pro_deals_section_category'),
           'order' => 'ASC'
           );
@@ -47,7 +47,7 @@
             <div class="row p-lg-3 ">
               <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 deals-col py-3">
                 <div class="mt-3">
-                  <?php if (has_post_thumbnail( $loop->post->ID )) echo get_the_post_thumbnail($loop->post->ID, 'shop_catalog'); else echo '<img src="'.esc_url(woocommerce_placeholder_img_src()).'" />'; ?>
+                  <?php if (has_post_thumbnail( $loop->post->ID )) echo get_the_post_thumbnail($loop->post->ID, 'woocommerce_thumbnail'); else echo '<img src="'.esc_url(woocommerce_placeholder_img_src()).'" />'; ?>
                 </div>
               </div>
               <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12 text-md-start text-sm-center text-center deals-col py-3">
@@ -67,7 +67,7 @@
                 </div>
                 <div class="countdowntimer mt-3">
                   <p id="timer" class="countdown">
-                    <?php 
+                    <?php
                     $dateday = get_theme_mod('drop_shipping_pro_deals_section_clock_timer_end','December 12, 2022 11:00:00'); ?>
                     <input type="hidden" class="date" value="<?php echo esc_html($dateday); ?>"></p>
                 </div>
@@ -79,5 +79,5 @@
       <h6 class="text-center"><?php echo esc_html('Please install Woocommerce plugin and add your products to enable this section','dropshipping-store-pro')?></h6>
     <?php }?>
   </div>
- 
+
 </section>

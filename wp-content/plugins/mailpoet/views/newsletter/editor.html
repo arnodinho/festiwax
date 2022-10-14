@@ -357,6 +357,13 @@
     ];
   </script>
 <% endif %>
+
+<script type="text/javascript">
+  var mailpoet_email_editor_tutorial_seen  = '<%= editor_tutorial_seen %>';
+  var mailpoet_email_editor_tutorial_url = '<%= cdn_url('newsletter-editor/editor-drag-demo.20190226-1505.mp4') %>';
+  var mailpoet_installed_at = '<%= settings.installed_at %>';
+</script>
+
 <% endblock %>
 
 <% block translations %>
@@ -389,7 +396,6 @@
     'newsletterPreviewErrorSignUpForSendingService': __('Sign up for free in minutes'),
     'newsletterPreviewErrorCheckSettingsNotice': __('Check your [link]sending method settings[/link].'),
     'templateNameMissing': __('Please add a template name'),
-    'helpTooltipSendPreview': helpTooltipSendPreview,
     'helpTooltipDesignerSubjectLine': __("You can add MailPoet shortcodes here. For example, you can add your subscribers' first names by using this shortcode: [subscriber:firstname | default:reader]. Simply copy and paste the shortcode into the field."),
     'helpTooltipDesignerPreheader': __("This optional text will appear in your subscribers' inboxes, beside the subject line. Write something enticing!"),
     'helpTooltipDesignerPreheaderWarning': __("Max length is 250 characters, however, we recommend 80 characters."),
@@ -407,6 +413,7 @@
     'selectColor': _x('Select', 'select color'),
     'cancelColorSelection': _x('Cancel', 'cancel color selection'),
     'newsletterIsPaused': __('Email sending has been paused.'),
+    'emailWasDeactivated': __('This email was deactivated.'),
     'tutorialVideoTitle': __('Before you start, this is how you drag and drop in MailPoet'),
     'selectType': __('Select type'),
     'events': __('Events'),
@@ -708,9 +715,6 @@
       ),
     };
 
-    var mailpoet_site_name = '<%= site_name %>';
-    var mailpoet_site_address = '<%= site_address %>';
-    var mailpoet_mss_key_pending_approval = '<%= mss_key_pending_approval %>';
     var currentUserEmail = '<%= current_wp_user.user_email %>';
 
     var config = {
@@ -742,6 +746,7 @@
             'Times New Roman',
             'Trebuchet MS',
             'Verdana'
+            <% if customFontsEnabled %>
           ],
           custom: [
             'Arvo',
@@ -758,6 +763,7 @@
             'Raleway',
             'Permanent Marker',
             'Pacifico',
+            <% endif %>
           ]
         },
         socialIconSets: {
@@ -1552,10 +1558,7 @@
           "newsletter_editor/image-missing.svg"
         ) %>',
       },
-      dragDemoUrl: '<%= cdn_url('newsletter-editor/editor-drag-demo.20190226-1505.mp4') %>',
       currentUserId: '<%= current_wp_user.wp_user_id %>',
-      dragDemoUrlSettings: '<%= editor_tutorial_seen %>',
-      installedAt: '<%= settings["installed_at"] %>',
       mtaMethod: '<%= settings["mta"]["method"] %>',
       woocommerceCustomizerEnabled: <%= woocommerce.customizer_enabled ? 'true' : 'false' %>,
       <% if is_wc_transactional_email %>

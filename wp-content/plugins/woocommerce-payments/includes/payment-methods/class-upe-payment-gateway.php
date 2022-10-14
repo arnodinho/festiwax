@@ -116,6 +116,7 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 
 		add_action( 'woocommerce_order_payment_status_changed', [ __CLASS__, 'remove_upe_payment_intent_from_session' ], 10, 0 );
 		add_action( 'woocommerce_after_account_payment_methods', [ $this, 'remove_upe_setup_intent_from_session' ], 10, 0 );
+		add_action( 'woocommerce_subscription_payment_method_updated', [ $this, 'remove_upe_setup_intent_from_session' ], 10, 0 );
 	}
 
 	/**
@@ -273,10 +274,12 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 	public function create_payment_intent( $order_id = null ) {
 		$amount   = WC()->cart->get_total( '' );
 		$currency = get_woocommerce_currency();
+		$number   = 0;
 		$order    = wc_get_order( $order_id );
 		if ( is_a( $order, 'WC_Order' ) ) {
 			$amount   = $order->get_total();
 			$currency = $order->get_currency();
+			$number   = $order->get_order_number();
 		}
 
 		$converted_amount = WC_Payments_Utils::prepare_amount( $amount, $currency );
@@ -298,7 +301,7 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 				$converted_amount,
 				strtolower( $currency ),
 				array_values( $enabled_payment_methods ),
-				$order_id ?? 0,
+				$number,
 				$capture_method
 			);
 		} catch ( Amount_Too_Small_Exception $e ) {
@@ -317,7 +320,7 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 				$minimum_amount,
 				strtolower( $currency ),
 				array_values( $enabled_payment_methods ),
-				$order_id ?? 0,
+				$number,
 				$capture_method
 			);
 		}
@@ -463,9 +466,10 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 				$intent_id              = $updated_payment_intent->get_id();
 				$intent_status          = $updated_payment_intent->get_status();
 				$payment_method         = $updated_payment_intent->get_payment_method_id();
-				$payment_method_details = $updated_payment_intent->get_payment_method_details();
+				$charge                 = $updated_payment_intent->get_charge();
+				$payment_method_details = $charge ? $charge->get_payment_method_details() : [];
 				$payment_method_type    = $payment_method_details ? $payment_method_details['type'] : null;
-				$charge_id              = $updated_payment_intent->get_charge_id();
+				$charge_id              = $charge ? $charge->get_id() : null;
 
 				/**
 				 * Attach the intent and exchange info to the order before doing the redirect, just in case the redirect
@@ -473,7 +477,7 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 				 * the redirect completes.
 				 */
 				$this->attach_intent_info_to_order( $order, $intent_id, $intent_status, $payment_method, $customer_id, $charge_id, $currency );
-				$this->attach_exchange_info_to_order( $order, $updated_payment_intent->get_charge_id() );
+				$this->attach_exchange_info_to_order( $order, $charge_id );
 				$this->set_payment_method_title_for_order( $order, $payment_method_type, $payment_method_details );
 				$this->update_order_status_from_intent( $order, $intent_id, $intent_status, $charge_id );
 
@@ -598,10 +602,11 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 				$intent                 = $this->payments_api_client->get_intent( $intent_id );
 				$client_secret          = $intent->get_client_secret();
 				$status                 = $intent->get_status();
-				$charge_id              = $intent->get_charge_id();
+				$charge                 = $intent->get_charge();
+				$charge_id              = $charge ? $charge->get_id() : null;
 				$currency               = $intent->get_currency();
 				$payment_method_id      = $intent->get_payment_method_id();
-				$payment_method_details = $intent->get_payment_method_details();
+				$payment_method_details = $charge ? $charge->get_payment_method_details() : [];
 				$payment_method_type    = $payment_method_details ? $payment_method_details['type'] : null;
 				$error                  = $intent->get_last_payment_error();
 			} else {
@@ -963,36 +968,33 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 	/**
 	 * Returns the list of available payment method types for UPE.
 	 * Filtering out those without configured fees, this will prevent a payment method not supported by the Stripe account's country from being returned.
+	 * Note that we are not taking into account capabilities, which are taken into account when managing payment methods in settings.
 	 * See https://stripe.com/docs/stripe-js/payment-element#web-create-payment-intent for a complete list.
 	 *
 	 * @return string[]
 	 */
 	public function get_upe_available_payment_methods() {
-		$methods = parent::get_upe_available_payment_methods();
-		$fees    = $this->account->get_fees();
+		$available_methods = parent::get_upe_available_payment_methods();
 
-		$methods[] = Becs_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
-		$methods[] = Bancontact_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
-		$methods[] = Eps_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
-		$methods[] = Giropay_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
-		$methods[] = Ideal_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
-		$methods[] = Sofort_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
-		$methods[] = Sepa_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
-		$methods[] = P24_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
-		$methods[] = Link_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
+		$available_methods[] = Becs_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
+		$available_methods[] = Bancontact_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
+		$available_methods[] = Eps_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
+		$available_methods[] = Giropay_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
+		$available_methods[] = Ideal_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
+		$available_methods[] = Sofort_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
+		$available_methods[] = Sepa_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
+		$available_methods[] = P24_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
+		$available_methods[] = Link_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
 
-		$methods = array_values(
+		$available_methods = array_values(
 			apply_filters(
 				'wcpay_upe_available_payment_methods',
-				$methods
+				$available_methods
 			)
 		);
+		$methods_with_fees = array_keys( $this->account->get_fees() );
 
-		$methods_with_fees = array_values( array_intersect( $methods, array_keys( $fees ) ) );
-
-		$methods_with_fees[] = Link_Payment_Method::PAYMENT_METHOD_STRIPE_ID;
-
-		return $methods_with_fees;
+		return array_values( array_intersect( $available_methods, $methods_with_fees ) );
 	}
 
 	/**

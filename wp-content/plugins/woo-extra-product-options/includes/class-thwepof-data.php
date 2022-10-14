@@ -96,7 +96,7 @@ class THWEPOF_Data {
 
 			if(is_array($products) && !empty($products)){
 				foreach($products as $pid){
-					$productsList[] = array("id" => $pid, "text" => get_the_title($pid), "selected" => true);
+					$productsList[] = array("id" => $pid, "text" => html_entity_decode(get_the_title($pid)), "selected" => true);
 				}
 			}
 
@@ -121,7 +121,7 @@ class THWEPOF_Data {
 			
 			if(is_array($products) && !empty($products)){
 				foreach($products as $pid){
-					$productsList[] = array("id" => $pid, "text" => get_the_title($pid));
+					$productsList[] = array("id" => $pid, "text" => html_entity_decode(get_the_title($pid)));
 					//$productsList[] = array("id" => $product->ID, "title" => $product->post_title);
 				}
 			}

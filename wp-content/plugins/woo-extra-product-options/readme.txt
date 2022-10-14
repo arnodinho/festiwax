@@ -3,13 +3,13 @@ Contributors: ThemeHigh
 Donate link: https://themehigh.com/
 Tags: Woocommerce Product Addons, WooCommerce Extra product fields, woocommerce extra product options, Extra Product Options, WooCommerce Custom Product Fields, WooCommerce Product Field Editor, woocommerce product customizer, product form customizer, product, WooCommerce product, product form designer, custom, custom product fields, custom product option, custom options, customize product, customize variation, extra options, extra product options, form editor, price fields, prices, product, product choices, product price, woocommerce
 Requires at least: 4.9
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 3.1.2
+Stable tag: 3.1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-WooCommerce Extra Product Options plugin lets you add product addons (custom products field) of 17 different field types to your product page.
+WooCommerce Extra Product Options plugin lets you add product addons (custom products field) of 19 different field types to your product page.
 
 == Description ==
 The WooCommerce Extra Product Options (WooCommerce Product Addons) plugin lets you add custom product fields(19 field types) and sections to your product page, making your WooCommerce product page more functional.
@@ -85,11 +85,11 @@ Apart from these wonderful features, Extra Product Options for WooCommerce provi
 The Extra product options plugin is WPML compatible and it lets you create product pages in multiple languages.
 
 == 💎💎 Premium Features ==
-The premium version of [Extra Product Options for WooCommerce plugin](https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wordpress&utm_medium=referral&utm_content=tracking) offers a wide variety of advanced features that will help you to create the finest product pages. It is equipped with all demanded features for an extra product fields plugin.
+The premium version of [Extra Product Options for WooCommerce plugin](https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wepo_free&utm_medium=readme&utm_campaign=wepo_upgrade_link) offers a wide variety of advanced features that will help you to create the finest product pages. It is equipped with all demanded features for an extra product fields plugin.
 
-You can effortlessly define products with most-sought fields and features that are inherited from world-class WooCommerce stores. [Buy Now!](https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wordpress&utm_medium=referral&utm_content=tracking).
+You can effortlessly define products with most-sought fields and features that are inherited from world-class WooCommerce stores. [Buy Now!](https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wepo_free&utm_medium=readme&utm_campaign=wepo_upgrade_link).
 
-You can check out the demo for a more detailed overview of the features. [Live Demo](https://flydemos.com/wepo/?utm_source=wordpress&utm_medium=referral&utm_content=tracking)
+You can check out the demo for a more detailed overview of the features. [Live Demo](https://flydemos.com/wepo/?utm_source=wepo_free&utm_medium=readme&utm_campaign=try_demo)
 
 = ☞ Extra 7 Field Types =
 The pro version has 7 more fields than the free version with advanced functional properties that enhance your product pages. The available extra fields are;
@@ -143,9 +143,9 @@ Custom Validator allows you to validate fields by defining rules based on regula
 Confirm Validator allows you to validate two fields for the same value (for example Email and Confirm Email).
 
 --------------------------------------------
-*For the complete list of features, Please visit [Extra Product Options for WooCommerce (Custom Product Addons)](https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wordpress&utm_medium=referral&utm_content=tracking) plugin's official page.*
+*For the complete list of features, Please visit [Extra Product Options for WooCommerce (Custom Product Addons)](https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wepo_free&utm_medium=readme&utm_campaign=wepo_upgrade_link) plugin's official page.*
 
-Check how it works ([Live Demo](https://flydemos.com/wepo/?utm_source=wordpress&utm_medium=referral&utm_content=tracking))
+Check how it works ([Live Demo](https://flydemos.com/wepo/?utm_source=wepo_free&utm_medium=readme&utm_campaign=try_demo))
 --------------------------------------------
 
 == Why ThemeHigh ==
@@ -167,10 +167,11 @@ Frequent updates are made to improve the plugin with a talented group of develop
 
 For more info on ThemeHigh and WooCommerce Extra Product Options (WooCommerce Product Addons) plugin in specific, check out the following:
 
-*   The [Extra Product Options (Product Addons) for WooCommerce](https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wordpress&utm_medium=referral&utm_content=tracking) premium plugin homepage.
-*   The [Knowledgebase](https://www.themehigh.com/help-guides/woocommerce-extra-product-options/?utm_source=wordpress&utm_medium=referral&utm_content=tracking).
-*   Other [WordPress Plugins](https://www.themehigh.com/plugins/?utm_source=wordpress&utm_medium=referral&utm_content=tracking) by the ThemeHigh team.
-*   Follow ThemeHigh on [Facebook](https://www.facebook.com/ThemeHigh-319611541768603/?utm_source=wordpress&utm_medium=referral&utm_content=tracking), [LinkedIn](https://www.linkedin.com/company/themehigh/?utm_source=wordpress&utm_medium=referral&utm_content=tracking), [Twitter](https://twitter.com/themehigh/?utm_source=wordpress&utm_medium=referral&utm_content=tracking) & [YouTube](https://www.youtube.com/channel/UC-_uMXaC_21j1Y2_nGjTyvg/?utm_source=wordpress&utm_medium=referral&utm_content=tracking).
+*   The [Extra Product Options (Product Addons) for WooCommerce](https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wepo_free&utm_medium=readme&utm_campaign=wepo_upgrade_link) premium plugin homepage.
+*   The [Knowledgebase](https://www.themehigh.com/docs/category/extra-product-option-for-woocommerce/?utm_source=wepo_free&utm_medium=readme&utm_campaign=help_docs).
+*   Other [WordPress Plugins](https://www.themehigh.com/plugins/?utm_source=wepo_free&utm_medium=readme&utm_campaign=themehigh_plugins) by the ThemeHigh team.
+*   Join [Themehigh Community](https://www.facebook.com/groups/themehigh/) to get help from similar people
+*   Follow ThemeHigh on [Facebook](https://www.facebook.com/ThemeHigh-319611541768603/), [LinkedIn](https://www.linkedin.com/company/themehigh/), [Twitter](https://twitter.com/themehigh/) & [YouTube](https://www.youtube.com/channel/UC-_uMXaC_21j1Y2_nGjTyvg/).
 
 == Installation ==
 = Minimum Requirements =
@@ -189,9 +190,9 @@ Manual installation method requires downloading the 'Extra Product Options (Prod
 == Frequently Asked Questions ==
 There’s a lot of help available on the main plugin website. See:
 
-🔗 [Plugin Features](https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wordpress&utm_medium=referral&utm_content=tracking)
-🔗 [Help Docs](https://www.themehigh.com/help-guides/woocommerce-extra-product-options/?utm_source=wordpress&utm_medium=referral&utm_content=tracking)
-🔗 [ThemeHigh Support](https://www.themehigh.com/help-guides/?utm_source=wordpress&utm_medium=referral&utm_content=tracking)
+🔗 [Plugin Features](https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wepo_free&utm_medium=readme&utm_campaign=wepo_upgrade_link)
+🔗 [Help Docs](https://www.themehigh.com/docs/category/extra-product-option-for-woocommerce/?utm_source=wepo_free&utm_medium=readme&utm_campaign=help_docs)
+🔗 [ThemeHigh Support](https://www.themehigh.com/docs/?utm_source=wepo_free&utm_medium=readme&utm_campaign=get_support)
 
 = How can I show different custom fields for different Products? =
 Using the Field display rules, the field can be set to display for a particular product or products as well as based on a category or categories. By setting a display rule based on Product/Category, you can have a different field for different Product/Categories. You can logically combine more than one rule with OR and AND functions.
@@ -211,7 +212,7 @@ The Input type of these field types makes them different. The Input of the numbe
 In the case of the Telephone type on responsive screen, a very suitable Keypad for entering Telephone number is displayed.
 
 = What is more in the Premium version of Extra Product Options for WooCommerce? =
-The Premium version provides more Field types (16 types) than the free version to bring out the maximum possibilities with Input fields and Display fields for the Product page. You can have it checked from - <a rel="nofollow" href="https://themehigh.com/product/woocommerce-extra-product-options/?utm_source=wordpress&utm_medium=referral&utm_content=tracking">Premium Version</a>
+The Premium version provides more Field types (16 types) than the free version to bring out the maximum possibilities with Input fields and Display fields for the Product page. You can have it checked from - <a rel="nofollow" href="https://www.themehigh.com/product/woocommerce-extra-product-options/?utm_source=wepo_free&utm_medium=readme&utm_campaign=wepo_upgrade_link">Premium Version</a>
 
 = Where all does the fields created using this Extra Product Options plugin gets displayed? =
 The fields created using this plugin are displayed on the Product page to accept data. 
@@ -253,6 +254,23 @@ Yes, it is compatible with Astra, Storefront. Also compatible with Avada, divi b
 17. Use html tags in field label.
 
 == Changelog ==
+= 3.1.7 =
+* Added Twenty Twenty-Two theme compatibility.
+* Added WooCommerce 6.8.2 compatibility.
+
+= 3.1.6 =
+* Improved display of product title in admin area for conditional rule product list.
+
+= 3.1.5 =
+* Added WooCommerce 6.7.0 compatibility.
+
+= 3.1.4 =
+* Disabled the feedback form in the admin area.
+
+= 3.1.3 =
+* Added WooCommerce 6.5.1 compatibility.
+* Added WordPress 6.0 compatibility.
+
 = 3.1.2 =
 * Added new field type "Switch".
 * Added new field type "Separator".

@@ -26,6 +26,7 @@ use MailPoetVendor\Symfony\Component\Validator\Constraints as Assert;
 class NewsletterEntity {
   // types
   const TYPE_AUTOMATIC = 'automatic';
+  const TYPE_AUTOMATION = 'automation';
   const TYPE_STANDARD = 'standard';
   const TYPE_WELCOME = 'welcome';
   const TYPE_NOTIFICATION = 'notification';
@@ -179,6 +180,7 @@ class NewsletterEntity {
   public function __clone() {
     // reset ID
     $this->id = null;
+    $this->newsletterSegments = new ArrayCollection();
   }
 
   /**
@@ -445,6 +447,21 @@ class NewsletterEntity {
     return $option ?: null;
   }
 
+  /**
+   * @return array<string, mixed> Associative array of newsletter option values with option names as keys
+   */
+  public function getOptionsAsArray(): array {
+    $optionsArray = [];
+    foreach ($this->options as $option) {
+      $name = $option->getName();
+      if (!$name) {
+        continue;
+      }
+      $optionsArray[$name] = $option->getValue();
+    }
+    return $optionsArray;
+  }
+
   public function getOptionValue(string $name) {
     $option = $this->getOption($name);
     return $option ? $option->getValue() : null;
@@ -507,5 +524,12 @@ class NewsletterEntity {
   public function getContent(): string {
     $content = $this->getBody()['content'] ?? '';
     return json_encode($content) ?: '';
+  }
+
+  /**
+   * Only some types of newsletters can be set as sent. Some others are just active or draft.
+   */
+  public function canBeSetSent(): bool {
+    return in_array($this->getType(), [self::TYPE_NOTIFICATION_HISTORY, self::TYPE_STANDARD], true);
   }
 }

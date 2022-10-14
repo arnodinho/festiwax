@@ -81,7 +81,7 @@ class Shortcodes {
       '/\[%s:(?!\/\/).*?\]/i',
       ($categories) ? '(?:' . $categories . ')' : '(?:\w+)'
     );
-    preg_match_all($regex, $content, $shortcodes);
+    preg_match_all($regex, (string)$content, $shortcodes);
     $shortcodes = $shortcodes[0];
     return (count($shortcodes)) ?
       array_values(array_unique($shortcodes)) :
@@ -154,7 +154,7 @@ class Shortcodes {
         '';
       $shortcodeDetails['action_argument_value'] = !empty($shortcodeDetails['argument_value']) ?
         $shortcodeDetails['argument_value'] :
-        false;
+        '';
       $shortcodeDetails['arguments'] = !empty($shortcodeDetails['arguments']) ?
         $shortcodeDetails['arguments'] : [];
 

@@ -12,7 +12,6 @@ use MailPoet\Util\Helpers;
 use MailPoet\Util\License\Features\Subscribers as SubscribersFeature;
 use MailPoet\Util\License\License;
 use MailPoet\WP\DateTime;
-use MailPoet\WP\Functions as WPFunctions;
 use MailPoet\WP\Notice as WPNotice;
 
 class ServicesChecker {
@@ -28,6 +27,10 @@ class ServicesChecker {
     $this->subscribersFeature = ContainerWrapper::getInstance()->get(SubscribersFeature::class);
   }
 
+  public function isPremiumPluginActive() {
+    return License::getLicense() ? true : false;
+  }
+
   public function isMailPoetAPIKeyValid($displayErrorNotice = true, $forceCheck = false) {
     if (!$forceCheck && !Bridge::isMPSendingServiceEnabled()) {
       return null;
@@ -36,7 +39,8 @@ class ServicesChecker {
     $mssKeySpecified = Bridge::isMSSKeySpecified();
     $mssKey = $this->settings->get(Bridge::API_KEY_STATE_SETTING_NAME);
 
-    if (!$mssKeySpecified
+    if (
+      !$mssKeySpecified
       || empty($mssKey['state'])
       || $mssKey['state'] == Bridge::KEY_INVALID
     ) {
@@ -52,14 +56,16 @@ class ServicesChecker {
         WPNotice::displayError($error, '', '', false, false);
       }
       return false;
-    } elseif ($mssKey['state'] == Bridge::KEY_EXPIRING
+    } elseif (
+      $mssKey['state'] == Bridge::KEY_EXPIRING
       && !empty($mssKey['data']['expire_at'])
     ) {
       if ($displayErrorNotice) {
         $dateTime = new DateTime();
         $date = $dateTime->formatDate(strtotime($mssKey['data']['expire_at']));
         $error = Helpers::replaceLinkTags(
-          WPFunctions::get()->__("Your newsletters are awesome! Don't forget to [link]upgrade your MailPoet email plan[/link] by %s to keep sending them to your subscribers.", 'mailpoet'),
+          // translators: %s is a date.
+          __("Your newsletters are awesome! Don't forget to [link]upgrade your MailPoet email plan[/link] by %s to keep sending them to your subscribers.", 'mailpoet'),
           'https://account.mailpoet.com?s=' . $this->subscribersFeature->getSubscribersCount(),
           ['target' => '_blank']
         );
@@ -83,13 +89,14 @@ class ServicesChecker {
       $displayErrorNotice = false;
     }
 
-    if (!$premiumKeySpecified
+    if (
+      !$premiumKeySpecified
       || empty($premiumKey['state'])
       || $premiumKey['state'] === Bridge::KEY_INVALID
       || $premiumKey['state'] === Bridge::KEY_ALREADY_USED
     ) {
       if ($displayErrorNotice) {
-        $errorString = WPFunctions::get()->__('[link1]Register[/link1] your copy of the MailPoet Premium plugin to receive access to automatic upgrades and support. Need a license key? [link2]Purchase one now.[/link2]', 'mailpoet');
+        $errorString = __('[link1]Register[/link1] your copy of the MailPoet Premium plugin to receive access to automatic upgrades and support. Need a license key? [link2]Purchase one now.[/link2]', 'mailpoet');
         $error = Helpers::replaceLinkTags(
           $errorString,
           'admin.php?page=mailpoet-settings#premium',
@@ -98,21 +105,23 @@ class ServicesChecker {
         );
         $error = Helpers::replaceLinkTags(
           $error,
-          'admin.php?page=mailpoet-premium',
+          'admin.php?page=mailpoet-upgrade',
           [],
           'link2'
         );
         WPNotice::displayWarning($error);
       }
       return false;
-    } elseif ($premiumKey['state'] === Bridge::KEY_EXPIRING
+    } elseif (
+      $premiumKey['state'] === Bridge::KEY_EXPIRING
       && !empty($premiumKey['data']['expire_at'])
     ) {
       if ($displayErrorNotice) {
         $dateTime = new DateTime();
         $date = $dateTime->formatDate(strtotime($premiumKey['data']['expire_at']));
         $error = Helpers::replaceLinkTags(
-          WPFunctions::get()->__("Your License Key for MailPoet is expiring! Don't forget to [link]renew your license[/link] by %s to keep enjoying automatic updates and Premium support.", 'mailpoet'),
+          // translators: %s is a date.
+          __("Your License Key for MailPoet is expiring! Don't forget to [link]renew your license[/link] by %s to keep enjoying automatic updates and Premium support.", 'mailpoet'),
           'https://account.mailpoet.com',
           ['target' => '_blank']
         );
@@ -135,6 +144,19 @@ class ServicesChecker {
     return $mssActive && $mssKeyValid && $mssKeyPendingApproval;
   }
 
+  public function isUserActivelyPaying(): bool {
+    $isPremiumKeyValid = $this->isPremiumKeyValid(false);
+
+    $mssActive = Bridge::isMPSendingServiceEnabled();
+    $isMssKeyValid = $this->isMailPoetAPIKeyValid(false);
+
+    if (!$mssActive || ($isPremiumKeyValid && !$isMssKeyValid)) {
+      return $this->subscribersFeature->hasPremiumSupport();
+    } else {
+      return $this->subscribersFeature->hasMssPremiumSupport();
+    }
+  }
+
   /**
    * Returns MSS or Premium valid key.
    */
@@ -146,5 +168,15 @@ class ServicesChecker {
       return $this->settings->get(Bridge::PREMIUM_KEY_SETTING_NAME);
     }
     return null;
+  }
+
+  public function generatePartialApiKey(): string {
+    $key = (string)($this->getAnyValidKey());
+    if ($key) {
+      $halfKeyLength = (int)(strlen($key) / 2);
+
+      return substr($key, 0, $halfKeyLength);
+    }
+    return '';
   }
 }

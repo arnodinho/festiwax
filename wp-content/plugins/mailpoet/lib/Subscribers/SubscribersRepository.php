@@ -10,9 +10,10 @@ use MailPoet\Entities\SegmentEntity;
 use MailPoet\Entities\SubscriberCustomFieldEntity;
 use MailPoet\Entities\SubscriberEntity;
 use MailPoet\Entities\SubscriberSegmentEntity;
-use MailPoet\Entities\UserAgentEntity;
+use MailPoet\Util\License\Features\Subscribers;
 use MailPoet\WP\Functions as WPFunctions;
 use MailPoetVendor\Carbon\Carbon;
+use MailPoetVendor\Carbon\CarbonImmutable;
 use MailPoetVendor\Doctrine\DBAL\Connection;
 use MailPoetVendor\Doctrine\ORM\EntityManager;
 use MailPoetVendor\Doctrine\ORM\Query\Expr\Join;
@@ -44,10 +45,7 @@ class SubscribersRepository extends Repository {
     return SubscriberEntity::class;
   }
 
-  /**
-   * @return int
-   */
-  public function getTotalSubscribers() {
+  public function getTotalSubscribers(): int {
     $query = $this->entityManager
       ->createQueryBuilder()
       ->select('count(n.id)')
@@ -60,6 +58,10 @@ class SubscribersRepository extends Repository {
       ])
       ->getQuery();
     return (int)$query->getSingleScalarResult();
+  }
+
+  public function invalidateTotalSubscribersCache(): void {
+    $this->wp->deleteTransient(Subscribers::SUBSCRIBERS_COUNT_CACHE_KEY);
   }
 
   public function findBySegment(int $segmentId): array {
@@ -86,6 +88,24 @@ class SubscribersRepository extends Repository {
       ->getQuery()->getResult();
   }
 
+  public function getWooCommerceSegmentSubscriber(string $email): ?SubscriberEntity {
+    $subscriber = $this->doctrineRepository->createQueryBuilder('s')
+      ->join('s.subscriberSegments', 'ss')
+      ->join('ss.segment', 'sg', Join::WITH, 'sg.type = :typeWcUsers')
+      ->where('s.isWoocommerceUser = 1')
+      ->andWhere('s.status IN (:subscribed, :unconfirmed)')
+      ->andWhere('ss.status = :subscribed')
+      ->andWhere('s.email = :email')
+      ->setParameter('typeWcUsers', SegmentEntity::TYPE_WC_USERS)
+      ->setParameter('subscribed', SubscriberEntity::STATUS_SUBSCRIBED)
+      ->setParameter('unconfirmed', SubscriberEntity::STATUS_UNCONFIRMED)
+      ->setParameter('email', $email)
+      ->setMaxResults(1)
+      ->getQuery()
+      ->getOneOrNullResult();
+    return $subscriber instanceof SubscriberEntity ? $subscriber : null;
+  }
+
   /**
    * @return int - number of processed ids
    */
@@ -101,6 +121,7 @@ class SubscribersRepository extends Repository {
       ->setParameter('ids', $ids)
       ->getQuery()->execute();
 
+    $this->invalidateTotalSubscribersCache();
     return count($ids);
   }
 
@@ -120,6 +141,7 @@ class SubscribersRepository extends Repository {
       ->setParameter('ids', $ids)
       ->getQuery()->execute();
 
+    $this->invalidateTotalSubscribersCache();
     return count($ids);
   }
 
@@ -156,6 +178,7 @@ class SubscribersRepository extends Repository {
         ->getQuery()->execute();
     });
 
+    $this->invalidateTotalSubscribersCache();
     return $count;
   }
 
@@ -168,7 +191,7 @@ class SubscribersRepository extends Repository {
     }
 
     $subscriberSegmentsTable = $this->entityManager->getClassMetadata(SubscriberSegmentEntity::class)->getTableName();
-    $count = $this->entityManager->getConnection()->executeStatement("
+    $count = (int)$this->entityManager->getConnection()->executeStatement("
        DELETE ss FROM $subscriberSegmentsTable ss
        WHERE ss.`subscriber_id` IN (:ids)
        AND ss.`segment_id` = :segment_id
@@ -187,7 +210,7 @@ class SubscribersRepository extends Repository {
 
     $subscriberSegmentsTable = $this->entityManager->getClassMetadata(SubscriberSegmentEntity::class)->getTableName();
     $segmentsTable = $this->entityManager->getClassMetadata(SegmentEntity::class)->getTableName();
-    $count = $this->entityManager->getConnection()->executeStatement("
+    $count = (int)$this->entityManager->getConnection()->executeStatement("
        DELETE ss FROM $subscriberSegmentsTable ss
        JOIN $segmentsTable s ON s.id = ss.segment_id AND s.`type` = :typeDefault
        WHERE ss.`subscriber_id` IN (:ids)
@@ -267,6 +290,7 @@ class SubscribersRepository extends Repository {
       ->setParameter('ids', $ids)
       ->getQuery()->execute();
 
+    $this->invalidateTotalSubscribersCache();
     return count($ids);
   }
 
@@ -322,16 +346,13 @@ class SubscribersRepository extends Repository {
       ->getResult();
   }
 
-  public function maybeUpdateLastEngagement(SubscriberEntity $subscriberEntity, ?UserAgentEntity $userAgent = null): void {
-    if ($userAgent instanceof UserAgentEntity && $userAgent->getUserAgentType() === UserAgentEntity::USER_AGENT_TYPE_MACHINE) {
-      return;
-    }
-    $now = Carbon::createFromTimestamp((int)$this->wp->currentTime('timestamp'));
+  public function maybeUpdateLastEngagement(SubscriberEntity $subscriberEntity): void {
+    $now = CarbonImmutable::createFromTimestamp((int)$this->wp->currentTime('timestamp'));
     // Do not update engagement if was recently updated to avoid unnecessary updates in DB
     if ($subscriberEntity->getLastEngagementAt() && $subscriberEntity->getLastEngagementAt() > $now->subMinute()) {
       return;
     }
-    // Update last engagement for human (and also unknown) user agent
+    // Update last engagement
     $subscriberEntity->setLastEngagementAt($now);
     $this->flush();
   }
@@ -349,5 +370,15 @@ class SubscribersRepository extends Repository {
       ->setParameter('ids', $ids)
       ->getQuery()
       ->getArrayResult();
+  }
+
+  public function getMaxSubscriberId(): int {
+    $maxSubscriberId = $this->entityManager->createQueryBuilder()
+      ->select('MAX(s.id)')
+      ->from(SubscriberEntity::class, 's')
+      ->getQuery()
+      ->getSingleScalarResult();
+
+    return is_int($maxSubscriberId) ? $maxSubscriberId : 0;
   }
 }

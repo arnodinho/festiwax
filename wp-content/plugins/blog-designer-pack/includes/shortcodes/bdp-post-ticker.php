@@ -93,7 +93,7 @@ function bdp_get_post_ticker( $atts, $content = null ) {
 	<div class="bdp-ticker-wrp bdp-clearfix" id="bdp-ticker-<?php echo $unique; ?>">
 		<div class="bdp-ticker-title bdp-ticker-title">
 			<?php if($ticker_title) { ?>
-			<div class="bdp-ticker-title-cnt"><?php echo $ticker_title; ?></div>
+			<div class="bdp-ticker-title-cnt"><?php echo esc_html($ticker_title); ?></div>
 			<?php } ?>
 			<span></span>
 		</div>

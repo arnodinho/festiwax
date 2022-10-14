@@ -21,10 +21,11 @@ class PHPVersionWarnings {
   }
 
   public function isOutdatedPHPVersion($phpVersion) {
-    return version_compare($phpVersion, '7.2', '<') && !get_transient(self::OPTION_NAME);
+    return version_compare($phpVersion, '7.3', '<') && !get_transient(self::OPTION_NAME);
   }
 
   public function display($phpVersion) {
+    // translators: %s is the PHP version
     $errorString = __('Your website is running on PHP %s which MailPoet does not officially support. Read our [link]simple PHP upgrade guide.[/link]', 'mailpoet');
     $errorString = sprintf($errorString, $phpVersion);
     $error = Helpers::replaceLinkTags($errorString, 'https://kb.mailpoet.com/article/251-upgrading-the-websites-php-version', [

@@ -9,7 +9,8 @@
 		"html": false,
 		"multiple": false,
 		"reusable": false,
-		"inserter": false
+		"inserter": false,
+		"lock": false
 	},
 	"attributes": {
 		"lock": {
@@ -22,5 +23,6 @@
 	},
 	"parent": [ "woocommerce/cart-items-block" ],
 	"textdomain": "woo-gutenberg-products-block",
+	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 2
 }

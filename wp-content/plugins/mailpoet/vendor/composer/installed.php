@@ -1,2 +1,54 @@
 <?php
- if (!defined('ABSPATH')) exit; return array( 'root' => array( 'pretty_version' => 'dev-master', 'version' => 'dev-master', 'type' => 'library', 'install_path' => __DIR__ . '/../../', 'aliases' => array(), 'reference' => '3ec23ce877b97cd807e446fb3cbe1768c1588a26', 'name' => '__root__', 'dev' => false, ), 'versions' => array( '__root__' => array( 'pretty_version' => 'dev-master', 'version' => 'dev-master', 'type' => 'library', 'install_path' => __DIR__ . '/../../', 'aliases' => array(), 'reference' => '3ec23ce877b97cd807e446fb3cbe1768c1588a26', 'dev_requirement' => false, ), 'mtdowling/cron-expression' => array( 'pretty_version' => 'v1.2.3', 'version' => '1.2.3.0', 'type' => 'library', 'install_path' => __DIR__ . '/../mtdowling/cron-expression', 'aliases' => array(), 'reference' => '9be552eebcc1ceec9776378f7dcc085246cacca6', 'dev_requirement' => false, ), 'soundasleep/html2text' => array( 'pretty_version' => 'dev-master', 'version' => 'dev-master', 'type' => 'library', 'install_path' => __DIR__ . '/../soundasleep/html2text', 'aliases' => array(), 'reference' => 'd907c8fc20605135b4ac29b7a2f43d8c1c6cddb8', 'dev_requirement' => false, ), 'tburry/pquery' => array( 'pretty_version' => 'v1.1.1', 'version' => '1.1.1.0', 'type' => 'library', 'install_path' => __DIR__ . '/../tburry/pquery', 'aliases' => array(), 'reference' => '872339ffd38d261c4417ea1855428b1b4ff9abf1', 'dev_requirement' => false, ), ), ); 
+if (!defined('ABSPATH')) exit;
+ return array(
+ 'root' => array(
+ 'pretty_version' => 'dev-trunk',
+ 'version' => 'dev-trunk',
+ 'type' => 'library',
+ 'install_path' => __DIR__ . '/../../',
+ 'aliases' => array(),
+ 'reference' => '32e5785e54e14e35f55552dd9388f54ba2556658',
+ 'name' => '__root__',
+ 'dev' => false,
+ ),
+ 'versions' => array(
+ '__root__' => array(
+ 'pretty_version' => 'dev-trunk',
+ 'version' => 'dev-trunk',
+ 'type' => 'library',
+ 'install_path' => __DIR__ . '/../../',
+ 'aliases' => array(),
+ 'reference' => '32e5785e54e14e35f55552dd9388f54ba2556658',
+ 'dev_requirement' => false,
+ ),
+ 'mtdowling/cron-expression' => array(
+ 'pretty_version' => 'v1.2.3',
+ 'version' => '1.2.3.0',
+ 'type' => 'library',
+ 'install_path' => __DIR__ . '/../mtdowling/cron-expression',
+ 'aliases' => array(),
+ 'reference' => '9be552eebcc1ceec9776378f7dcc085246cacca6',
+ 'dev_requirement' => false,
+ ),
+ 'soundasleep/html2text' => array(
+ 'pretty_version' => 'dev-master',
+ 'version' => 'dev-master',
+ 'type' => 'library',
+ 'install_path' => __DIR__ . '/../soundasleep/html2text',
+ 'aliases' => array(
+ 0 => '9999999-dev',
+ ),
+ 'reference' => 'd907c8fc20605135b4ac29b7a2f43d8c1c6cddb8',
+ 'dev_requirement' => false,
+ ),
+ 'woocommerce/action-scheduler' => array(
+ 'pretty_version' => '3.4.2',
+ 'version' => '3.4.2.0',
+ 'type' => 'wordpress-plugin',
+ 'install_path' => __DIR__ . '/../woocommerce/action-scheduler',
+ 'aliases' => array(),
+ 'reference' => '7d8e830b6387410ccf11708194d3836f01cb2942',
+ 'dev_requirement' => false,
+ ),
+ ),
+);

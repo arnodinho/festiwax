@@ -14,12 +14,15 @@ use MailPoet\Mailer\MailerLog;
 use MailPoet\Models\Newsletter as NewsletterModel;
 use MailPoet\Models\NewsletterSegment as NewsletterSegmentModel;
 use MailPoet\Models\SendingQueue as SendingQueueModel;
+use MailPoet\Models\Subscriber as SubscriberModel;
 use MailPoet\Newsletter\Links\Links as NewsletterLinks;
 use MailPoet\Newsletter\NewslettersRepository;
 use MailPoet\Newsletter\Renderer\PostProcess\OpenTracking;
 use MailPoet\Newsletter\Renderer\Renderer;
-use MailPoet\Settings\SettingsController;
+use MailPoet\Newsletter\Sending\SendingQueuesRepository;
+use MailPoet\Settings\TrackingConfig;
 use MailPoet\Statistics\GATracking;
+use MailPoet\Subscribers\SubscribersRepository;
 use MailPoet\Util\Helpers;
 use MailPoet\WP\Emoji;
 use MailPoet\WP\Functions as WPFunctions;
@@ -55,14 +58,20 @@ class Newsletter {
   /** @var NewsletterLinks */
   private $newsletterLinks;
 
+  /** @var SendingQueuesRepository */
+  private $sendingQueuesRepository;
+
+  /** @var SubscribersRepository */
+  private $subscribersRepository;
+
   public function __construct(
     WPFunctions $wp = null,
     PostsTask $postsTask = null,
     GATracking $gaTracking = null,
     Emoji $emoji = null
   ) {
-    $settings = SettingsController::getInstance();
-    $this->trackingEnabled = (boolean)$settings->get('tracking.enabled');
+    $trackingConfig = ContainerWrapper::getInstance()->get(TrackingConfig::class);
+    $this->trackingEnabled = $trackingConfig->isEmailTrackingEnabled();
     if ($wp === null) {
       $wp = new WPFunctions;
     }
@@ -84,6 +93,8 @@ class Newsletter {
     $this->newslettersRepository = ContainerWrapper::getInstance()->get(NewslettersRepository::class);
     $this->linksTask = ContainerWrapper::getInstance()->get(LinksTask::class);
     $this->newsletterLinks = ContainerWrapper::getInstance()->get(NewsletterLinks::class);
+    $this->sendingQueuesRepository = ContainerWrapper::getInstance()->get(SendingQueuesRepository::class);
+    $this->subscribersRepository = ContainerWrapper::getInstance()->get(SubscribersRepository::class);
   }
 
   public function getNewsletterFromQueue($queue) {
@@ -121,16 +132,18 @@ class Newsletter {
         $this->stopNewsletterPreProcessing(sprintf('QUEUE-%d-RENDER', $sendingTask->id)) :
         $newsletter;
     }
-    $this->loggerFactory->getLogger(LoggerFactory::TOPIC_NEWSLETTERS)->addInfo(
+    $this->loggerFactory->getLogger(LoggerFactory::TOPIC_NEWSLETTERS)->info(
       'pre-processing newsletter',
       ['newsletter_id' => $newsletter->id, 'task_id' => $sendingTask->taskId]
     );
+    $newsletterEntity = $this->newslettersRepository->findOneById($newsletter->id);
+    if (!$newsletterEntity) return false;
     // if tracking is enabled, do additional processing
     if ($this->trackingEnabled) {
       // hook to the newsletter post-processing filter and add tracking image
       $this->trackingImageInserted = OpenTracking::addTrackingImage();
       // render newsletter
-      $renderedNewsletter = $this->renderer->render($newsletter, $sendingTask);
+      $renderedNewsletter = $this->renderer->render($newsletterEntity, $sendingTask);
       $renderedNewsletter = $this->wp->applyFilters(
         'mailpoet_sending_newsletter_render_after',
         $renderedNewsletter,
@@ -141,7 +154,7 @@ class Newsletter {
       $renderedNewsletter = $this->linksTask->process($renderedNewsletter, $newsletter, $sendingTask);
     } else {
       // render newsletter
-      $renderedNewsletter = $this->renderer->render($newsletter, $sendingTask);
+      $renderedNewsletter = $this->renderer->render($newsletterEntity, $sendingTask);
       $renderedNewsletter = $this->wp->applyFilters(
         'mailpoet_sending_newsletter_render_after',
         $renderedNewsletter,
@@ -150,11 +163,12 @@ class Newsletter {
       $renderedNewsletter = $this->gaTracking->applyGATracking($renderedNewsletter, $newsletter);
     }
     // check if this is a post notification and if it contains at least 1 ALC post
-    if ($newsletter->type === NewsletterModel::TYPE_NOTIFICATION_HISTORY &&
+    if (
+      $newsletter->type === NewsletterModel::TYPE_NOTIFICATION_HISTORY &&
       $this->postsTask->getAlcPostsCount($renderedNewsletter, $newsletter) === 0
     ) {
       // delete notification history record since it will never be sent
-      $this->loggerFactory->getLogger(LoggerFactory::TOPIC_POST_NOTIFICATIONS)->addInfo(
+      $this->loggerFactory->getLogger(LoggerFactory::TOPIC_POST_NOTIFICATIONS)->info(
         'no posts in post notification, deleting it',
         ['newsletter_id' => $newsletter->id, 'task_id' => $sendingTask->taskId]
       );
@@ -162,21 +176,26 @@ class Newsletter {
       return false;
     }
     // extract and save newsletter posts
-    $newsletterEntity = $this->newslettersRepository->findOneById($newsletter->id);
-    if (!$newsletterEntity) return false;
     $this->postsTask->extractAndSave($renderedNewsletter, $newsletterEntity);
+
+    if ($sendingTask->queue() instanceof SendingQueueModel) {
+      $sendingQueueEntity = $this->sendingQueuesRepository->findOneById($sendingTask->queue()->id);
+    } else {
+      $sendingQueueEntity = null;
+    }
+
     // update queue with the rendered and pre-processed newsletter
     $sendingTask->newsletterRenderedSubject = ShortcodesTask::process(
       $newsletter->subject,
       $renderedNewsletter['html'],
-      $newsletter,
+      $newsletterEntity,
       null,
-      $sendingTask
+      $sendingQueueEntity
     );
     // if the rendered subject is empty, use a default subject,
     // having no subject in a newsletter is considered spammy
-    if (empty(trim($sendingTask->newsletterRenderedSubject))) {
-      $sendingTask->newsletterRenderedSubject = WPFunctions::get()->__('No subject', 'mailpoet');
+    if (empty(trim((string)$sendingTask->newsletterRenderedSubject))) {
+      $sendingTask->newsletterRenderedSubject = __('No subject', 'mailpoet');
     }
     $renderedNewsletter = $this->emoji->encodeEmojisInBody($renderedNewsletter);
     $sendingTask->newsletterRenderedBody = $renderedNewsletter;
@@ -208,12 +227,31 @@ class Newsletter {
         $renderedNewsletter['text'],
       ]
     );
+
+    if ($newsletter instanceof NewsletterModel) {
+      $newsletterEntity = $this->newslettersRepository->findOneById($newsletter->id);
+    } else {
+      $newsletterEntity = null;
+    }
+
+    if ($subscriber instanceof SubscriberModel) {
+      $subscriberEntity = $this->subscribersRepository->findOneById($subscriber->id);
+    } else {
+      $subscriberEntity = null;
+    }
+
+    if ($queue->queue() instanceof SendingQueueModel) {
+      $sendingQueueEntity = $this->sendingQueuesRepository->findOneById($queue->queue()->id);
+    } else {
+      $sendingQueueEntity = null;
+    }
+
     $preparedNewsletter = ShortcodesTask::process(
       $preparedNewsletter,
       null,
-      $newsletter,
-      $subscriber,
-      $queue
+      $newsletterEntity,
+      $subscriberEntity,
+      $sendingQueueEntity
     );
     if ($this->trackingEnabled) {
       $preparedNewsletter = $this->newsletterLinks->replaceSubscriberData(
@@ -235,7 +273,8 @@ class Newsletter {
 
   public function markNewsletterAsSent($newsletter, $queue) {
     // if it's a standard or notification history newsletter, update its status
-    if ($newsletter->type === NewsletterModel::TYPE_STANDARD ||
+    if (
+      $newsletter->type === NewsletterModel::TYPE_STANDARD ||
        $newsletter->type === NewsletterModel::TYPE_NOTIFICATION_HISTORY
     ) {
       $newsletter->status = NewsletterModel::STATUS_SENT;
@@ -254,7 +293,7 @@ class Newsletter {
   public function stopNewsletterPreProcessing($errorCode = null) {
     MailerLog::processError(
       'queue_save',
-      WPFunctions::get()->__('There was an error processing your newsletter during sending. If possible, please contact us and report this issue.', 'mailpoet'),
+      __('There was an error processing your newsletter during sending. If possible, please contact us and report this issue.', 'mailpoet'),
       $errorCode
     );
   }

@@ -47,7 +47,9 @@ class DaemonHttpRunner {
   public function ping() {
     // if Tracy enabled & called by 'MailPoet Cron' user agent, disable Tracy Bar
     // (happens in CronHelperTest because it's not a real integration test - calls other WP instance)
-    $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
+    $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ?
+      sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT']))
+      : null;
     if (class_exists(Debugger::class) && $userAgent === 'MailPoet Cron') {
       Debugger::$showBar = false;
     }
@@ -62,12 +64,13 @@ class DaemonHttpRunner {
     }
     $this->addCacheHeaders();
     if (!$requestData) {
-      $error = WPFunctions::get()->__('Invalid or missing request data.', 'mailpoet');
+      $error = __('Invalid or missing request data.', 'mailpoet');
     } else {
       if (!$this->settingsDaemonData) {
-        $error = WPFunctions::get()->__('Daemon does not exist.', 'mailpoet');
+        $error = __('Daemon does not exist.', 'mailpoet');
       } else {
-        if (!isset($requestData['token']) ||
+        if (
+          !isset($requestData['token']) ||
           $requestData['token'] !== $this->settingsDaemonData['token']
         ) {
           $error = 'Invalid or missing token.';
@@ -78,13 +81,14 @@ class DaemonHttpRunner {
       return $this->abortWithError($error);
     }
     if ($this->daemon === null) {
-      return $this->abortWithError(WPFunctions::get()->__('Daemon does not set correctly.', 'mailpoet'));
+      return $this->abortWithError(__('Daemon does not set correctly.', 'mailpoet'));
     }
     $this->settingsDaemonData['token'] = $this->token;
     $this->daemon->run($this->settingsDaemonData);
     // If we're using the WordPress trigger, check the conditions to stop cron if necessary
     $enableCronSelfDeactivation = WPFunctions::get()->applyFilters('mailpoet_cron_enable_self_deactivation', false);
-    if ($enableCronSelfDeactivation
+    if (
+      $enableCronSelfDeactivation
       && $this->isCronTriggerMethodWordPress()
       && !$this->checkWPTriggerExecutionRequirements()
     ) {
@@ -120,7 +124,8 @@ class DaemonHttpRunner {
   }
 
   public function terminateRequest($message = false) {
-    die($message);
+    echo esc_html($message);
+    die();
   }
 
   public function isCronTriggerMethodWordPress() {

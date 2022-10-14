@@ -15,7 +15,7 @@ class SettingsController {
   const DEFAULT_SENDING_METHOD = 'PHPMail';
   const DEFAULT_SENDING_FREQUENCY_EMAILS = 25;
   const DEFAULT_SENDING_FREQUENCY_INTERVAL = 5; // in minutes
-  const DEFAULT_DEACTIVATE_SUBSCRIBER_AFTER_INACTIVE_DAYS = 180;
+  const DEFAULT_DEACTIVATE_SUBSCRIBER_AFTER_INACTIVE_DAYS = 365;
 
   private $loaded = false;
 
@@ -70,11 +70,12 @@ class SettingsController {
         ],
         'signup_confirmation' => [
           'enabled' => true,
+          // translators: %1$s is the name of the blog
           'subject' => sprintf(__('Confirm your subscription to %1$s', 'mailpoet'), WPFunctions::get()->getOption('blogname')),
-          'body' => WPFunctions::get()->__("Hello,\n\nWelcome to our newsletter!\n\nPlease confirm your subscription to our list by clicking the link below: \n\n[activation_link]I confirm my subscription![/activation_link]\n\nThank you,\n\nThe Team", 'mailpoet'),
+          'body' => __("Hello,\n\nWelcome to our newsletter!\n\nPlease confirm your subscription to our list by clicking the link below: \n\n[activation_link]I confirm my subscription![/activation_link]\n\nThank you,\n\nThe Team", 'mailpoet'),
         ],
         'tracking' => [
-          'enabled' => true,
+          'level' => TrackingConfig::LEVEL_FULL,
         ],
         'analytics' => [
           'enabled' => false,

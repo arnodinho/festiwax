@@ -5,7 +5,9 @@ namespace MailPoet\Util\pQuery;
 if (!defined('ABSPATH')) exit;
 
 
-class Html5Parser extends \pQuery\HtmlParser {
-  /** @var string|\pQuery\DomNode */
-  public $root = 'MailPoet\Util\pQuery\DomNode';
+use MailPoetVendor\pQuery\Html5Parser as pQueryHtml5Parser;
+
+class Html5Parser extends pQueryHtml5Parser {
+  /** @var string|DomNode */
+  public $root = DomNode::class;
 }

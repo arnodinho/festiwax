@@ -7,15 +7,32 @@ if (!defined('ABSPATH')) exit;
 
 use MailPoet\Cron\Workers\SimpleWorker;
 use MailPoet\Entities\ScheduledTaskEntity;
+use MailPoet\Entities\ScheduledTaskSubscriberEntity;
+use MailPoet\Entities\SendingQueueEntity;
 use MailPoet\Mailer\MailerLog;
-use MailPoet\Models\ScheduledTaskSubscriber;
-use MailPoet\Models\SendingQueue as SendingQueueModel;
+use MailPoet\Newsletter\Sending\ScheduledTaskSubscribersRepository;
 use MailPoet\WP\Functions as WPFunctions;
 use MailPoetVendor\Carbon\Carbon;
+use MailPoetVendor\Doctrine\ORM\EntityManager;
 
 class Migration extends SimpleWorker {
   const TASK_TYPE = 'migration';
   const BATCH_SIZE = 20;
+
+  /** @var EntityManager */
+  private $entityManager;
+
+  /** @var ScheduledTaskSubscribersRepository */
+  private $scheduledTaskSubscribersRepository;
+
+  public function __construct(
+    EntityManager $entityManager,
+    ScheduledTaskSubscribersRepository $scheduledTaskSubscribersRepository
+  ) {
+    parent::__construct();
+    $this->entityManager = $entityManager;
+    $this->scheduledTaskSubscribersRepository = $scheduledTaskSubscribersRepository;
+  }
 
   public function checkProcessingRequirements() {
     // if migration was completed, don't run it again
@@ -29,11 +46,12 @@ class Migration extends SimpleWorker {
     $unmigratedQueueSubscribers = [];
 
     if ($unmigratedColumns) {
-      $unmigratedQueuesCount = $this->getUnmigratedQueues()->count();
+      $unmigratedQueuesCount = count($this->getUnmigratedQueueIds());
       $unmigratedQueueSubscribers = $this->getTaskIdsForUnmigratedSubscribers();
     }
 
-    if (!$unmigratedColumns ||
+    if (
+      !$unmigratedColumns ||
       ($unmigratedQueuesCount == 0
       && count($unmigratedQueueSubscribers) == 0)
     ) {
@@ -60,7 +78,7 @@ class Migration extends SimpleWorker {
     $mailerLog = MailerLog::setError(
       $mailerLog,
       'migration',
-      WPFunctions::get()->__('Your sending queue data is being migrated to allow better performance, sending is paused while the migration is in progress and will resume automatically upon completion. This may take a few minutes.')
+      __('Your sending queue data is being migrated to allow better performance, sending is paused while the migration is in progress and will resume automatically upon completion. This may take a few minutes.', 'mailpoet')
     );
     return MailerLog::pauseSending($mailerLog);
   }
@@ -87,13 +105,21 @@ class Migration extends SimpleWorker {
 
   private function checkUnmigratedColumnsExist() {
     global $wpdb;
-    $existingColumns = $wpdb->get_col('DESC ' . SendingQueueModel::$_table);
+    $existingColumns = $wpdb->get_col('DESC ' . esc_sql($this->getTableName(SendingQueueEntity::class)));
     return in_array('type', $existingColumns);
   }
 
-  public function getUnmigratedQueues() {
-    return SendingQueueModel::where('task_id', 0)
-      ->whereNull('type');
+  /**
+   * @return array
+   */
+  public function getUnmigratedQueueIds(): array {
+    $sendingQueuesTable = $this->getTableName(SendingQueueEntity::class);
+    return $this->entityManager->getConnection()->executeQuery("
+      SELECT id
+      FROM {$sendingQueuesTable}
+      WHERE task_id = 0
+        AND type IS NULL
+    ")->fetchFirstColumn();
   }
 
   public function getTaskIdsForUnmigratedSubscribers() {
@@ -103,9 +129,9 @@ class Migration extends SimpleWorker {
       'WHERE tasks.`type` = "sending" AND (tasks.`status` IS NULL OR tasks.`status` = "paused") ' .
       'AND queues.`subscribers` != "" AND queues.`subscribers` != "N;"' .
       'AND queues.`count_total` > (SELECT COUNT(*) FROM %3$s subs WHERE subs.`task_id` = queues.`task_id`)',
-      MP_SENDING_QUEUES_TABLE,
-      MP_SCHEDULED_TASKS_TABLE,
-      MP_SCHEDULED_TASK_SUBSCRIBERS_TABLE
+      esc_sql($this->getTableName(SendingQueueEntity::class)),
+      esc_sql($this->getTableName(ScheduledTaskEntity::class)),
+      esc_sql($this->getTableName(ScheduledTaskSubscriberEntity::class))
     );
     return $wpdb->get_col($query);
   }
@@ -116,9 +142,7 @@ class Migration extends SimpleWorker {
   public function migrateSendingQueues($timer) {
     global $wpdb;
 
-    $queues = $this->getUnmigratedQueues()
-      ->select('id')
-      ->findArray();
+    $queueIds = $this->getUnmigratedQueueIds();
 
     $columnList = [
       'status',
@@ -130,29 +154,34 @@ class Migration extends SimpleWorker {
       'deleted_at',
     ];
 
-    if (!empty($queues)) {
-      foreach (array_chunk($queues, self::BATCH_SIZE) as $queueBatch) {
+    if (!empty($queueIds)) {
+      foreach (array_chunk($queueIds, self::BATCH_SIZE) as $queueBatch) {
         // abort if execution limit is reached
         $this->cronHelper->enforceExecutionLimit($timer);
 
-        foreach ($queueBatch as $queue) {
+        foreach ($queueBatch as $queueId) {
           // create a new scheduled task of type "sending"
+
+          // Constants are safe, queue ID is cast to int.
+          // phpcs:ignore WordPressDotOrg.sniffs.DirectDB.UnescapedDBParameter
           $wpdb->query(sprintf(
             'INSERT IGNORE INTO %1$s (`type`, %2$s) ' .
             'SELECT "sending", %2$s FROM %3$s WHERE `id` = %4$s',
-            MP_SCHEDULED_TASKS_TABLE,
+            $this->getTableName(ScheduledTaskEntity::class),
             '`' . join('`, `', $columnList) . '`',
-            MP_SENDING_QUEUES_TABLE,
-            $queue['id']
+            $this->getTableName(SendingQueueEntity::class),
+            $queueId
           ));
+
           // link the queue with the task via task_id
           $newTaskId = $wpdb->insert_id; // phpcs:ignore Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps
-          $wpdb->query(sprintf(
-            'UPDATE %1$s SET `task_id` = %2$s WHERE `id` = %3$s',
-            MP_SENDING_QUEUES_TABLE,
+          $table = esc_sql($this->getTableName(SendingQueueEntity::class));
+          $query = $wpdb->prepare(
+            "UPDATE `$table` SET `task_id` = %s WHERE `id` = %s",
             $newTaskId,
-            $queue['id']
-          ));
+            $queueId
+          );
+          $wpdb->query($query);
         }
       }
     }
@@ -174,8 +203,8 @@ class Migration extends SimpleWorker {
       $taskIds = $wpdb->get_col(sprintf(
         'SELECT queues.`task_id` FROM %1$s queues WHERE queues.`task_id` IN(' . join(',', array_map('intval', $taskIds)) . ') ' .
         'AND queues.`count_total` > (SELECT COUNT(*) FROM %2$s subs WHERE subs.`task_id` = queues.`task_id`)',
-        MP_SENDING_QUEUES_TABLE,
-        MP_SCHEDULED_TASK_SUBSCRIBERS_TABLE
+        esc_sql($this->getTableName(SendingQueueEntity::class)),
+        esc_sql($this->getTableName(ScheduledTaskSubscriberEntity::class))
       ));
     }
 
@@ -194,14 +223,21 @@ class Migration extends SimpleWorker {
   public function migrateTaskSubscribers($taskId, $timer) {
     global $wpdb;
 
-    $migratedUnprocessedCount = ScheduledTaskSubscriber::getUnprocessedCount($taskId);
-    $migratedProcessedCount = ScheduledTaskSubscriber::getProcessedCount($taskId);
+    $migratedUnprocessedCount = $this->scheduledTaskSubscribersRepository->countBy([
+      'task' => $taskId,
+      'processed' => ScheduledTaskSubscriberEntity::STATUS_UNPROCESSED,
+    ]);
+    $migratedProcessedCount = $this->scheduledTaskSubscribersRepository->countBy([
+      'task' => $taskId,
+      'processed' => ScheduledTaskSubscriberEntity::STATUS_PROCESSED,
+    ]);
 
-    $subscribers = $wpdb->get_var(sprintf(
-      'SELECT `subscribers` FROM %1$s WHERE `task_id` = %2$d ' .
-      'AND (`count_processed` > %3$d OR `count_to_process` > %4$d)',
-      MP_SENDING_QUEUES_TABLE,
-      $taskId,
+    $table = $this->getTableName(SendingQueueEntity::class);
+    // All parameters are safe
+    // phpcs:ignore WordPressDotOrg.sniffs.DirectDB.UnescapedDBParameter
+    $subscribers = $wpdb->get_var($wpdb->prepare(
+      "SELECT `subscribers` FROM `$table` WHERE `task_id` = %d AND (`count_processed` > %d OR `count_to_process` > %d)",
+      (int)$taskId,
       $migratedUnprocessedCount,
       $migratedProcessedCount
     ));
@@ -219,10 +255,10 @@ class Migration extends SimpleWorker {
         // abort if execution limit is reached
         $this->cronHelper->enforceExecutionLimit($timer);
 
-        ScheduledTaskSubscriber::createOrUpdate([
+        $this->scheduledTaskSubscribersRepository->createOrUpdate([
           'task_id' => $taskId,
           'subscriber_id' => $subId,
-          'processed' => ScheduledTaskSubscriber::STATUS_UNPROCESSED,
+          'processed' => ScheduledTaskSubscriberEntity::STATUS_UNPROCESSED,
         ]);
       }
     }
@@ -233,10 +269,10 @@ class Migration extends SimpleWorker {
         // abort if execution limit is reached
         $this->cronHelper->enforceExecutionLimit($timer);
 
-        ScheduledTaskSubscriber::createOrUpdate([
+        $this->scheduledTaskSubscribersRepository->createOrUpdate([
           'task_id' => $taskId,
           'subscriber_id' => $subId,
-          'processed' => ScheduledTaskSubscriber::STATUS_PROCESSED,
+          'processed' => ScheduledTaskSubscriberEntity::STATUS_PROCESSED,
         ]);
       }
     }
@@ -250,5 +286,9 @@ class Migration extends SimpleWorker {
     }
     // run migration immediately
     return Carbon::createFromTimestamp($wp->currentTime('timestamp'));
+  }
+
+  private function getTableName(string $entityName): string {
+    return $this->entityManager->getClassMetadata($entityName)->getTableName();
   }
 }

@@ -1,2 +1,11 @@
 <?php
- namespace MailPoetVendor\Monolog\Handler; if (!defined('ABSPATH')) exit; use MailPoetVendor\Monolog\Formatter\FormatterInterface; interface HandlerInterface { public function isHandling(array $record); public function handle(array $record); public function handleBatch(array $records); public function pushProcessor($callback); public function popProcessor(); public function setFormatter(FormatterInterface $formatter); public function getFormatter(); } 
+declare (strict_types=1);
+namespace MailPoetVendor\Monolog\Handler;
+if (!defined('ABSPATH')) exit;
+interface HandlerInterface
+{
+ public function isHandling(array $record) : bool;
+ public function handle(array $record) : bool;
+ public function handleBatch(array $records) : void;
+ public function close() : void;
+}

@@ -54,7 +54,7 @@
          <div class="row">
                  <div class="col-lg-4 col-md-4 col-sm-4 col-4 topbar-cart-icon align-self-end">
                      <a href="<?php echo wc_get_cart_url(); ?>" title="<?php _e('Cart View', 'woothemes'); ?>">
-                   <img src="<?php echo esc_url(get_theme_mod('drop_shipping_pro_header_shopping_basket_image')); ?>" alt="Shopping Basket">
+                   <img src="<?php echo esc_url(get_theme_mod('drop_shipping_pro_header_shopping_basket_image')); ?>" alt="Shopping Basket" width="49" height="49">
                      </a>
                 </div>
             <div class="col-lg-8 col-md-8 col-sm-8 col-8 p-0 cart-btn-box align-self-center position-relative">

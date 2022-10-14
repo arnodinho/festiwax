@@ -10,6 +10,7 @@ use MailPoet\Mailer\WordPress\WordpressMailerReplacer;
 use MailPoet\Newsletter\Scheduler\PostNotificationScheduler;
 use MailPoet\Segments\WP;
 use MailPoet\Settings\SettingsController;
+use MailPoet\Statistics\Track\SubscriberHandler;
 use MailPoet\Subscription\Comment;
 use MailPoet\Subscription\Form;
 use MailPoet\Subscription\Manage;
@@ -47,6 +48,9 @@ class Hooks {
   /** @var WP */
   private $wpSegment;
 
+  /** @var SubscriberHandler */
+  private $subscriberHandler;
+
   /** @var HooksWooCommerce */
   private $hooksWooCommerce;
 
@@ -61,6 +65,7 @@ class Hooks {
     WordpressMailerReplacer $wordpressMailerReplacer,
     DisplayFormInWPContent $displayFormInWPContent,
     HooksWooCommerce $hooksWooCommerce,
+    SubscriberHandler $subscriberHandler,
     WP $wpSegment
   ) {
     $this->subscriptionForm = $subscriptionForm;
@@ -73,6 +78,7 @@ class Hooks {
     $this->wordpressMailerReplacer = $wordpressMailerReplacer;
     $this->displayFormInWPContent = $displayFormInWPContent;
     $this->wpSegment = $wpSegment;
+    $this->subscriberHandler = $subscriberHandler;
     $this->hooksWooCommerce = $hooksWooCommerce;
   }
 
@@ -88,6 +94,7 @@ class Hooks {
     $this->setupPostNotifications();
     $this->setupWooCommerceSettings();
     $this->setupFooter();
+    $this->setupSettingsLinkInPluginPage();
   }
 
   public function initEarlyHooks() {
@@ -258,6 +265,16 @@ class Hooks {
       6, 2
     );
     $this->wp->addAction(
+      'add_user_role',
+      [$this->wpSegment, 'synchronizeUser'],
+      6, 1
+    );
+    $this->wp->addAction(
+      'set_user_role',
+      [$this->wpSegment, 'synchronizeUser'],
+      6, 1
+    );
+    $this->wp->addAction(
       'delete_user',
       [$this->wpSegment, 'synchronizeUser'],
       1
@@ -271,6 +288,14 @@ class Hooks {
     $this->wp->addAction(
       'remove_user_from_blog',
       [$this->wpSegment, 'synchronizeUser'],
+      1
+    );
+
+    // login
+    $this->wp->addAction(
+      'wp_login',
+      [$this->subscriberHandler, 'identifyByLogin'],
+      10,
       1
     );
   }
@@ -352,7 +377,7 @@ class Hooks {
 
   public function appendImageSize($sizes) {
     return array_merge($sizes, [
-      'mailpoet_newsletter_max' => WPFunctions::get()->__('MailPoet Newsletter', 'mailpoet'),
+      'mailpoet_newsletter_max' => __('MailPoet Newsletter', 'mailpoet'),
     ]);
   }
 
@@ -393,5 +418,24 @@ class Hooks {
 
   public function setFooter($text) {
     return '<a href="https://feedback.mailpoet.com/" rel="noopener noreferrer" target="_blank">Give feedback</a>';
+  }
+
+  public function setupSettingsLinkInPluginPage() {
+    $this->wp->addFilter(
+      'plugin_action_links_' . Env::$pluginPath,
+      [$this, 'setSettingsLinkInPluginPage']
+    );
+  }
+
+  /**
+   * @param array<string, string> $actionLinks
+   * @return array<string, string>
+   */
+  public function setSettingsLinkInPluginPage(array $actionLinks): array {
+    $customLinks = [
+      'settings' => '<a href="' . $this->wp->adminUrl('admin.php?page=mailpoet-settings') . '" aria-label="' . $this->wp->escAttr(__('View MailPoet settings', 'mailpoet')) . '">' . $this->wp->escHtml(__('Settings', 'mailpoet')) . '</a>',
+    ];
+
+    return array_merge($customLinks, $actionLinks);
   }
 }

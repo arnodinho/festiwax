@@ -10,6 +10,7 @@
  * in require_lib().
  *
  * @since 4.0.2
+ * @deprecated since 11.3 Use `JETPACK__PLUGIN_DIR . '_inc/lib/'` instead.
  *
  * @return string Location of Jetpack library directory.
  *
@@ -48,7 +49,7 @@ require_once JETPACK__PLUGIN_DIR . 'class.photon.php';
 require_once JETPACK__PLUGIN_DIR . 'functions.photon.php';
 require_once JETPACK__PLUGIN_DIR . 'functions.global.php';
 require_once JETPACK__PLUGIN_DIR . 'functions.compat.php';
-require_once JETPACK__PLUGIN_DIR . 'functions.gallery.php';
+require_once JETPACK__PLUGIN_DIR . 'class-jetpack-gallery-settings.php';
 require_once JETPACK__PLUGIN_DIR . 'functions.cookies.php';
 require_once JETPACK__PLUGIN_DIR . 'require-lib.php';
 require_once JETPACK__PLUGIN_DIR . 'class.jetpack-autoupdate.php';
@@ -57,9 +58,9 @@ require_once JETPACK__PLUGIN_DIR . 'modules/module-headings.php';
 require_once JETPACK__PLUGIN_DIR . 'class.jetpack-connection-banner.php';
 require_once JETPACK__PLUGIN_DIR . 'class.jetpack-plan.php';
 // Used by the API endpoints.
-require_once JETPACK__PLUGIN_DIR . 'modules/seo-tools/jetpack-seo-utils.php';
-require_once JETPACK__PLUGIN_DIR . 'modules/seo-tools/jetpack-seo-titles.php';
-require_once JETPACK__PLUGIN_DIR . 'modules/seo-tools/jetpack-seo-posts.php';
+require_once JETPACK__PLUGIN_DIR . 'modules/seo-tools/class-jetpack-seo-utils.php';
+require_once JETPACK__PLUGIN_DIR . 'modules/seo-tools/class-jetpack-seo-titles.php';
+require_once JETPACK__PLUGIN_DIR . 'modules/seo-tools/class-jetpack-seo-posts.php';
 require_once JETPACK__PLUGIN_DIR . 'modules/verification-tools/verification-tools-utils.php';
 
 require_once JETPACK__PLUGIN_DIR . 'class-jetpack-xmlrpc-methods.php';
@@ -82,10 +83,28 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 }
 
 require_once JETPACK__PLUGIN_DIR . '_inc/lib/class.core-rest-api-endpoints.php';
+require_once JETPACK__PLUGIN_DIR . '_inc/blogging-prompts.php';
 
 add_action( 'updating_jetpack_version', array( 'Jetpack', 'do_version_bump' ), 10, 2 );
 add_filter( 'is_jetpack_site', '__return_true' );
 
 require_once JETPACK__PLUGIN_DIR . '3rd-party/3rd-party.php';
+
+// WAF should never be available on the Atomic platform.
+
+if ( ( new Automattic\Jetpack\Status\Host() )->is_atomic_platform() ) {
+	add_filter(
+		'jetpack_get_available_modules',
+		function ( $modules ) {
+			unset( $modules['waf'] );
+
+			return $modules;
+		}
+	);
+
+	if ( ! defined( 'DISABLE_JETPACK_WAF' ) ) {
+		define( 'DISABLE_JETPACK_WAF', true );
+	}
+}
 
 Jetpack::init();

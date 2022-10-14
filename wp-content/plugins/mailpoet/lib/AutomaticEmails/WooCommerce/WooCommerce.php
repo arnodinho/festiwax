@@ -17,19 +17,32 @@ class WooCommerce {
   /** @var WooCommerceHelper */
   private $woocommerceHelper;
 
+  /** @var string[] */
   public $availableEvents = [
     'AbandonedCart',
     'FirstPurchase',
     'PurchasedInCategory',
     'PurchasedProduct',
   ];
+
+  /** @var bool */
   private $woocommerceEnabled;
+
+  /** @var WPFunctions */
   private $wp;
 
-  public function __construct() {
-    $this->wp = new WPFunctions;
-    $this->woocommerceHelper = new WooCommerceHelper();
+  /** @var WooCommerceEventFactory */
+  private $eventFactory;
+
+  public function __construct(
+    WPFunctions $wp,
+    WooCommerceHelper $woocommerceHelper,
+    WooCommerceEventFactory $eventFactory
+  ) {
+    $this->wp = $wp;
+    $this->woocommerceHelper = $woocommerceHelper;
     $this->woocommerceEnabled = $this->isWoocommerceEnabled();
+    $this->eventFactory = $eventFactory;
   }
 
   public function init() {
@@ -52,31 +65,27 @@ class WooCommerce {
   public function setupGroup() {
     return [
       'slug' => self::SLUG,
-      'title' => WPFunctions::get()->__('WooCommerce', 'mailpoet'),
-      'description' => WPFunctions::get()->__('Automatically send an email based on your customers’ purchase behavior. Enhance your customer service and start increasing sales with WooCommerce follow up emails.', 'mailpoet'),
+      'title' => __('WooCommerce', 'mailpoet'),
+      'description' => __('Automatically send an email based on your customers’ purchase behavior. Enhance your customer service and start increasing sales with WooCommerce follow up emails.', 'mailpoet'),
       'events' => $this->wp->applyFilters(self::EVENTS_FILTER, []),
     ];
   }
 
   public function setupEvents($events) {
     $customEventDetails = (!$this->woocommerceEnabled) ? [
-      'actionButtonTitle' => WPFunctions::get()->__('WooCommerce is required', 'mailpoet'),
+      'actionButtonTitle' => __('WooCommerce is required', 'mailpoet'),
       'actionButtonLink' => 'https://wordpress.org/plugins/woocommerce/',
     ] : [];
 
     foreach ($this->availableEvents as $event) {
-      $eventClass = sprintf(
-        '%s\Events\%s',
-        __NAMESPACE__,
-        $event
-      );
+      $eventInstance = in_array($event, $this->availableEvents, true)
+        ? $this->eventFactory->createEvent($event)
+        : null;
 
-      if (!class_exists($eventClass)) {
+      if (!$eventInstance) {
         $this->displayEventWarning($event);
         continue;
       }
-
-      $eventInstance = new $eventClass();
 
       if (method_exists($eventInstance, 'init')) {
         $eventInstance->init();
@@ -103,8 +112,9 @@ class WooCommerce {
 
   private function displayEventWarning($event) {
     $notice = sprintf('%s %s',
+      // translators: %s is the name of the event.
       sprintf(__('WooCommerce %s event is misconfigured.', 'mailpoet'), $event),
-      WPFunctions::get()->__('Please contact our technical support for assistance.', 'mailpoet')
+      __('Please contact our technical support for assistance.', 'mailpoet')
     );
     Notice::displayWarning($notice);
   }

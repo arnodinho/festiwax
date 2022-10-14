@@ -449,7 +449,7 @@ class THWEPOF_Public {
 		if($field->is_required() && empty($value)) {
 
 			/* translators: %s: field name */
-			THWEPOF_Utils::wcpf_add_error(apply_filters('thwepof_required_field_notice', sprintf(__('%s Le champ de personnalisation est requis.', 'woo-extra-product-options'), '<strong>'. wp_kses_post($field_label) .'</strong>')));
+			THWEPOF_Utils::wcpf_add_error(apply_filters('thwepof_required_field_notice', sprintf(__('%s is a required field.', 'woo-extra-product-options'), '<strong>'. wp_kses_post($field_label) .'</strong>')));
 			$valid = false;
 		}else{
 			$validators = $field->get_property('validator');
@@ -583,7 +583,7 @@ class THWEPOF_Public {
 
 	// Filter item data to allow 3rd parties to add more to the array.
 	public function woo_get_item_data($item_data, $cart_item = null) {
-		$show_fields = true;
+		$show_fields = true;		
 
 		if(is_checkout()){
 			$hide_in_checkout = THWEPOF_Utils::get_settings('hide_in_checkout');
@@ -613,7 +613,7 @@ class THWEPOF_Public {
 						$value = is_array($value) ? implode(",", $value) : trim(stripslashes($value));
 
 						if(isset($data['type']) && ($data['type'] === 'colorpicker')){
-							$value = THWEPOF_Utils::get_cart_item_color_display($value);
+							$value = THWEPOF_Utils::get_cart_item_color_display($value); 
 						}
 
 						//$value = $display_option_text ? THWEPOF_Utils::get_option_display_value($name, $value, $data) : $value;

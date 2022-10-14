@@ -6,12 +6,12 @@ if (!defined('ABSPATH')) exit;
 
 
 use Exception;
-use InvalidArgumentException;
 use MailPoet\API\JSON\Endpoint as APIEndpoint;
 use MailPoet\API\JSON\Error as APIError;
 use MailPoet\API\JSON\Response;
 use MailPoet\API\JSON\ResponseBuilders\SegmentsResponseBuilder;
 use MailPoet\Config\AccessControl;
+use MailPoet\ConflictException;
 use MailPoet\Cron\CronWorkerScheduler;
 use MailPoet\Cron\Workers\WooCommerceSync;
 use MailPoet\Doctrine\Validator\ValidationException;
@@ -27,7 +27,6 @@ use MailPoet\Segments\WooCommerce;
 use MailPoet\Segments\WP;
 use MailPoet\Subscribers\SubscribersRepository;
 use MailPoet\UnexpectedValueException;
-use MailPoet\WP\Functions as WPFunctions;
 
 class Segments extends APIEndpoint {
   public $permissions = [
@@ -100,7 +99,7 @@ class Segments extends APIEndpoint {
       return $this->successResponse($this->segmentsResponseBuilder->build($segment));
     } else {
       return $this->errorResponse([
-        APIError::NOT_FOUND => WPFunctions::get()->__('This list does not exist.', 'mailpoet'),
+        APIError::NOT_FOUND => __('This list does not exist.', 'mailpoet'),
       ]);
     }
   }
@@ -126,11 +125,11 @@ class Segments extends APIEndpoint {
       $segment = $this->segmentSavecontroller->save($data);
     } catch (ValidationException $exception) {
       return $this->badRequest([
-        APIError::BAD_REQUEST  => __('Please specify a name.', 'mailpoet'),
+        APIError::BAD_REQUEST => __('Please specify a name.', 'mailpoet'),
       ]);
-    } catch (InvalidArgumentException $exception) {
+    } catch (ConflictException $exception) {
       return $this->badRequest([
-        APIError::BAD_REQUEST  => __('Another record already exists. Please specify a different "name".', 'mailpoet'),
+        APIError::BAD_REQUEST => __('Another record already exists. Please specify a different "name".', 'mailpoet'),
       ]);
     }
     $response = $this->segmentsResponseBuilder->build($segment);
@@ -142,7 +141,7 @@ class Segments extends APIEndpoint {
     if ($segment instanceof SegmentEntity) {
       if (!$this->isTrashOrRestoreAllowed($segment)) {
         return $this->errorResponse([
-          APIError::FORBIDDEN => WPFunctions::get()->__('This list cannot be moved to trash.', 'mailpoet'),
+          APIError::FORBIDDEN => __('This list cannot be moved to trash.', 'mailpoet'),
         ]);
       }
       // When the segment is of type WP_USERS we want to restore all its subscribers
@@ -162,7 +161,7 @@ class Segments extends APIEndpoint {
       );
     } else {
       return $this->errorResponse([
-        APIError::NOT_FOUND => WPFunctions::get()->__('This list does not exist.', 'mailpoet'),
+        APIError::NOT_FOUND => __('This list does not exist.', 'mailpoet'),
       ]);
     }
   }
@@ -172,13 +171,13 @@ class Segments extends APIEndpoint {
     if (!$segment instanceof SegmentEntity) {
 
       return $this->errorResponse([
-        APIError::NOT_FOUND => WPFunctions::get()->__('This list does not exist.', 'mailpoet'),
+        APIError::NOT_FOUND => __('This list does not exist.', 'mailpoet'),
       ]);
     }
 
     if (!$this->isTrashOrRestoreAllowed($segment)) {
       return $this->errorResponse([
-        APIError::FORBIDDEN => WPFunctions::get()->__('This list cannot be moved to trash.', 'mailpoet'),
+        APIError::FORBIDDEN => __('This list cannot be moved to trash.', 'mailpoet'),
       ]);
     }
 
@@ -188,6 +187,7 @@ class Segments extends APIEndpoint {
         APIError::BAD_REQUEST => str_replace(
           '%1$s',
           "'" . join("', '", $activelyUsedNewslettersSubjects[$segment->getId()] ) . "'",
+          // translators: %1$s is a comma-seperated list of emails for which the segment is used.
           _x('List cannot be deleted because it’s used for %1$s email', 'Alert shown when trying to delete segment, which is assigned to any automatic emails.', 'mailpoet')
         ),
       ]);
@@ -199,6 +199,7 @@ class Segments extends APIEndpoint {
         APIError::BAD_REQUEST => str_replace(
           '%1$s',
           "'" . join("', '", $activelyUsedFormNames[$segment->getId()] ) . "'",
+          // translators: %1$s is a comma-seperated list of forms for which the segment is used.
           _nx(
             'List cannot be deleted because it’s used for %1$s form',
             'List cannot be deleted because it’s used for %1$s forms',
@@ -234,7 +235,7 @@ class Segments extends APIEndpoint {
       return $this->successResponse(null, ['count' => 1]);
     } else {
       return $this->errorResponse([
-        APIError::NOT_FOUND => WPFunctions::get()->__('This list does not exist.', 'mailpoet'),
+        APIError::NOT_FOUND => __('This list does not exist.', 'mailpoet'),
       ]);
     }
   }
@@ -256,7 +257,7 @@ class Segments extends APIEndpoint {
       );
     } else {
       return $this->errorResponse([
-        APIError::NOT_FOUND => WPFunctions::get()->__('This list does not exist.', 'mailpoet'),
+        APIError::NOT_FOUND => __('This list does not exist.', 'mailpoet'),
       ]);
     }
   }

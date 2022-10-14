@@ -28,7 +28,7 @@ function bdp_post_masonry( $atts, $content = null ) {
 		"show_read_more" 		=> 'true',
 		"content_words_limit" 	=> 20,
 		'order'					=> 'DESC',
-		'orderby'				=> 'post_date',
+		'orderby'				=> 'date',
 		'effect'				=> 'effect-2',
 		'load_more_text'		=> '',
 		'show_author' 			=> 'true',
@@ -149,20 +149,20 @@ function bdp_post_masonry( $atts, $content = null ) {
 			</div>
 			<?php }
 
-			if($pagination == "true" && $query->max_num_pages > 1 ) { ?>
+			if( $pagination == "true" && $query->max_num_pages > 1 ) { ?>
 			<div class="bdp-post-pagination bdp-clearfix">
-				<?php
-					echo bdp_pagination( array( 'paged' => $paged , 'total' => $query->max_num_pages, 'multi_page' => $multi_page ) );
-				?>
+				<?php echo bdp_pagination( array( 'paged' => $paged , 'total' => $query->max_num_pages, 'multi_page' => $multi_page ) ); ?>
 			</div>
 			<?php } ?>
 		</div>
 
 	<?php
-		endif;		
-		wp_reset_postdata(); // Reset wp query
-		$content .= ob_get_clean();
-		return $content;
+		endif;
+
+	wp_reset_postdata(); // Reset wp query
+	
+	$content .= ob_get_clean();
+	return $content;
 }
 
 // Post Masonry Shortcode

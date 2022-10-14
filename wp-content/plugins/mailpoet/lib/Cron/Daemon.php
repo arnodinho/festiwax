@@ -6,7 +6,6 @@ if (!defined('ABSPATH')) exit;
 
 
 use MailPoet\Cron\Workers\WorkersFactory;
-use MailPoet\Features\FeaturesController;
 
 class Daemon {
   public $timer;
@@ -20,19 +19,14 @@ class Daemon {
   /** @var WorkersFactory */
   private $workersFactory;
 
-  /** @var FeaturesController */
-  private $featureSwitch;
-
   public function __construct(
     CronHelper $cronHelper,
     CronWorkerRunner $cronWorkerRunner,
-    FeaturesController $featureSwitch,
     WorkersFactory $workersFactory
   ) {
     $this->timer = microtime(true);
     $this->workersFactory = $workersFactory;
     $this->cronWorkerRunner = $cronWorkerRunner;
-    $this->featureSwitch = $featureSwitch;
     $this->cronHelper = $cronHelper;
   }
 
@@ -76,6 +70,7 @@ class Daemon {
     yield $this->workersFactory->createBounceWorker();
     yield $this->workersFactory->createExportFilesCleanupWorker();
     yield $this->workersFactory->createBeamerkWorker();
+    yield $this->workersFactory->createSubscribersEmailCountsWorker();
     yield $this->workersFactory->createInactiveSubscribersWorker();
     yield $this->workersFactory->createUnsubscribeTokensWorker();
     yield $this->workersFactory->createWooCommerceSyncWorker();
@@ -86,9 +81,7 @@ class Daemon {
     yield $this->workersFactory->createSubscribersEngagementScoreWorker();
     yield $this->workersFactory->createSubscribersLastEngagementWorker();
     yield $this->workersFactory->createSubscribersCountCacheRecalculationWorker();
-    if ($this->featureSwitch->isSupported(FeaturesController::RE_ENGAGEMENT_EMAIL)) {
-      yield $this->workersFactory->createReEngagementEmailsSchedulerWorker();
-    }
+    yield $this->workersFactory->createReEngagementEmailsSchedulerWorker();
     yield $this->workersFactory->createNewsletterTemplateThumbnailsWorker();
   }
 }

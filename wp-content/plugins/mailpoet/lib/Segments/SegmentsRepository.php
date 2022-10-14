@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) exit;
 
 
 use DateTime;
+use MailPoet\ConflictException;
 use MailPoet\Doctrine\Repository;
 use MailPoet\Entities\DynamicSegmentFilterData;
 use MailPoet\Entities\DynamicSegmentFilterEntity;
@@ -18,6 +19,7 @@ use MailPoet\WP\Functions as WPFunctions;
 use MailPoetVendor\Carbon\Carbon;
 use MailPoetVendor\Doctrine\DBAL\Connection;
 use MailPoetVendor\Doctrine\ORM\EntityManager;
+use MailPoetVendor\Doctrine\ORM\ORMException;
 
 /**
  * @extends Repository<SegmentEntity>
@@ -30,21 +32,26 @@ class SegmentsRepository extends Repository {
   /** @var FormsRepository */
   private $formsRepository;
 
+  /** @var WPFunctions */
+  private $wp;
+
   public function __construct(
     EntityManager $entityManager,
     NewsletterSegmentRepository $newsletterSegmentRepository,
-    FormsRepository $formsRepository
+    FormsRepository $formsRepository,
+    WPFunctions $wp
   ) {
     parent::__construct($entityManager);
     $this->newsletterSegmentRepository = $newsletterSegmentRepository;
     $this->formsRepository = $formsRepository;
+    $this->wp = $wp;
   }
 
   protected function getEntityClassName() {
     return SegmentEntity::class;
   }
 
-  public function getWPUsersSegment() {
+  public function getWPUsersSegment(): ?SegmentEntity {
     return $this->findOneBy(['type' => SegmentEntity::TYPE_WP_USERS]);
   }
 
@@ -53,9 +60,9 @@ class SegmentsRepository extends Repository {
     if (!$segment) {
       // create the WooCommerce customers segment
       $segment = new SegmentEntity(
-        WPFunctions::get()->__('WooCommerce Customers', 'mailpoet'),
+        __('WooCommerce Customers', 'mailpoet'),
         SegmentEntity::TYPE_WC_USERS,
-        WPFunctions::get()->__('This list contains all of your WooCommerce customers.', 'mailpoet')
+        __('This list contains all of your WooCommerce customers.', 'mailpoet')
       );
       $this->entityManager->persist($segment);
       $this->entityManager->flush();
@@ -96,7 +103,19 @@ class SegmentsRepository extends Repository {
   }
 
   /**
+   * @throws ConflictException
+   */
+  public function verifyNameIsUnique(string $name, ?int $id): void {
+    if (!$this->isNameUnique($name, $id)) {
+      throw new ConflictException("Could not create new segment with name [{$name}] because a segment with that name already exists.");
+    }
+  }
+
+  /**
    * @param DynamicSegmentFilterData[] $filtersData
+   * @throws ConflictException
+   * @throws NotFoundException
+   * @throws ORMException
    */
   public function createOrUpdate(
     string $name,
@@ -110,9 +129,13 @@ class SegmentsRepository extends Repository {
       if (!$segment instanceof SegmentEntity) {
         throw new NotFoundException("Segment with ID [{$id}] was not found.");
       }
-      $segment->setName($name);
+      if ($name !== $segment->getName()) {
+        $this->verifyNameIsUnique($name, $id);
+        $segment->setName($name);
+      }
       $segment->setDescription($description);
     } else {
+      $this->verifyNameIsUnique($name, $id);
       $segment = new SegmentEntity($name, $type, $description);
       $this->persist($segment);
     }
@@ -125,7 +148,8 @@ class SegmentsRepository extends Repository {
         $this->entityManager->remove($filterEntity);
       }
     }
-    foreach ($filtersData as $key => $filterData) {
+
+    $createOrUpdateFilter = function ($filterData, $key) use ($segment) {
       if ($filterData instanceof DynamicSegmentFilterData) {
         $filterEntity = $segment->getDynamicFilters()->get($key);
         if (!$filterEntity instanceof DynamicSegmentFilterEntity) {
@@ -136,17 +160,28 @@ class SegmentsRepository extends Repository {
           $filterEntity->setFilterData($filterData);
         }
       }
+    };
+
+    $wpActionName = 'mailpoet_dynamic_segments_filters_save';
+    if ($this->wp->hasAction($wpActionName)) {
+      $this->wp->doAction($wpActionName, $createOrUpdateFilter, $filtersData);
+    } else {
+      $filterData = reset($filtersData);
+      $key = key($filtersData);
+      $createOrUpdateFilter($filterData, $key);
     }
+
     $this->flush();
     return $segment;
   }
 
-  public function bulkDelete(array $ids, $type = SegmentEntity::TYPE_DEFAULT) {
+  public function bulkDelete(array $ids, string $type = SegmentEntity::TYPE_DEFAULT): int {
     if (empty($ids)) {
       return 0;
     }
 
-    return $this->entityManager->transactional(function (EntityManager $entityManager) use ($ids, $type) {
+    $count = 0;
+    $this->entityManager->transactional(function (EntityManager $entityManager) use ($ids, $type, &$count) {
       $subscriberSegmentTable = $entityManager->getClassMetadata(SubscriberSegmentEntity::class)->getTableName();
       $segmentTable = $entityManager->getClassMetadata(SegmentEntity::class)->getTableName();
       $segmentFiltersTable = $entityManager->getClassMetadata(DynamicSegmentFilterEntity::class)->getTableName();
@@ -168,15 +203,15 @@ class SegmentsRepository extends Repository {
         'ids' => $ids,
       ], ['ids' => Connection::PARAM_INT_ARRAY]);
 
-      return $entityManager->getConnection()->executeStatement("
-         DELETE s FROM $segmentTable s
-         WHERE s.`id` IN (:ids)
-         AND s.`type` = :type
-      ", [
-        'ids' => $ids,
-        'type' => $type,
-      ], ['ids' => Connection::PARAM_INT_ARRAY]);
+      $queryBuilder = $entityManager->createQueryBuilder();
+      $count = $queryBuilder->delete(SegmentEntity::class, 's')
+        ->where('s.id IN (:ids)')
+        ->andWhere('s.type = :type')
+        ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
+        ->setParameter('type', $type, \PDO::PARAM_STR)
+        ->getQuery()->execute();
     });
+    return $count;
   }
 
   public function bulkTrash(array $ids, string $type = SegmentEntity::TYPE_DEFAULT): int {

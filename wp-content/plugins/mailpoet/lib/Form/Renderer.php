@@ -39,15 +39,14 @@ class Renderer {
 
   public function renderStyles(FormEntity $form, string $prefix, string $displayType): string {
     $this->customFonts->enqueueStyle();
-    $html = '.mailpoet_hp_email_label{display:none!important;}'; // move honeypot field out of sight
-    $html .= $this->styleUtils->prefixStyles($this->getCustomStyles($form), $prefix);
+    $html = $this->styleUtils->prefixStyles($this->getCustomStyles($form), $prefix);
     $html .= strip_tags($this->styleUtils->renderFormSettingsStyles($form, $prefix, $displayType));
     return $html;
   }
 
   public function renderHTML(FormEntity $form = null): string {
     if (($form instanceof FormEntity) && !empty($form->getBody()) && is_array($form->getSettings())) {
-      return $this->renderBlocks($form->getBody(), $form->getSettings() ?? []);
+      return $this->renderBlocks($form->getBody(), $form->getSettings() ?? [], $form->getId());
     }
     return '';
   }
@@ -60,33 +59,47 @@ class Renderer {
     }
   }
 
-  public function renderBlocks(array $blocks = [], array $formSettings = [], bool $honeypotEnabled = true, bool $captchaEnabled = true): string {
+  public function renderBlocks(
+    array $blocks = [],
+    array $formSettings = [],
+    ?int $formId = null,
+    bool $honeypotEnabled = true,
+    bool $captchaEnabled = true
+  ): string {
     // add honeypot for spambots
     $html = ($honeypotEnabled) ? $this->renderHoneypot() : '';
     foreach ($blocks as $key => $block) {
-      if ($captchaEnabled
+      if (
+        $captchaEnabled
         && $block['type'] === FormEntity::SUBMIT_BLOCK_TYPE
-        && $this->settings->get('captcha.type') === Captcha::TYPE_RECAPTCHA
+        && Captcha::isRecaptcha($this->settings->get('captcha.type'))
       ) {
         $html .= $this->renderReCaptcha();
       }
       if (in_array($block['type'], [FormEntity::COLUMN_BLOCK_TYPE, FormEntity::COLUMNS_BLOCK_TYPE])) {
         $blocks = $block['body'] ?? [];
-        $html .= $this->blocksRenderer->renderContainerBlock($block, $this->renderBlocks($blocks, $formSettings, false)) . PHP_EOL;
+        $html .= $this->blocksRenderer->renderContainerBlock($block, $this->renderBlocks($blocks, $formSettings, $formId, false)) . PHP_EOL;
       } else {
-        $html .= $this->blocksRenderer->renderBlock($block, $formSettings) . PHP_EOL;
+        $html .= $this->blocksRenderer->renderBlock($block, $formSettings, $formId) . PHP_EOL;
       }
     }
     return $html;
   }
 
   private function renderHoneypot(): string {
-    return '<label class="mailpoet_hp_email_label">' . __('Please leave this field empty', 'mailpoet') . '<input type="email" name="data[email]"/></label>';
+    return '<label class="mailpoet_hp_email_label" style="display: none !important;">' . __('Please leave this field empty', 'mailpoet') . '<input type="email" name="data[email]"/></label>';
   }
 
   private function renderReCaptcha(): string {
-    $siteKey = $this->settings->get('captcha.recaptcha_site_token');
-    return '<div class="mailpoet_recaptcha" data-sitekey="' . $siteKey . '">
+    if ($this->settings->get('captcha.type') === Captcha::TYPE_RECAPTCHA) {
+      $siteKey = $this->settings->get('captcha.recaptcha_site_token');
+      $size = '';
+    } else {
+      $siteKey = $this->settings->get('captcha.recaptcha_invisible_site_token');
+      $size = 'invisible';
+    }
+
+    $html = '<div class="mailpoet_recaptcha" data-sitekey="' . $siteKey . '" ' . ($size === 'invisible' ? 'data-size="invisible"' : '') . '>
       <div class="mailpoet_recaptcha_container"></div>
       <noscript>
         <div>
@@ -102,7 +115,9 @@ class Renderer {
           </div>
         </div>
       </noscript>
-      <input class="mailpoet_recaptcha_field" type="hidden" name="recaptcha">
+      <input class="mailpoet_recaptcha_field" type="hidden" name="recaptchaWidgetId">
     </div>';
+
+    return $html;
   }
 }

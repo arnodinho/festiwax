@@ -5,9 +5,9 @@ namespace MailPoet\Subscribers\ImportExport;
 if (!defined('ABSPATH')) exit;
 
 
+use MailPoet\CustomFields\CustomFieldsRepository;
 use MailPoet\DI\ContainerWrapper;
 use MailPoet\Entities\SegmentEntity;
-use MailPoet\Models\CustomField;
 use MailPoet\Segments\SegmentsSimpleListRepository;
 use MailPoet\Util\Helpers;
 
@@ -21,11 +21,15 @@ class ImportExportFactory {
   /** @var SegmentsSimpleListRepository */
   private $segmentsListRepository;
 
+  /** @var CustomFieldsRepository */
+  private $customFieldsRepository;
+
   public function __construct(
     $action = null
   ) {
     $this->action = $action;
     $this->segmentsListRepository = ContainerWrapper::getInstance()->get(SegmentsSimpleListRepository::class);
+    $this->customFieldsRepository = ContainerWrapper::getInstance()->get(CustomFieldsRepository::class);
   }
 
   public function getSegments() {
@@ -75,6 +79,7 @@ class ImportExportFactory {
       return [
         'id' => $fieldId,
         'name' => $fieldName,
+        'text' => $fieldName, // Required for select2 default functionality
         'type' => ($fieldId === 'confirmed_at' || $fieldId === 'created_at') ? 'date' : null,
         'custom' => false,
       ];
@@ -82,7 +87,7 @@ class ImportExportFactory {
   }
 
   public function getSubscriberCustomFields() {
-    return CustomField::findArray();
+    return $this->customFieldsRepository->findAllAsArray();
   }
 
   public function formatSubscriberCustomFields($subscriberCustomFields) {
@@ -90,6 +95,7 @@ class ImportExportFactory {
       return [
         'id' => $field['id'],
         'name' => $field['name'],
+        'text' => $field['name'], // Required for select2 default functionality
         'type' => $field['type'],
         'params' => unserialize($field['params']),
         'custom' => true,
@@ -106,35 +112,42 @@ class ImportExportFactory {
         [
           'id' => 'ignore',
           'name' => __('Ignore field...', 'mailpoet'),
+          'text' => __('Ignore field...', 'mailpoet'), // Required for select2 default functionality
         ],
         [
           'id' => 'create',
           'name' => __('Create new field...', 'mailpoet'),
+          'text' => __('Create new field...', 'mailpoet'), // Required for select2 default functionality
         ],
       ] :
       [
         [
           'id' => 'select',
           'name' => __('Select all...', 'mailpoet'),
+          'text' => __('Select all...', 'mailpoet'), // Required for select2 default functionality
         ],
         [
           'id' => 'deselect',
           'name' => __('Deselect all...', 'mailpoet'),
+          'text' => __('Deselect all...', 'mailpoet'), // Required for select2 default functionality
         ],
       ];
     $select2Fields = [
       [
         'name' => __('Actions', 'mailpoet'),
+        'text' => __('Actions', 'mailpoet'), // Required for select2 default functionality
         'children' => $actions,
       ],
       [
         'name' => __('System fields', 'mailpoet'),
+        'text' => __('System fields', 'mailpoet'), // Required for select2 default functionality
         'children' => $this->formatSubscriberFields($subscriberFields),
       ],
     ];
     if ($subscriberCustomFields) {
       array_push($select2Fields, [
         'name' => __('User fields', 'mailpoet'),
+        'text' => __('User fields', 'mailpoet'), // Required for select2 default functionality
         'children' => $this->formatSubscriberCustomFields(
           $subscriberCustomFields
         ),

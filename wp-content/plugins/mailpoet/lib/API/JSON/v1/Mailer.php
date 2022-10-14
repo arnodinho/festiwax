@@ -8,12 +8,12 @@ if (!defined('ABSPATH')) exit;
 use MailPoet\API\JSON\Endpoint as APIEndpoint;
 use MailPoet\API\JSON\Error as APIError;
 use MailPoet\Config\AccessControl;
+use MailPoet\Mailer\MailerFactory;
 use MailPoet\Mailer\MailerLog;
 use MailPoet\Mailer\MetaInfo;
 use MailPoet\Services\AuthorizedEmailsController;
 use MailPoet\Services\Bridge;
 use MailPoet\Settings\SettingsController;
-use MailPoet\WP\Functions as WPFunctions;
 
 class Mailer extends APIEndpoint {
 
@@ -29,6 +29,9 @@ class Mailer extends APIEndpoint {
   /** @var MetaInfo */
   private $mailerMetaInfo;
 
+  /** @var MailerFactory */
+  private $mailerFactory;
+
   public $permissions = [
     'global' => AccessControl::PERMISSION_MANAGE_EMAILS,
   ];
@@ -37,21 +40,22 @@ class Mailer extends APIEndpoint {
     AuthorizedEmailsController $authorizedEmailsController,
     SettingsController $settings,
     Bridge $bridge,
+    MailerFactory $mailerFactory,
     MetaInfo $mailerMetaInfo
   ) {
     $this->authorizedEmailsController = $authorizedEmailsController;
     $this->settings = $settings;
     $this->bridge = $bridge;
+    $this->mailerFactory = $mailerFactory;
     $this->mailerMetaInfo = $mailerMetaInfo;
   }
 
   public function send($data = []) {
     try {
-      $mailer = new \MailPoet\Mailer\Mailer();
-      $mailer->init(
-        (isset($data['mailer'])) ? $data['mailer'] : false,
-        (isset($data['sender'])) ? $data['sender'] : false,
-        (isset($data['reply_to'])) ? $data['reply_to'] : false
+      $mailer = $this->mailerFactory->buildMailer(
+        $data['mailer'] ?? null,
+        $data['sender'] ?? null,
+        $data['reply_to'] ?? null
       );
       // report this as 'sending_test' in metadata since this endpoint is only used to test sending methods for now
       $extraParams = [
@@ -66,7 +70,8 @@ class Mailer extends APIEndpoint {
 
     if ($result['response'] === false) {
       $error = sprintf(
-        WPFunctions::get()->__('The email could not be sent: %s', 'mailpoet'),
+        // translators: %s is the error message.
+        __('The email could not be sent: %s', 'mailpoet'),
         $result['error']->getMessage()
       );
       return $this->errorResponse([APIError::BAD_REQUEST => $error]);

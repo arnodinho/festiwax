@@ -6,6 +6,10 @@ $vendorDir = dirname(__DIR__);
 $baseDir   = dirname($vendorDir);
 
 return array(
+	'WCPay\\MultiCurrency\\Compatibility\\WooCommercePointsAndRewards' => array(
+		'version' => 'dev-trunk',
+		'path'    => $baseDir . '/includes/multi-currency/Compatibility/WooCommercePointsAndRewards.php'
+	),
 	'WCPay\\MultiCurrency\\Compatibility\\WooCommerceProductAddOns' => array(
 		'version' => 'dev-trunk',
 		'path'    => $baseDir . '/includes/multi-currency/Compatibility/WooCommerceProductAddOns.php'
@@ -530,9 +534,29 @@ return array(
 		'version' => '2.10.11.0',
 		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/AutoloadGenerator.php'
 	),
+	'Container' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-container.php'
+	),
+	'Autoloader_Locator' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-autoloader-locator.php'
+	),
+	'Latest_Autoloader_Guard' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-latest-autoloader-guard.php'
+	),
+	'PHP_Autoloader' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-php-autoloader.php'
+	),
 	'Automattic\\Jetpack\\Autoloader\\AutoloadProcessor' => array(
 		'version' => '2.10.11.0',
 		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/AutoloadProcessor.php'
+	),
+	'Autoloader_Handler' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-autoloader-handler.php'
 	),
 	'Automattic\\Jetpack\\Autoloader\\AutoloadFileWriter' => array(
 		'version' => '2.10.11.0',
@@ -542,9 +566,45 @@ return array(
 		'version' => '2.10.11.0',
 		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/CustomAutoloaderPlugin.php'
 	),
+	'Version_Selector' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-version-selector.php'
+	),
+	'Path_Processor' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-path-processor.php'
+	),
+	'Hook_Manager' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-hook-manager.php'
+	),
+	'Manifest_Reader' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-manifest-reader.php'
+	),
+	'Plugin_Locator' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-plugin-locator.php'
+	),
+	'Plugins_Handler' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-plugins-handler.php'
+	),
+	'Autoloader' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-autoloader.php'
+	),
 	'Automattic\\Jetpack\\Autoloader\\ManifestGenerator' => array(
 		'version' => '2.10.11.0',
 		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/ManifestGenerator.php'
+	),
+	'Shutdown_Handler' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-shutdown-handler.php'
+	),
+	'Version_Loader' => array(
+		'version' => '2.10.11.0',
+		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-version-loader.php'
 	),
 	'Automattic\\Jetpack\\Sync\\Defaults' => array(
 		'version' => '1.30.5.0',

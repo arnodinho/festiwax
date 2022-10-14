@@ -139,6 +139,9 @@ table.thwepo-extra-options td {
     vertical-align: middle;
     margin-top: 0px;
 }
+.theme-twentytwentyone .thwepo-extra-options input[type=range] {
+    -webkit-appearance: auto;
+}
 
 /* Hestia Theme Design Fix */
 .theme-hestia form.cart table.thwepo-extra-options td.leftside {
@@ -285,4 +288,23 @@ form.cart table.thwepo-extra-options input.thwepof-colorpicker {
 .thwepof-seperator {
     min-height: 1px;
     border: 0.5px dashed #959595;
+}
+
+/* twentytwentytwo style fixes  */
+.theme-twentytwentytwo table.thwepo-extra-options td {
+    padding: 5px 0px;
+}
+.theme-twentytwentytwo .thwepo-extra-options input, .theme-twentytwentytwo .thwepo-extra-options select{
+    min-height: 35px;
+}
+.theme-twentytwentytwo .thwepo-extra-options textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+.theme-twentytwentytwo .thwepof-seperator {
+    margin: 10px 0px;
+}
+.theme-twentytwentytwo .thwepo-extra-options input[type=checkbox],
+.theme-twentytwentytwo .thwepo-extra-options input[type=radio] {
+    min-height: auto;
 }

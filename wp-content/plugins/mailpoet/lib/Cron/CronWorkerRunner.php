@@ -74,7 +74,7 @@ class CronWorkerRunner {
         $this->processTask($worker, $task);
       }
     } catch (\Exception $e) {
-      if ($task && $e->getCode() !== CronHelper::DAEMON_EXECUTION_LIMIT_REACHED) {
+      if (isset($task) && $task && $e->getCode() !== CronHelper::DAEMON_EXECUTION_LIMIT_REACHED) {
         $this->cronWorkerScheduler->rescheduleProgressively($task);
       }
       throw $e;
@@ -177,7 +177,7 @@ class CronWorkerRunner {
   }
 
   private function complete(ScheduledTaskEntity $task) {
-    $task->setProcessedAt(new Carbon());
+    $task->setProcessedAt(Carbon::createFromTimestamp($this->wp->currentTime('timestamp')));
     $task->setStatus(ScheduledTaskEntity::STATUS_COMPLETED);
     $this->scheduledTasksRepository->persist($task);
     $this->scheduledTasksRepository->flush();

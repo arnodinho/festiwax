@@ -58,7 +58,7 @@ class WC_Payments_Features {
 	 * @return bool
 	 */
 	public static function is_account_overview_task_list_enabled() {
-		return get_option( '_wcpay_feature_account_overview_task_list' );
+		return get_option( '_wcpay_feature_account_overview_task_list', '1' );
 	}
 
 	/**
@@ -111,6 +111,15 @@ class WC_Payments_Features {
 	}
 
 	/**
+	 * Checks whether custom deposit schedules are enabled.
+	 *
+	 * @return bool
+	 */
+	public static function is_custom_deposit_schedules_enabled() {
+		return '1' === get_option( '_wcpay_feature_custom_deposit_schedules', '1' );
+	}
+
+	/**
 	 * Returns feature flags as an array suitable for display on the front-end.
 	 *
 	 * @return bool[]
@@ -124,6 +133,7 @@ class WC_Payments_Features {
 				'accountOverviewTaskList' => self::is_account_overview_task_list_enabled(),
 				'platformCheckout'        => self::is_platform_checkout_eligible(),
 				'documents'               => self::is_documents_section_enabled(),
+				'customDepositSchedules'  => self::is_custom_deposit_schedules_enabled(),
 			]
 		);
 	}

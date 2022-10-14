@@ -52,7 +52,8 @@
                          ?>
                       </div>
                         <a class=""  href="<?php echo esc_url(get_permalink( $loop->post->ID )); ?>">
-                        <?php if (has_post_thumbnail( $loop->post->ID )) echo get_the_post_thumbnail($loop->post->ID, 'shop_catalog'); else echo '<img src="'.esc_url(woocommerce_placeholder_img_src()).'" alt="'.esc_html(get_the_title()) .' post thumbnail" />'; ?>
+                        <?php
+                        if (has_post_thumbnail( $loop->post->ID )) echo get_the_post_thumbnail($loop->post->ID, 'woocommerce_thumbnail'); else echo '<img src="'.esc_url(woocommerce_placeholder_img_src()).'" alt="'.esc_html(get_the_title()) .' post thumbnail" />'; ?>
                         </a>
                             <div class="bwt-wishlist-cart-view textcenter">
                             <ul class="d-flex">
@@ -92,7 +93,7 @@
                       <?php echo $product->get_price_html(); ?>
                     </div>
                     <div class="cart-box">
-                      <span class="our-product-cart"><?php if( $product->is_type( 'simple' ) ){ woocommerce_template_loop_add_to_cart( $loop->post, $product ); } ?></span>
+                      <span class="our-product-cart"><?php woocommerce_template_loop_add_to_cart( $loop->post, $product );  ?></span>
                     </div>
                   </div>
                 </div>

@@ -7,22 +7,26 @@ if (!defined('ABSPATH')) exit;
 
 use MailPoet\API\JSON\Endpoint as APIEndpoint;
 use MailPoet\API\JSON\Error as APIError;
+use MailPoet\API\JSON\ErrorResponse;
+use MailPoet\API\JSON\Response;
 use MailPoet\API\JSON\ResponseBuilders\SubscribersResponseBuilder;
+use MailPoet\API\JSON\SuccessResponse;
 use MailPoet\Config\AccessControl;
+use MailPoet\ConflictException;
 use MailPoet\Doctrine\Validator\ValidationException;
 use MailPoet\Entities\SegmentEntity;
 use MailPoet\Entities\SubscriberEntity;
 use MailPoet\Exception;
 use MailPoet\Listing;
-use MailPoet\Models\Subscriber;
 use MailPoet\Segments\SegmentsRepository;
+use MailPoet\Settings\SettingsController;
 use MailPoet\Subscribers\ConfirmationEmailMailer;
 use MailPoet\Subscribers\SubscriberListingRepository;
 use MailPoet\Subscribers\SubscriberSaveController;
 use MailPoet\Subscribers\SubscribersRepository;
 use MailPoet\Subscribers\SubscriberSubscribeController;
 use MailPoet\UnexpectedValueException;
-use MailPoet\WP\Functions as WPFunctions;
+use MailPoet\Util\Helpers;
 
 class Subscribers extends APIEndpoint {
   const SUBSCRIPTION_LIMIT_COOLDOWN = 60;
@@ -56,6 +60,9 @@ class Subscribers extends APIEndpoint {
   /** @var SubscriberSubscribeController */
   private $subscribeController;
 
+  /** @var SettingsController */
+  private $settings;
+
   public function __construct(
     Listing\Handler $listingHandler,
     ConfirmationEmailMailer $confirmationEmailMailer,
@@ -64,7 +71,8 @@ class Subscribers extends APIEndpoint {
     SubscriberListingRepository $subscriberListingRepository,
     SegmentsRepository $segmentsRepository,
     SubscriberSaveController $saveController,
-    SubscriberSubscribeController $subscribeController
+    SubscriberSubscribeController $subscribeController,
+    SettingsController $settings
   ) {
     $this->listingHandler = $listingHandler;
     $this->confirmationEmailMailer = $confirmationEmailMailer;
@@ -74,13 +82,14 @@ class Subscribers extends APIEndpoint {
     $this->segmentsRepository = $segmentsRepository;
     $this->saveController = $saveController;
     $this->subscribeController = $subscribeController;
+    $this->settings = $settings;
   }
 
   public function get($data = []) {
     $subscriber = $this->getSubscriber($data);
     if (!$subscriber instanceof SubscriberEntity) {
       return $this->errorResponse([
-        APIError::NOT_FOUND => WPFunctions::get()->__('This subscriber does not exist.', 'mailpoet'),
+        APIError::NOT_FOUND => __('This subscriber does not exist.', 'mailpoet'),
       ]);
     }
     $result = $this->subscribersResponseBuilder->build($subscriber);
@@ -109,7 +118,7 @@ class Subscribers extends APIEndpoint {
   private function preferUnsubscribedStatusFromSegment(array $subscriber, $segmentId) {
     $segmentStatus = $this->findSegmentStatus($subscriber, $segmentId);
 
-    if ($segmentStatus === Subscriber::STATUS_UNSUBSCRIBED) {
+    if ($segmentStatus === SubscriberEntity::STATUS_UNSUBSCRIBED) {
       $subscriber['status'] = $segmentStatus;
     }
     return $subscriber;
@@ -142,12 +151,21 @@ class Subscribers extends APIEndpoint {
     );
   }
 
-  public function save($data = []) {
+  /**
+   * @param array $data
+   * @return ErrorResponse|SuccessResponse
+   * @throws \Exception
+   */
+  public function save(array $data = []) {
     try {
       $subscriber = $this->saveController->save($data);
     } catch (ValidationException $validationException) {
       return $this->badRequest([$this->getErrorMessage($validationException)]);
-    }
+    } catch (ConflictException $conflictException) {
+      return $this->badRequest([
+        APIError::BAD_REQUEST => $conflictException->getMessage(),
+      ]);
+    };
 
     return $this->successResponse(
       $this->subscribersResponseBuilder->build($subscriber)
@@ -165,7 +183,7 @@ class Subscribers extends APIEndpoint {
       );
     } else {
       return $this->errorResponse([
-        APIError::NOT_FOUND => WPFunctions::get()->__('This subscriber does not exist.', 'mailpoet'),
+        APIError::NOT_FOUND => __('This subscriber does not exist.', 'mailpoet'),
       ]);
     }
   }
@@ -181,7 +199,7 @@ class Subscribers extends APIEndpoint {
       );
     } else {
       return $this->errorResponse([
-        APIError::NOT_FOUND => WPFunctions::get()->__('This subscriber does not exist.', 'mailpoet'),
+        APIError::NOT_FOUND => __('This subscriber does not exist.', 'mailpoet'),
       ]);
     }
   }
@@ -193,24 +211,37 @@ class Subscribers extends APIEndpoint {
       return $this->successResponse(null, ['count' => $count]);
     } else {
       return $this->errorResponse([
-        APIError::NOT_FOUND => WPFunctions::get()->__('This subscriber does not exist.', 'mailpoet'),
+        APIError::NOT_FOUND => __('This subscriber does not exist.', 'mailpoet'),
       ]);
     }
   }
 
   public function sendConfirmationEmail($data = []) {
+    if (!(bool)$this->settings->get('signup_confirmation.enabled', true)) {
+      $errorMessage = __('Sign-up confirmation is disabled in your [link]MailPoet settings[/link]. Please enable it to resend confirmation emails or update your subscriber’s status manually.', 'mailpoet');
+      $errorMessage = Helpers::replaceLinkTags($errorMessage, 'admin.php?page=mailpoet-settings#/signup');
+      return $this->errorResponse([APIError::BAD_REQUEST => $errorMessage], [], Response::STATUS_BAD_REQUEST);
+    }
+
     $id = (isset($data['id']) ? (int)$data['id'] : false);
-    $subscriber = Subscriber::findOne($id);
-    if ($subscriber instanceof Subscriber) {
-      if ($this->confirmationEmailMailer->sendConfirmationEmail($subscriber)) {
-        return $this->successResponse();
+    $subscriber = $this->subscribersRepository->findOneById($id);
+    if ($subscriber instanceof SubscriberEntity) {
+      try {
+        if ($this->confirmationEmailMailer->sendConfirmationEmail($subscriber)) {
+          return $this->successResponse();
+        } else {
+          return $this->errorResponse([
+            APIError::UNKNOWN => __('There was a problem with your sending method. Please check if your sending method is properly configured.', 'mailpoet'),
+          ]);
+        }
+      } catch (\Exception $e) {
+        return $this->errorResponse([
+          APIError::UNKNOWN => __('There was a problem with your sending method. Please check if your sending method is properly configured.', 'mailpoet'),
+        ]);
       }
-      return $this->errorResponse([
-        APIError::UNKNOWN => __('There was a problem with your sending method. Please check if your sending method is properly configured.', 'mailpoet'),
-      ]);
     } else {
       return $this->errorResponse([
-        APIError::NOT_FOUND => WPFunctions::get()->__('This subscriber does not exist.', 'mailpoet'),
+        APIError::NOT_FOUND => __('This subscriber does not exist.', 'mailpoet'),
       ]);
     }
   }
@@ -225,7 +256,7 @@ class Subscribers extends APIEndpoint {
       $segment = $this->getSegment($data);
       if (!$segment) {
         return $this->errorResponse([
-          APIError::NOT_FOUND => WPFunctions::get()->__('This segment does not exist.', 'mailpoet'),
+          APIError::NOT_FOUND => __('This segment does not exist.', 'mailpoet'),
         ]);
       }
     }
@@ -279,11 +310,11 @@ class Subscribers extends APIEndpoint {
   private function getErrorMessage(ValidationException $exception): string {
     $exceptionMessage = $exception->getMessage();
     if (strpos($exceptionMessage, 'This value should not be blank.') !== false) {
-      return WPFunctions::get()->__('Please enter your email address', 'mailpoet');
+      return __('Please enter your email address', 'mailpoet');
     } elseif (strpos($exceptionMessage, 'This value is not a valid email address.') !== false) {
-      return WPFunctions::get()->__('Your email address is invalid!', 'mailpoet');
+      return __('Your email address is invalid!', 'mailpoet');
     }
 
-    return WPFunctions::get()->__('Unexpected error.', 'mailpoet');
+    return __('Unexpected error.', 'mailpoet');
   }
 }

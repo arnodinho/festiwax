@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) exit;
 
 
 use InvalidArgumentException;
-use MailPoet\Models\CustomField;
+use MailPoet\Entities\CustomFieldEntity;
 
 class ApiDataSanitizer {
 
@@ -34,9 +34,11 @@ class ApiDataSanitizer {
 
   private function checkMandatoryStringParameter(array $data, $parameterName) {
     if (empty($data[$parameterName])) {
+      // translators: %s is the name of the missing argument.
       throw new InvalidArgumentException(sprintf(__('Mandatory argument "%s" is missing', 'mailpoet'), $parameterName), self::ERROR_MANDATORY_ARGUMENT_MISSING);
     }
     if (!is_string($data[$parameterName])) {
+      // translators: %s is the name of the malformed argument.
       throw new InvalidArgumentException(sprintf(__('Mandatory argument "%s" has to be string', 'mailpoet'), $parameterName), self::ERROR_MANDATORY_ARGUMENT_WRONG_TYPE);
     }
   }
@@ -72,22 +74,23 @@ class ApiDataSanitizer {
 
   private function getExtraParams($data) {
     $type = strtolower($data['type']);
-    if (in_array($type, [CustomField::TYPE_TEXT, CustomField::TYPE_TEXTAREA], true)) {
+    if (in_array($type, [CustomFieldEntity::TYPE_TEXT, CustomFieldEntity::TYPE_TEXTAREA], true)) {
       return $this->getExtraParamsForText($data['params']);
     }
 
-    if (in_array($type, [CustomField::TYPE_RADIO, CustomField::TYPE_SELECT], true)) {
+    if (in_array($type, [CustomFieldEntity::TYPE_RADIO, CustomFieldEntity::TYPE_SELECT], true)) {
       return $this->getExtraParamsForSelect($data['params']);
     }
 
-    if ($type === CustomField::TYPE_CHECKBOX) {
+    if ($type === CustomFieldEntity::TYPE_CHECKBOX) {
       return $this->getExtraParamsForCheckbox($data['params']);
     }
 
-    if ($type === CustomField::TYPE_DATE) {
+    if ($type === CustomFieldEntity::TYPE_DATE) {
       return $this->getExtraParamsForDate($data['params']);
     }
 
+    // translators: %s is the name of the type.
     throw new InvalidArgumentException(sprintf(__('Invalid type "%s"', 'mailpoet'), $type), self::ERROR_INVALID_TYPE);
   }
 

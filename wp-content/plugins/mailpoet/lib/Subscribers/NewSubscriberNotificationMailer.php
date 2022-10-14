@@ -6,19 +6,18 @@ if (!defined('ABSPATH')) exit;
 
 
 use MailPoet\Config\Renderer;
-use MailPoet\Mailer\Mailer;
+use MailPoet\Entities\SegmentEntity;
+use MailPoet\Entities\SubscriberEntity;
+use MailPoet\Mailer\MailerFactory;
 use MailPoet\Mailer\MetaInfo;
-use MailPoet\Models\Segment;
-use MailPoet\Models\Subscriber;
 use MailPoet\Settings\SettingsController;
 use MailPoet\WP\Functions as WPFunctions;
 
 class NewSubscriberNotificationMailer {
-
   const SETTINGS_KEY = 'subscriber_email_notification';
 
-  /** @var Mailer */
-  private $mailer;
+  /** @var MailerFactory */
+  private $mailerFactory;
 
   /** @var Renderer */
   private $renderer;
@@ -30,23 +29,23 @@ class NewSubscriberNotificationMailer {
   private $mailerMetaInfo;
 
   public function __construct(
-    Mailer $mailer,
+    MailerFactory $mailerFactory,
     Renderer $renderer,
     SettingsController $settings
   ) {
-    $this->mailer = $mailer;
+    $this->mailerFactory = $mailerFactory;
     $this->renderer = $renderer;
     $this->settings = $settings;
     $this->mailerMetaInfo = new MetaInfo();
   }
 
   /**
-   * @param Subscriber $subscriber
-   * @param Segment[] $segments
+   * @param SubscriberEntity $subscriber
+   * @param SegmentEntity[] $segments
    *
    * @throws \Exception
    */
-  public function send(Subscriber $subscriber, array $segments) {
+  public function send(SubscriberEntity $subscriber, array $segments): void {
     $settings = $this->settings->get(NewSubscriberNotificationMailer::SETTINGS_KEY);
     if ($this->isDisabled($settings)) {
       return;
@@ -55,7 +54,7 @@ class NewSubscriberNotificationMailer {
       $extraParams = [
         'meta' => $this->mailerMetaInfo->getNewSubscriberNotificationMetaInfo(),
       ];
-      $this->mailer->send($this->constructNewsletter($subscriber, $segments), $settings['address'], $extraParams);
+      $this->mailerFactory->getDefaultMailer()->send($this->constructNewsletter($subscriber, $segments), $settings['address'], $extraParams);
     } catch (\Exception $e) {
       if (WP_DEBUG) {
         throw $e;
@@ -80,21 +79,22 @@ class NewSubscriberNotificationMailer {
   }
 
   /**
-   * @param Subscriber $subscriber
-   * @param Segment[] $segments
+   * @param SubscriberEntity $subscriber
+   * @param SegmentEntity[] $segments
    *
    * @return array
    * @throws \Exception
    */
-  private function constructNewsletter(Subscriber $subscriber, array $segments) {
+  private function constructNewsletter(SubscriberEntity $subscriber, array $segments) {
     $segmentNames = $this->getSegmentNames($segments);
     $context = [
-      'subscriber_email' => $subscriber->get('email'),
+      'subscriber_email' => $subscriber->getEmail(),
       'segments_names' => $segmentNames,
       'link_settings' => WPFunctions::get()->getSiteUrl(null, '/wp-admin/admin.php?page=mailpoet-settings'),
-      'link_premium' => WPFunctions::get()->getSiteUrl(null, '/wp-admin/admin.php?page=mailpoet-premium'),
+      'link_premium' => WPFunctions::get()->getSiteUrl(null, '/wp-admin/admin.php?page=mailpoet-upgrade'),
     ];
     return [
+      // translators: %s is name of the segment.
       'subject' => sprintf(__('New subscriber to %s', 'mailpoet'), $segmentNames),
       'body' => [
         'html' => $this->renderer->render('emails/newSubscriberNotification.html', $context),
@@ -104,13 +104,13 @@ class NewSubscriberNotificationMailer {
   }
 
   /**
-   * @param Segment[] $segments
+   * @param SegmentEntity[] $segments
    * @return string
    */
-  private function getSegmentNames($segments) {
+  private function getSegmentNames(array $segments): string {
     $names = [];
     foreach ($segments as $segment) {
-      $names[] = $segment->get('name');
+      $names[] = $segment->getName();
     }
     return implode(', ', $names);
   }

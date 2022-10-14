@@ -1,14 +1,14 @@
-<?php 
+<?php
 $attorneys_enable = get_theme_mod( 'drop_shipping_pro_radio_product_banner1_enable' );
 if ( 'Disable' == $attorneys_enable ) {
   return;
 }
-if( get_theme_mod('drop_shipping_pro_product_banner1_bgcolor') ) { 
+if( get_theme_mod('drop_shipping_pro_product_banner1_bgcolor') ) {
   $feature_stores_backg = 'background-color:'.esc_attr(get_theme_mod('drop_shipping_pro_product_banner1_bgcolor')).';';
 }elseif( get_theme_mod('drop_shipping_pro_product_banner1_bgimage') ){
   $feature_stores_backg = 'background-image:url(\''.esc_url(get_theme_mod('drop_shipping_pro_product_banner1_bgimage')).'\')';
 }else{
-  $feature_stores_backg = '';   
+  $feature_stores_backg = '';
 }
 
 $banner_backg1 = 'background-image:url(\''.esc_url(get_theme_mod('drop_shipping_pro_product_banner1_box_bgimage1')).'\')';

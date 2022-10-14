@@ -1,2 +1,10 @@
 <?php
- namespace MailPoetVendor\Twig\Cache; if (!defined('ABSPATH')) exit; interface CacheInterface { public function generateKey($name, $className); public function write($key, $content); public function load($key); public function getTimestamp($key); } \class_alias('MailPoetVendor\\Twig\\Cache\\CacheInterface', 'MailPoetVendor\\Twig_CacheInterface'); 
+namespace MailPoetVendor\Twig\Cache;
+if (!defined('ABSPATH')) exit;
+interface CacheInterface
+{
+ public function generateKey(string $name, string $className) : string;
+ public function write(string $key, string $content) : void;
+ public function load(string $key) : void;
+ public function getTimestamp(string $key) : int;
+}

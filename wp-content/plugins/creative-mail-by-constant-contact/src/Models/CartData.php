@@ -34,4 +34,16 @@ class CartData
      * @var User
      */
     public $user;
+    /**
+     * Cart Shipping Total
+     *
+     * @var float
+     */
+    public $shipping_total;
+    /**
+     * Cart Shipping Taxes
+     *
+     * @var array
+     */
+    public $shipping_taxes;
 }

@@ -3,13 +3,13 @@
  * Plugin Name: Extra product options For WooCommerce | Custom Product Addons and Fields
  * Description: Add extra product options in product page.
  * Author:      ThemeHigh
- * Version:     3.1.2
+ * Version:     3.1.7
  * Author URI:  https://www.themehigh.com
  * Plugin URI:  https://www.themehigh.com
  * Text Domain: woo-extra-product-options
  * Domain Path: /languages
  * WC requires at least: 3.0.0
- * WC tested up to: 6.5.0
+ * WC tested up to: 6.8.2
  */
 
 if(!defined('ABSPATH')){ exit; }
@@ -34,7 +34,7 @@ if(is_woocommerce_active()) {
 			}
 
 			public function init() {
-				define('THWEPOF_VERSION', '3.1.2');
+				define('THWEPOF_VERSION', '3.1.7');
 				!defined('THWEPOF_BASE_NAME') && define('THWEPOF_BASE_NAME', plugin_basename( __FILE__ ));
 				!defined('THWEPOF_PATH') && define('THWEPOF_PATH', plugin_dir_path( __FILE__ ));
 				!defined('THWEPOF_URL') && define('THWEPOF_URL', plugins_url( '/', __FILE__ ));

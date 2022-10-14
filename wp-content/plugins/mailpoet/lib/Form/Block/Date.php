@@ -36,14 +36,14 @@ class Date {
     $this->wp = $wp;
   }
 
-  public function render(array $block, array $formSettings): string {
+  public function render(array $block, array $formSettings, ?int $formId = null): string {
     $html = '';
     $html .= $this->rendererHelper->renderLabel($block, $formSettings);
-    $html .= $this->renderDateSelect($block, $formSettings);
+    $html .= $this->renderDateSelect($formId, $block, $formSettings);
     return $this->wrapper->render($block, $html);
   }
 
-  private function renderDateSelect(array $block = [], $formSettings = []): string {
+  private function renderDateSelect(?int $formId, array $block = [], $formSettings = []): string {
     $html = '';
 
     $fieldName = 'data[' . $this->rendererHelper->getFieldName($block) . ']';
@@ -54,8 +54,10 @@ class Date {
     $dateFormat = $dateFormats[$block['params']['date_type']][0];
 
     // set date format if specified
-    if (isset($block['params']['date_format'])
-    && strlen(trim($block['params']['date_format'])) > 0) {
+    if (
+      isset($block['params']['date_format'])
+      && strlen(trim($block['params']['date_format'])) > 0
+    ) {
       $dateFormat = $block['params']['date_format'];
     }
 
@@ -68,7 +70,7 @@ class Date {
         $html .= ' style="' . $this->wp->escAttr($this->blockStylesRenderer->renderForSelect([], $formSettings)) . '"';
         $html .= $this->rendererHelper->getInputValidation($block, [
           'required-message' => __('Please select a day', 'mailpoet'),
-        ]);
+        ], $formId);
         $html .= 'name="' . $fieldName . '[day]" placeholder="' . __('Day', 'mailpoet') . '">';
         $html .= $this->getDays($block);
         $html .= '</select>';
@@ -77,7 +79,7 @@ class Date {
         $html .= ' style="' . $this->wp->escAttr($this->blockStylesRenderer->renderForSelect([], $formSettings)) . '"';
         $html .= $this->rendererHelper->getInputValidation($block, [
           'required-message' => __('Please select a month', 'mailpoet'),
-        ]);
+        ], $formId);
         $html .= 'name="' . $fieldName . '[month]" placeholder="' . __('Month', 'mailpoet') . '">';
         $html .= $this->getMonths($block);
         $html .= '</select>';
@@ -86,14 +88,14 @@ class Date {
         $html .= ' style="' . $this->wp->escAttr($this->blockStylesRenderer->renderForSelect([], $formSettings)) . '"';
         $html .= $this->rendererHelper->getInputValidation($block, [
           'required-message' => __('Please select a year', 'mailpoet'),
-        ]);
+        ], $formId);
         $html .= 'name="' . $fieldName . '[year]" placeholder="' . __('Year', 'mailpoet') . '">';
         $html .= $this->getYears($block);
         $html .= '</select>';
       }
     }
 
-    $html .= '<span class="mailpoet_error_' . $this->wp->escAttr($block['id']) . '"></span>';
+    $html .= '<span class="mailpoet_error_' . $this->wp->escAttr($block['id']) . ($formId ? '_' . $formId : '') . '"></span>';
 
     return $html;
   }
@@ -131,11 +133,11 @@ class Date {
     if (!empty($block['params']['value'])) {
       $date = CarbonImmutable::createFromFormat('Y-m-d H:i:s', $block['params']['value']);
       if ($date instanceof CarbonImmutable) {
-        $defaults['selected'] = (int)strftime('%m', $date->getTimestamp());
+        $defaults['selected'] = (int)date('m', $date->getTimestamp());
       }
     } elseif (!empty($block['params']['is_default_today'])) {
       // is default today
-      $defaults['selected'] = (int)strftime('%m');
+      $defaults['selected'] = (int)date('m');
     }
     // merge block with defaults
     $block = array_merge($defaults, $block);
@@ -160,18 +162,18 @@ class Date {
   private function getYears(array $block = []): string {
     $defaults = [
       'selected' => null,
-      'from' => (int)strftime('%Y') - 100,
-      'to' => (int)strftime('%Y'),
+      'from' => (int)date('Y') - 100,
+      'to' => (int)date('Y'),
     ];
 
     if (!empty($block['params']['value'])) {
       $date = CarbonImmutable::createFromFormat('Y-m-d H:i:s', $block['params']['value']);
       if ($date instanceof CarbonImmutable) {
-        $defaults['selected'] = (int)strftime('%Y', $date->getTimestamp());
+        $defaults['selected'] = (int)date('Y', $date->getTimestamp());
       }
     } elseif (!empty($block['params']['is_default_today'])) {
       // is default today
-      $defaults['selected'] = (int)strftime('%Y');
+      $defaults['selected'] = (int)date('Y');
     }
 
     // merge block with defaults
@@ -198,11 +200,11 @@ class Date {
     if (!empty($block['params']['value'])) {
       $date = CarbonImmutable::createFromFormat('Y-m-d H:i:s', $block['params']['value']);
       if ($date instanceof CarbonImmutable) {
-        $defaults['selected'] = (int)strftime('%d', $date->getTimestamp());
+        $defaults['selected'] = (int)date('d', $date->getTimestamp());
       }
     } elseif (!empty($block['params']['is_default_today'])) {
       // is default today
-      $defaults['selected'] = (int)strftime('%d');
+      $defaults['selected'] = (int)date('d');
     }
 
     // merge block with defaults

@@ -1,2 +1,19 @@
 <?php
- namespace MailPoetVendor\Twig\Node\Expression\Binary; if (!defined('ABSPATH')) exit; use MailPoetVendor\Twig\Compiler; class GreaterBinary extends AbstractBinary { public function operator(Compiler $compiler) { return $compiler->raw('>'); } } \class_alias('MailPoetVendor\\Twig\\Node\\Expression\\Binary\\GreaterBinary', 'MailPoetVendor\\Twig_Node_Expression_Binary_Greater'); 
+namespace MailPoetVendor\Twig\Node\Expression\Binary;
+if (!defined('ABSPATH')) exit;
+use MailPoetVendor\Twig\Compiler;
+class GreaterBinary extends AbstractBinary
+{
+ public function compile(Compiler $compiler) : void
+ {
+ if (\PHP_VERSION_ID >= 80000) {
+ parent::compile($compiler);
+ return;
+ }
+ $compiler->raw('(1 === \\MailPoetVendor\\twig_compare(')->subcompile($this->getNode('left'))->raw(', ')->subcompile($this->getNode('right'))->raw('))');
+ }
+ public function operator(Compiler $compiler) : Compiler
+ {
+ return $compiler->raw('>');
+ }
+}

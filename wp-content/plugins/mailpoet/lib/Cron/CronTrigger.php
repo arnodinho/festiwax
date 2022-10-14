@@ -5,27 +5,23 @@ namespace MailPoet\Cron;
 if (!defined('ABSPATH')) exit;
 
 
-use MailPoet\Cron\Triggers\MailPoet;
 use MailPoet\Cron\Triggers\WordPress;
 use MailPoet\Settings\SettingsController;
 
 class CronTrigger {
   const METHOD_LINUX_CRON = 'Linux Cron';
-  const METHOD_MAILPOET = 'MailPoet';
   const METHOD_WORDPRESS = 'WordPress';
+  const METHOD_ACTION_SCHEDULER = 'Action Scheduler';
 
   const METHODS = [
-    'mailpoet' => self::METHOD_MAILPOET,
     'wordpress' => self::METHOD_WORDPRESS,
     'linux_cron' => self::METHOD_LINUX_CRON,
+    'action_scheduler' => self::METHOD_ACTION_SCHEDULER,
     'none' => 'Disabled',
   ];
 
-  const DEFAULT_METHOD = 'WordPress';
+  const DEFAULT_METHOD = self::METHOD_ACTION_SCHEDULER;
   const SETTING_NAME = 'cron_trigger';
-
-  /** @var MailPoet */
-  private $mailpoetTrigger;
 
   /** @var WordPress */
   private $wordpressTrigger;
@@ -33,22 +29,25 @@ class CronTrigger {
   /** @var SettingsController */
   private $settings;
 
+  /** @var DaemonActionSchedulerRunner */
+  private $cronActionScheduler;
+
   public function __construct(
-    MailPoet $mailpoetTrigger,
     WordPress $wordpressTrigger,
-    SettingsController $settings
+    SettingsController $settings,
+    DaemonActionSchedulerRunner $cronActionScheduler
   ) {
-    $this->mailpoetTrigger = $mailpoetTrigger;
     $this->wordpressTrigger = $wordpressTrigger;
     $this->settings = $settings;
+    $this->cronActionScheduler = $cronActionScheduler;
   }
 
-  public function init() {
+  public function init(string $environment = '') {
     $currentMethod = $this->settings->get(self::SETTING_NAME . '.method');
     try {
-      if ($currentMethod === self::METHOD_MAILPOET) {
-        return $this->mailpoetTrigger->run();
-      } elseif ($currentMethod === self::METHOD_WORDPRESS) {
+      $this->cronActionScheduler->init($currentMethod === self::METHOD_ACTION_SCHEDULER);
+      // setup WordPress cron method trigger only outside of cli environment
+      if ($currentMethod === self::METHOD_WORDPRESS && $environment !== 'cli') {
         return $this->wordpressTrigger->run();
       }
       return false;

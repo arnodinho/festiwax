@@ -16,7 +16,8 @@ class Styles {
     $formattedStyles = [];
     foreach ($styles->getAllDeclarationBlocks() as $styleDeclaration) {
       $selectors = array_map(function($selector) use ($prefix) {
-        return sprintf('%s %s', $prefix, $selector->__toString());
+        $stringSelector = is_string($selector) ? $selector : $selector->__toString();
+        return sprintf('%s %s', $prefix, $stringSelector);
       }, $styleDeclaration->getSelectors());
       $selectors = implode(', ', $selectors);
       $rules = array_map(function($rule) {
@@ -64,7 +65,7 @@ class Styles {
       $mobileBackgrounds[] = trim($formSettings['gradient']);
     }
 
-    if (!empty($formSettings['backgroundColor']) ) {
+    if (!empty($formSettings['backgroundColor'])) {
       $backgrounds[] = trim($formSettings['backgroundColor']);
       $mobileBackgrounds[] = trim($formSettings['backgroundColor']);
     }
@@ -88,10 +89,12 @@ class Styles {
     // Form element styles
     $formStyles = [];
     if (isset($formSettings['form_padding'])) {
-      if (in_array(
-        $displayType,
-        [FormEntity::DISPLAY_TYPE_POPUP, FormEntity::DISPLAY_TYPE_FIXED_BAR, FormEntity::DISPLAY_TYPE_SLIDE_IN]
-      )) {
+      if (
+        in_array(
+          $displayType,
+          [FormEntity::DISPLAY_TYPE_POPUP, FormEntity::DISPLAY_TYPE_FIXED_BAR, FormEntity::DISPLAY_TYPE_SLIDE_IN]
+        )
+      ) {
         $padding = $formSettings['form_padding'];
         $media .= " @media (min-width: 500px) {{$selector} {padding: {$padding}px;}} ";
       } else {
@@ -108,7 +111,7 @@ class Styles {
 
     $typeSpecificStyles = $this->getFormTypeSpecificStyles($selector, $displayType);
 
-    $messagesStyles = $this->renderMessagesStyles($formSettings, $selector);
+    $messagesStyles = $this->renderFormMessageStyles($form, $selector);
 
     $additionalStyles = $selector . ' .mailpoet_paragraph.last {margin-bottom: 0} ';
     $media .= " @media (min-width: 500px) {{$selector} .last .mailpoet_paragraph:last-child {margin-bottom: 0}} ";
@@ -176,6 +179,14 @@ class Styles {
     return $width['value'] . ($width['unit'] === 'percent' ? '%' : 'px');
   }
 
+  public function renderFormMessageStyles(FormEntity $form, string $selector): string {
+    $formSettings = $form->getSettings();
+    if (!is_array($formSettings)) {
+      return '';
+    }
+    return $this->renderMessagesStyles($formSettings, $selector);
+  }
+
   private function renderMessagesStyles(array $formSettings, string $selector): string {
     $styles = "$selector .mailpoet_message {margin: 0; padding: 0 20px;}";
     if (isset($formSettings['success_validation_color']) && $formSettings['success_validation_color']) {
@@ -219,10 +230,12 @@ class Styles {
     } else {
       $wrapperStyles[] = 'background-image: none;';
     }
-    if (in_array(
-      $displayType,
-      [FormEntity::DISPLAY_TYPE_POPUP, FormEntity::DISPLAY_TYPE_FIXED_BAR, FormEntity::DISPLAY_TYPE_SLIDE_IN]
-    )) {
+    if (
+      in_array(
+        $displayType,
+        [FormEntity::DISPLAY_TYPE_POPUP, FormEntity::DISPLAY_TYPE_FIXED_BAR, FormEntity::DISPLAY_TYPE_SLIDE_IN]
+      )
+    ) {
       $wrapperStyles = array_merge($wrapperStyles, [
         'animation: none;',
         'border: none;',

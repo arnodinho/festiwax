@@ -1,10 +1,10 @@
 === Jetpack - WP Security, Backup, Speed, & Growth ===
 Contributors: automattic, adamkheckler, adrianmoldovanwp, aduth, akirk, allendav, alternatekev, andy, annamcphee, annezazu, apeatling, arcangelini, azaozz, batmoo, barry, beaulebens, biskobe, blobaugh, bjorsch, brbrr, cainm, cena, cfinke, chaselivingston, chellycat, clickysteve, csonnek, danielbachhuber, davoraltman, daniloercoli, delawski, designsimply, dllh, drawmyface, dsmart, dzver, ebinnion, egregor, eliorivero, enej, eoigal, erania-pinnera, ethitter, fgiannar, gcorne, georgestephanis, gibrown, goldsounds, hew, hugobaeta, hypertextranch, iammattthomas, iandunn, jblz, jasmussen, jeffgolenski, jeherve, jenhooks, jenia, jessefriedman, jgs, jkudish, jmdodd, joanrho, johnjamesjacoby, jshreve, kbrownkd, keoshi, koke, kraftbj, lancewillett, leogermani, lschuyler, macmanx, martinremy, matt, matveb, mattwiebe, maverick3x6, mcsf, mdawaffe, mdbitz, MichaelArestad, migueluy, mikeyarce, mkaz, nancythanki, nickmomrik, obenland, oskosk, pento, professor44, rachelsquirrel, rdcoll, ryancowles, richardmuscat, richardmtl, robertbpugh, roccotripaldi, samhotchkiss, samiff, scarstocea, scottsweb, sdixon194, sdquirk, sermitr, simison, stephdau, tmoorewp, tyxla, Viper007Bond, westi, yoavf, zinigor
 Tags: Security, backup, Woo, malware, scan, spam, CDN, search, social
-Stable tag: 10.3
-Requires at least: 5.7
+Stable tag: 11.4
+Requires at least: 5.9
 Requires PHP: 5.6
-Tested up to: 5.8
+Tested up to: 6.0
 
 Improve your WP security with powerful one-click tools like backup and malware scan. Get essential free tools including stats, CDN and social sharing.
 
@@ -242,49 +242,19 @@ Jetpack Backup can do a full website migration to a new host, migrate theme file
 4. Promote your newest posts, pages, and products across your social media channels.
 
 == Changelog ==
-### 10.3 - 2021-11-02
+### 11.4 - 2022-10-04
 #### Enhancements
-- Dashboard: add a new screen to provide more information about the VideoPress feature.
-- Dashboard: add a new view that shortly summarizes available Jetpack products and facilitates the purchase process.
-- Dashboard: optimize the size of all product images displayed in the dashboard, to improve overall performance.
-- Instagram Widget: improve the connection flow when the widget has not been connected to WordPress.com yet.
-- Instant Search: always show the save button on the mobile view of the Search Settings dashboard.
-- Map Block: Add address attribute to the block.
-- Publicize editor settings: refactor, improve layout and wording in preparation for the addition of RePublicize.
-- Secure Sign On: add new filter allowing one to customize the explanation displayed next to the SSO button.
-- Social Icons Widget: Added Strava icon to Social Icons Widget.
-- Stats: add information about the VideoPress feature at the bottom of the page.
-- Stats: remove some upgrade notifications.
-- VideoPress: add tooltips to video block settings in the block editor.
-- VideoPress: improve the display of upload errors in the Media Library and the block editor.
-- VideoPress: remove X-18 rating from the block settings.
-- WordAds: update handling and setting CCPA related cookies.
+- Editor: update icon sizing in the Jetpack sidebar for consistency.
+- Recommendations: update assistant with question for agency managed sites.
 
 #### Improved compatibility
-- Contact Info & Map widget: allow transforming this widget into a block in Block-based widget editor.
-- General: ensure that no notices are output when Jetpack is used alongside plugins that modify the output of core comments.
-- Jetpack Backup: improve the display of the different plugin menus when using both Jetpack and Jetpack Backup.
-- Subscriptions: add an option to transform the Legacy Subscription Widget into a Subscription Block in the new block-based Widget editor.
-- Social Icons Widget: deprecate widget and offer the option to transform into a Social Links block.
-- VideoPress: improve handling of Video files when using a third-party video player.
+- WC Pay: resolve issue for WooCommerce Payments that could result in a fatal for some sites on PHP 8+.
 
 #### Bug fixes
-- Calendly block: fix the preview in the block inserter.
-- Dashboard: ensure feature cards display the right information when the site uses Jetpack's Offline mode.
-- Dashboard: fix the display of currencies to be based on user WordPress.com preferences.
-- Eventbrite Block: improve the event URL detection and avoid errors when using links without an event ID.
-- External Media block options: fix a bug where the external media modal collapsed on larger screens and did not leave enough whitespace.
-- General: avoid PHP notices that may happen when installing the plugin.
-- Instant Search: fix the display of filters when there are no results to display for a query.
-- Instant Search: fix the preview of the infinite scroll option in the Search Settings dashboard.
-- Instant Search: reduce browser history noise as search is being typed in the form.
-- Markdown: add title attributes to footnotes to improve accessibility.
-- Publicize: fix visual issue when the panel shows in the pre publish step of the post.
-- Publicize: refresh connections only when the post publishes.
-- Stats: remove extra request to WordPress.com that occurs when the stats feature is first activated.
-- VideoPress: add a "cover" option to the VideoPress iframe and shortcode to handle video resizing to its container.
-- Widgets: fix styles of the Milestone widget fields.
+- Admin: fix JavaScript errors related to the Jetpack disconnect option on multisite networks.
+- Payments block: make filtering patterns used for the payments intro more robust.
+- Social: prevent the package being initialized without a user connection.
 
 --------
 
-[See the previous changelogs here](https://github.com/Automattic/jetpack/blob/master/projects/plugins/jetpack/CHANGELOG.md#changelog)
+[See the previous changelogs here](https://github.com/Automattic/jetpack/blob/trunk/projects/plugins/jetpack/CHANGELOG.md#changelog)
