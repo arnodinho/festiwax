@@ -1,0 +1,750 @@
+
+@font-face {
+  font-family: "naturis-icon";
+  src: url("../../../fonts/icons/naturis-icon-1.1.3.eot");
+  src: url("../../../fonts/icons/naturis-icon-1.1.3.eot?#iefix") format("eot"), url("../../../fonts/icons/naturis-icon-1.1.3.woff2") format("woff2"), url("../../../fonts/icons/naturis-icon-1.1.3.woff") format("woff"), url("../../../fonts/icons/naturis-icon-1.1.3.ttf") format("truetype"), url("../../../fonts/icons/naturis-icon-1.1.3.svg#naturis-icon-1.1.3") format("svg");
+}
+[class*=naturis-icon-] {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.naturis-icon-account:before {
+  content: "";
+}
+
+.naturis-icon-angle-double-down:before {
+  content: "";
+}
+
+.naturis-icon-angle-down:before {
+  content: "";
+}
+
+.naturis-icon-angle-left:before {
+  content: "";
+}
+
+.naturis-icon-angle-right:before {
+  content: "";
+}
+
+.naturis-icon-angle-up:before {
+  content: "";
+}
+
+.naturis-icon-belgium:before {
+  content: "";
+}
+
+.naturis-icon-calendar:before {
+  content: "";
+}
+
+.naturis-icon-cart:before {
+  content: "";
+}
+
+.naturis-icon-chat:before {
+  content: "";
+}
+
+.naturis-icon-check-square-solid:before {
+  content: "";
+}
+
+.naturis-icon-chevron-down:before {
+  content: "";
+}
+
+.naturis-icon-chevron-left:before {
+  content: "";
+}
+
+.naturis-icon-chevron-right:before {
+  content: "";
+}
+
+.naturis-icon-chevron-up:before {
+  content: "";
+}
+
+.naturis-icon-clock:before {
+  content: "";
+}
+
+.naturis-icon-compare:before {
+  content: "";
+}
+
+.naturis-icon-delivery:before {
+  content: "";
+}
+
+.naturis-icon-envelope-1:before {
+  content: "";
+}
+
+.naturis-icon-expand-arrows:before {
+  content: "";
+}
+
+.naturis-icon-eye:before {
+  content: "";
+}
+
+.naturis-icon-facebook-f:before {
+  content: "";
+}
+
+.naturis-icon-filter-ul:before {
+  content: "";
+}
+
+.naturis-icon-gift-card:before {
+  content: "";
+}
+
+.naturis-icon-google-plus-g:before {
+  content: "";
+}
+
+.naturis-icon-heart-1:before {
+  content: "";
+}
+
+.naturis-icon-herbal:before {
+  content: "";
+}
+
+.naturis-icon-honest:before {
+  content: "";
+}
+
+.naturis-icon-leaf-2:before {
+  content: "";
+}
+
+.naturis-icon-leaf:before {
+  content: "";
+}
+
+.naturis-icon-ligredients:before {
+  content: "";
+}
+
+.naturis-icon-linkedin-in:before {
+  content: "";
+}
+
+.naturis-icon-list-ul:before {
+  content: "";
+}
+
+.naturis-icon-location:before {
+  content: "";
+}
+
+.naturis-icon-long-arrow-down:before {
+  content: "";
+}
+
+.naturis-icon-long-arrow-left:before {
+  content: "";
+}
+
+.naturis-icon-long-arrow-right:before {
+  content: "";
+}
+
+.naturis-icon-long-arrow-up:before {
+  content: "";
+}
+
+.naturis-icon-map-pin:before {
+  content: "";
+}
+
+.naturis-icon-payment:before {
+  content: "";
+}
+
+.naturis-icon-pen:before {
+  content: "";
+}
+
+.naturis-icon-phone-1:before {
+  content: "";
+}
+
+.naturis-icon-phone:before {
+  content: "";
+}
+
+.naturis-icon-pin:before {
+  content: "";
+}
+
+.naturis-icon-quote:before {
+  content: "";
+}
+
+.naturis-icon-return:before {
+  content: "";
+}
+
+.naturis-icon-satisfaction:before {
+  content: "";
+}
+
+.naturis-icon-search-1:before {
+  content: "";
+}
+
+.naturis-icon-search-2:before {
+  content: "";
+}
+
+.naturis-icon-shoping:before {
+  content: "";
+}
+
+.naturis-icon-shopping-bag:before {
+  content: "";
+}
+
+.naturis-icon-sliders-v:before {
+  content: "";
+}
+
+.naturis-icon-th-large:before {
+  content: "";
+}
+
+.naturis-icon-theme-arrow-right:before {
+  content: "";
+}
+
+.naturis-icon-theme-long-arrow-right:before {
+  content: "";
+}
+
+.naturis-icon-tracking:before {
+  content: "";
+}
+
+.naturis-icon-tweet:before {
+  content: "";
+}
+
+.naturis-icon-twitte-1:before {
+  content: "";
+}
+
+.naturis-icon-360:before {
+  content: "";
+}
+
+.naturis-icon-bars:before {
+  content: "";
+}
+
+.naturis-icon-caret-down:before {
+  content: "";
+}
+
+.naturis-icon-caret-left:before {
+  content: "";
+}
+
+.naturis-icon-caret-right:before {
+  content: "";
+}
+
+.naturis-icon-caret-up:before {
+  content: "";
+}
+
+.naturis-icon-cart-empty:before {
+  content: "";
+}
+
+.naturis-icon-check-square:before {
+  content: "";
+}
+
+.naturis-icon-circle:before {
+  content: "";
+}
+
+.naturis-icon-cloud-download-alt:before {
+  content: "";
+}
+
+.naturis-icon-comment:before {
+  content: "";
+}
+
+.naturis-icon-comments:before {
+  content: "";
+}
+
+.naturis-icon-contact:before {
+  content: "";
+}
+
+.naturis-icon-credit-card:before {
+  content: "";
+}
+
+.naturis-icon-dot-circle:before {
+  content: "";
+}
+
+.naturis-icon-edit:before {
+  content: "";
+}
+
+.naturis-icon-envelope:before {
+  content: "";
+}
+
+.naturis-icon-expand-alt:before {
+  content: "";
+}
+
+.naturis-icon-external-link-alt:before {
+  content: "";
+}
+
+.naturis-icon-file-alt:before {
+  content: "";
+}
+
+.naturis-icon-file-archive:before {
+  content: "";
+}
+
+.naturis-icon-filter:before {
+  content: "";
+}
+
+.naturis-icon-folder-open:before {
+  content: "";
+}
+
+.naturis-icon-folder:before {
+  content: "";
+}
+
+.naturis-icon-frown:before {
+  content: "";
+}
+
+.naturis-icon-gift:before {
+  content: "";
+}
+
+.naturis-icon-grid:before {
+  content: "";
+}
+
+.naturis-icon-grip-horizontal:before {
+  content: "";
+}
+
+.naturis-icon-heart-fill:before {
+  content: "";
+}
+
+.naturis-icon-heart:before {
+  content: "";
+}
+
+.naturis-icon-history:before {
+  content: "";
+}
+
+.naturis-icon-home:before {
+  content: "";
+}
+
+.naturis-icon-info-circle:before {
+  content: "";
+}
+
+.naturis-icon-instagram:before {
+  content: "";
+}
+
+.naturis-icon-level-up-alt:before {
+  content: "";
+}
+
+.naturis-icon-list:before {
+  content: "";
+}
+
+.naturis-icon-map-marker-check:before {
+  content: "";
+}
+
+.naturis-icon-meh:before {
+  content: "";
+}
+
+.naturis-icon-minus-circle:before {
+  content: "";
+}
+
+.naturis-icon-minus:before {
+  content: "";
+}
+
+.naturis-icon-mobile-android-alt:before {
+  content: "";
+}
+
+.naturis-icon-money-bill:before {
+  content: "";
+}
+
+.naturis-icon-pencil-alt:before {
+  content: "";
+}
+
+.naturis-icon-play-circle:before {
+  content: "";
+}
+
+.naturis-icon-play:before {
+  content: "";
+}
+
+.naturis-icon-plus-circle:before {
+  content: "";
+}
+
+.naturis-icon-plus:before {
+  content: "";
+}
+
+.naturis-icon-random:before {
+  content: "";
+}
+
+.naturis-icon-reply-all:before {
+  content: "";
+}
+
+.naturis-icon-reply:before {
+  content: "";
+}
+
+.naturis-icon-search-plus:before {
+  content: "";
+}
+
+.naturis-icon-search:before {
+  content: "";
+}
+
+.naturis-icon-shield-check:before {
+  content: "";
+}
+
+.naturis-icon-shopping-basket:before {
+  content: "";
+}
+
+.naturis-icon-shopping-cart:before {
+  content: "";
+}
+
+.naturis-icon-sign-out-alt:before {
+  content: "";
+}
+
+.naturis-icon-smile:before {
+  content: "";
+}
+
+.naturis-icon-spinner:before {
+  content: "";
+}
+
+.naturis-icon-square:before {
+  content: "";
+}
+
+.naturis-icon-star:before {
+  content: "";
+}
+
+.naturis-icon-store:before {
+  content: "";
+}
+
+.naturis-icon-sync:before {
+  content: "";
+}
+
+.naturis-icon-tachometer-alt:before {
+  content: "";
+}
+
+.naturis-icon-th-list:before {
+  content: "";
+}
+
+.naturis-icon-thumbtack:before {
+  content: "";
+}
+
+.naturis-icon-ticket:before {
+  content: "";
+}
+
+.naturis-icon-times-circle:before {
+  content: "";
+}
+
+.naturis-icon-times:before {
+  content: "";
+}
+
+.naturis-icon-trophy-alt:before {
+  content: "";
+}
+
+.naturis-icon-truck:before {
+  content: "";
+}
+
+.naturis-icon-user-headset:before {
+  content: "";
+}
+
+.naturis-icon-user-shield:before {
+  content: "";
+}
+
+.naturis-icon-user:before {
+  content: "";
+}
+
+.naturis-icon-video:before {
+  content: "";
+}
+
+.naturis-icon-adobe:before {
+  content: "";
+}
+
+.naturis-icon-amazon:before {
+  content: "";
+}
+
+.naturis-icon-android:before {
+  content: "";
+}
+
+.naturis-icon-angular:before {
+  content: "";
+}
+
+.naturis-icon-apper:before {
+  content: "";
+}
+
+.naturis-icon-apple:before {
+  content: "";
+}
+
+.naturis-icon-atlassian:before {
+  content: "";
+}
+
+.naturis-icon-behance:before {
+  content: "";
+}
+
+.naturis-icon-bitbucket:before {
+  content: "";
+}
+
+.naturis-icon-bitcoin:before {
+  content: "";
+}
+
+.naturis-icon-bity:before {
+  content: "";
+}
+
+.naturis-icon-bluetooth:before {
+  content: "";
+}
+
+.naturis-icon-btc:before {
+  content: "";
+}
+
+.naturis-icon-centos:before {
+  content: "";
+}
+
+.naturis-icon-chrome:before {
+  content: "";
+}
+
+.naturis-icon-codepen:before {
+  content: "";
+}
+
+.naturis-icon-cpanel:before {
+  content: "";
+}
+
+.naturis-icon-discord:before {
+  content: "";
+}
+
+.naturis-icon-dochub:before {
+  content: "";
+}
+
+.naturis-icon-docker:before {
+  content: "";
+}
+
+.naturis-icon-dribbble:before {
+  content: "";
+}
+
+.naturis-icon-dropbox:before {
+  content: "";
+}
+
+.naturis-icon-drupal:before {
+  content: "";
+}
+
+.naturis-icon-ebay:before {
+  content: "";
+}
+
+.naturis-icon-facebook:before {
+  content: "";
+}
+
+.naturis-icon-figma:before {
+  content: "";
+}
+
+.naturis-icon-firefox:before {
+  content: "";
+}
+
+.naturis-icon-google-plus:before {
+  content: "";
+}
+
+.naturis-icon-google:before {
+  content: "";
+}
+
+.naturis-icon-grunt:before {
+  content: "";
+}
+
+.naturis-icon-gulp:before {
+  content: "";
+}
+
+.naturis-icon-html5:before {
+  content: "";
+}
+
+.naturis-icon-joomla:before {
+  content: "";
+}
+
+.naturis-icon-link-brand:before {
+  content: "";
+}
+
+.naturis-icon-linkedin:before {
+  content: "";
+}
+
+.naturis-icon-mailchimp:before {
+  content: "";
+}
+
+.naturis-icon-opencart:before {
+  content: "";
+}
+
+.naturis-icon-paypal:before {
+  content: "";
+}
+
+.naturis-icon-pinterest-p:before {
+  content: "";
+}
+
+.naturis-icon-reddit:before {
+  content: "";
+}
+
+.naturis-icon-skype:before {
+  content: "";
+}
+
+.naturis-icon-slack:before {
+  content: "";
+}
+
+.naturis-icon-snapchat:before {
+  content: "";
+}
+
+.naturis-icon-spotify:before {
+  content: "";
+}
+
+.naturis-icon-trello:before {
+  content: "";
+}
+
+.naturis-icon-twitter:before {
+  content: "";
+}
+
+.naturis-icon-vimeo:before {
+  content: "";
+}
+
+.naturis-icon-whatsapp:before {
+  content: "";
+}
+
+.naturis-icon-wordpress:before {
+  content: "";
+}
+
+.naturis-icon-yoast:before {
+  content: "";
+}
+
+.naturis-icon-youtube:before {
+  content: "";
+}
+

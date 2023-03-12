@@ -1,0 +1,2662 @@
+@charset "UTF-8";
+/* ===== Start ICONS CSS ===== */
+@font-face {
+  font-family: "naturis-icon";
+  src: url("./assets/fonts/icons/naturis-icon-1.1.3.eot");
+  src: url("./assets/fonts/icons/naturis-icon-1.1.3.eot?#iefix") format("eot"), url("./assets/fonts/icons/naturis-icon-1.1.3.woff2") format("woff2"), url("./assets/fonts/icons/naturis-icon-1.1.3.woff") format("woff"), url("./assets/fonts/icons/naturis-icon-1.1.3.ttf") format("truetype"), url("./assets/fonts/icons/naturis-icon-1.1.3.svg#naturis-icon-1.1.3") format("svg");
+}
+[class*=naturis-icon-] {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.naturis-icon-account:before {
+  content: "";
+}
+
+.naturis-icon-angle-double-down:before {
+  content: "";
+}
+
+.naturis-icon-angle-down:before {
+  content: "";
+}
+
+.naturis-icon-angle-left:before {
+  content: "";
+}
+
+.naturis-icon-angle-right:before {
+  content: "";
+}
+
+.naturis-icon-angle-up:before {
+  content: "";
+}
+
+.naturis-icon-belgium:before {
+  content: "";
+}
+
+.naturis-icon-calendar:before {
+  content: "";
+}
+
+.naturis-icon-cart:before {
+  content: "";
+}
+
+.naturis-icon-chat:before {
+  content: "";
+}
+
+.naturis-icon-check-square-solid:before {
+  content: "";
+}
+
+.naturis-icon-chevron-down:before {
+  content: "";
+}
+
+.naturis-icon-chevron-left:before {
+  content: "";
+}
+
+.naturis-icon-chevron-right:before {
+  content: "";
+}
+
+.naturis-icon-chevron-up:before {
+  content: "";
+}
+
+.naturis-icon-clock:before {
+  content: "";
+}
+
+.naturis-icon-compare:before {
+  content: "";
+}
+
+.naturis-icon-delivery:before {
+  content: "";
+}
+
+.naturis-icon-envelope-1:before {
+  content: "";
+}
+
+.naturis-icon-expand-arrows:before {
+  content: "";
+}
+
+.naturis-icon-eye:before {
+  content: "";
+}
+
+.naturis-icon-facebook-f:before {
+  content: "";
+}
+
+.naturis-icon-filter-ul:before {
+  content: "";
+}
+
+.naturis-icon-gift-card:before {
+  content: "";
+}
+
+.naturis-icon-google-plus-g:before {
+  content: "";
+}
+
+.naturis-icon-heart-1:before {
+  content: "";
+}
+
+.naturis-icon-herbal:before {
+  content: "";
+}
+
+.naturis-icon-honest:before {
+  content: "";
+}
+
+.naturis-icon-leaf-2:before {
+  content: "";
+}
+
+.naturis-icon-leaf:before {
+  content: "";
+}
+
+.naturis-icon-ligredients:before {
+  content: "";
+}
+
+.naturis-icon-linkedin-in:before {
+  content: "";
+}
+
+.naturis-icon-list-ul:before {
+  content: "";
+}
+
+.naturis-icon-location:before {
+  content: "";
+}
+
+.naturis-icon-long-arrow-down:before {
+  content: "";
+}
+
+.naturis-icon-long-arrow-left:before {
+  content: "";
+}
+
+.naturis-icon-long-arrow-right:before {
+  content: "";
+}
+
+.naturis-icon-long-arrow-up:before {
+  content: "";
+}
+
+.naturis-icon-map-pin:before {
+  content: "";
+}
+
+.naturis-icon-payment:before {
+  content: "";
+}
+
+.naturis-icon-pen:before {
+  content: "";
+}
+
+.naturis-icon-phone-1:before {
+  content: "";
+}
+
+.naturis-icon-phone:before {
+  content: "";
+}
+
+.naturis-icon-pin:before {
+  content: "";
+}
+
+.naturis-icon-quote:before {
+  content: "";
+}
+
+.naturis-icon-return:before {
+  content: "";
+}
+
+.naturis-icon-satisfaction:before {
+  content: "";
+}
+
+.naturis-icon-search-1:before {
+  content: "";
+}
+
+.naturis-icon-search-2:before {
+  content: "";
+}
+
+.naturis-icon-shoping:before {
+  content: "";
+}
+
+.naturis-icon-shopping-bag:before {
+  content: "";
+}
+
+.naturis-icon-sliders-v:before {
+  content: "";
+}
+
+.naturis-icon-th-large:before {
+  content: "";
+}
+
+.naturis-icon-theme-arrow-right:before {
+  content: "";
+}
+
+.naturis-icon-theme-long-arrow-right:before {
+  content: "";
+}
+
+.naturis-icon-tracking:before {
+  content: "";
+}
+
+.naturis-icon-tweet:before {
+  content: "";
+}
+
+.naturis-icon-twitte-1:before {
+  content: "";
+}
+
+.naturis-icon-360:before {
+  content: "";
+}
+
+.naturis-icon-bars:before {
+  content: "";
+}
+
+.naturis-icon-caret-down:before {
+  content: "";
+}
+
+.naturis-icon-caret-left:before {
+  content: "";
+}
+
+.naturis-icon-caret-right:before {
+  content: "";
+}
+
+.naturis-icon-caret-up:before {
+  content: "";
+}
+
+.naturis-icon-cart-empty:before {
+  content: "";
+}
+
+.naturis-icon-check-square:before {
+  content: "";
+}
+
+.naturis-icon-circle:before {
+  content: "";
+}
+
+.naturis-icon-cloud-download-alt:before {
+  content: "";
+}
+
+.naturis-icon-comment:before {
+  content: "";
+}
+
+.naturis-icon-comments:before {
+  content: "";
+}
+
+.naturis-icon-contact:before {
+  content: "";
+}
+
+.naturis-icon-credit-card:before {
+  content: "";
+}
+
+.naturis-icon-dot-circle:before {
+  content: "";
+}
+
+.naturis-icon-edit:before {
+  content: "";
+}
+
+.naturis-icon-envelope:before {
+  content: "";
+}
+
+.naturis-icon-expand-alt:before {
+  content: "";
+}
+
+.naturis-icon-external-link-alt:before {
+  content: "";
+}
+
+.naturis-icon-file-alt:before {
+  content: "";
+}
+
+.naturis-icon-file-archive:before {
+  content: "";
+}
+
+.naturis-icon-filter:before {
+  content: "";
+}
+
+.naturis-icon-folder-open:before {
+  content: "";
+}
+
+.naturis-icon-folder:before {
+  content: "";
+}
+
+.naturis-icon-frown:before {
+  content: "";
+}
+
+.naturis-icon-gift:before {
+  content: "";
+}
+
+.naturis-icon-grid:before {
+  content: "";
+}
+
+.naturis-icon-grip-horizontal:before {
+  content: "";
+}
+
+.naturis-icon-heart-fill:before {
+  content: "";
+}
+
+.naturis-icon-heart:before {
+  content: "";
+}
+
+.naturis-icon-history:before {
+  content: "";
+}
+
+.naturis-icon-home:before {
+  content: "";
+}
+
+.naturis-icon-info-circle:before {
+  content: "";
+}
+
+.naturis-icon-instagram:before {
+  content: "";
+}
+
+.naturis-icon-level-up-alt:before {
+  content: "";
+}
+
+.naturis-icon-list:before {
+  content: "";
+}
+
+.naturis-icon-map-marker-check:before {
+  content: "";
+}
+
+.naturis-icon-meh:before {
+  content: "";
+}
+
+.naturis-icon-minus-circle:before {
+  content: "";
+}
+
+.naturis-icon-minus:before {
+  content: "";
+}
+
+.naturis-icon-mobile-android-alt:before {
+  content: "";
+}
+
+.naturis-icon-money-bill:before {
+  content: "";
+}
+
+.naturis-icon-pencil-alt:before {
+  content: "";
+}
+
+.naturis-icon-play-circle:before {
+  content: "";
+}
+
+.naturis-icon-play:before {
+  content: "";
+}
+
+.naturis-icon-plus-circle:before {
+  content: "";
+}
+
+.naturis-icon-plus:before {
+  content: "";
+}
+
+.naturis-icon-random:before {
+  content: "";
+}
+
+.naturis-icon-reply-all:before {
+  content: "";
+}
+
+.naturis-icon-reply:before {
+  content: "";
+}
+
+.naturis-icon-search-plus:before {
+  content: "";
+}
+
+.naturis-icon-search:before {
+  content: "";
+}
+
+.naturis-icon-shield-check:before {
+  content: "";
+}
+
+.naturis-icon-shopping-basket:before {
+  content: "";
+}
+
+.naturis-icon-shopping-cart:before {
+  content: "";
+}
+
+.naturis-icon-sign-out-alt:before {
+  content: "";
+}
+
+.naturis-icon-smile:before {
+  content: "";
+}
+
+.naturis-icon-spinner:before {
+  content: "";
+}
+
+.naturis-icon-square:before {
+  content: "";
+}
+
+.naturis-icon-star:before {
+  content: "";
+}
+
+.naturis-icon-store:before {
+  content: "";
+}
+
+.naturis-icon-sync:before {
+  content: "";
+}
+
+.naturis-icon-tachometer-alt:before {
+  content: "";
+}
+
+.naturis-icon-th-list:before {
+  content: "";
+}
+
+.naturis-icon-thumbtack:before {
+  content: "";
+}
+
+.naturis-icon-ticket:before {
+  content: "";
+}
+
+.naturis-icon-times-circle:before {
+  content: "";
+}
+
+.naturis-icon-times:before {
+  content: "";
+}
+
+.naturis-icon-trophy-alt:before {
+  content: "";
+}
+
+.naturis-icon-truck:before {
+  content: "";
+}
+
+.naturis-icon-user-headset:before {
+  content: "";
+}
+
+.naturis-icon-user-shield:before {
+  content: "";
+}
+
+.naturis-icon-user:before {
+  content: "";
+}
+
+.naturis-icon-video:before {
+  content: "";
+}
+
+.naturis-icon-adobe:before {
+  content: "";
+}
+
+.naturis-icon-amazon:before {
+  content: "";
+}
+
+.naturis-icon-android:before {
+  content: "";
+}
+
+.naturis-icon-angular:before {
+  content: "";
+}
+
+.naturis-icon-apper:before {
+  content: "";
+}
+
+.naturis-icon-apple:before {
+  content: "";
+}
+
+.naturis-icon-atlassian:before {
+  content: "";
+}
+
+.naturis-icon-behance:before {
+  content: "";
+}
+
+.naturis-icon-bitbucket:before {
+  content: "";
+}
+
+.naturis-icon-bitcoin:before {
+  content: "";
+}
+
+.naturis-icon-bity:before {
+  content: "";
+}
+
+.naturis-icon-bluetooth:before {
+  content: "";
+}
+
+.naturis-icon-btc:before {
+  content: "";
+}
+
+.naturis-icon-centos:before {
+  content: "";
+}
+
+.naturis-icon-chrome:before {
+  content: "";
+}
+
+.naturis-icon-codepen:before {
+  content: "";
+}
+
+.naturis-icon-cpanel:before {
+  content: "";
+}
+
+.naturis-icon-discord:before {
+  content: "";
+}
+
+.naturis-icon-dochub:before {
+  content: "";
+}
+
+.naturis-icon-docker:before {
+  content: "";
+}
+
+.naturis-icon-dribbble:before {
+  content: "";
+}
+
+.naturis-icon-dropbox:before {
+  content: "";
+}
+
+.naturis-icon-drupal:before {
+  content: "";
+}
+
+.naturis-icon-ebay:before {
+  content: "";
+}
+
+.naturis-icon-facebook:before {
+  content: "";
+}
+
+.naturis-icon-figma:before {
+  content: "";
+}
+
+.naturis-icon-firefox:before {
+  content: "";
+}
+
+.naturis-icon-google-plus:before {
+  content: "";
+}
+
+.naturis-icon-google:before {
+  content: "";
+}
+
+.naturis-icon-grunt:before {
+  content: "";
+}
+
+.naturis-icon-gulp:before {
+  content: "";
+}
+
+.naturis-icon-html5:before {
+  content: "";
+}
+
+.naturis-icon-joomla:before {
+  content: "";
+}
+
+.naturis-icon-link-brand:before {
+  content: "";
+}
+
+.naturis-icon-linkedin:before {
+  content: "";
+}
+
+.naturis-icon-mailchimp:before {
+  content: "";
+}
+
+.naturis-icon-opencart:before {
+  content: "";
+}
+
+.naturis-icon-paypal:before {
+  content: "";
+}
+
+.naturis-icon-pinterest-p:before {
+  content: "";
+}
+
+.naturis-icon-reddit:before {
+  content: "";
+}
+
+.naturis-icon-skype:before {
+  content: "";
+}
+
+.naturis-icon-slack:before {
+  content: "";
+}
+
+.naturis-icon-snapchat:before {
+  content: "";
+}
+
+.naturis-icon-spotify:before {
+  content: "";
+}
+
+.naturis-icon-trello:before {
+  content: "";
+}
+
+.naturis-icon-twitter:before {
+  content: "";
+}
+
+.naturis-icon-vimeo:before {
+  content: "";
+}
+
+.naturis-icon-whatsapp:before {
+  content: "";
+}
+
+.naturis-icon-wordpress:before {
+  content: "";
+}
+
+.naturis-icon-yoast:before {
+  content: "";
+}
+
+.naturis-icon-youtube:before {
+  content: "";
+}
+
+/* ===== End ICONS CSS ===== */
+.naturis-social ul {
+  margin: 0;
+  list-style-type: none;
+}
+.naturis-social ul li {
+  display: inline-block;
+  margin-right: 10px;
+  line-height: 1;
+}
+.naturis-social ul li:last-child {
+  margin-right: 0;
+}
+.naturis-social ul li a:before {
+  position: relative;
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+.naturis-social ul li a[href*=twitter]:before {
+  content: "";
+  color: #1DA1F2;
+}
+.naturis-social ul li a[href*=instagram]:before {
+  content: "";
+  color: #262626;
+}
+.naturis-social ul li a[href*=docker]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=dochub]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=yelp]:before {
+  content: "";
+  color: #af0606;
+}
+.naturis-social ul li a[href*=flickr]:before {
+  content: "";
+  color: #0063dc;
+}
+.naturis-social ul li a[href*=github]:before {
+  content: "";
+  color: #333333;
+}
+.naturis-social ul li a[href*=dribbble]:before {
+  content: "";
+  color: #ea4c89;
+}
+.naturis-social ul li a[href*=wordpress]:before {
+  content: "";
+  color: #21759b;
+}
+.naturis-social ul li a[href*=tumblr]:before {
+  content: "";
+  color: #35465c;
+}
+.naturis-social ul li a[href*=angular]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=atlassian]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=snapchat]:before {
+  content: "";
+  color: #fffc00;
+}
+.naturis-social ul li a[href*=apper]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=codepen]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=gulp]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=cpanel]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=skype]:before {
+  content: "";
+  color: #00AFF0;
+}
+.naturis-social ul li a[href*=reddit]:before {
+  content: "";
+  color: #ff4500;
+}
+.naturis-social ul li a[href*=whatsapp]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=slack]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=amazon]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=android]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=grunt]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=firefox]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=adobe]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=behance]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=dropbox]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=facebook]:before {
+  content: "";
+  color: #3b5998;
+}
+.naturis-social ul li a[href*=linkedin]:before {
+  content: "";
+  color: #0077b5;
+}
+.naturis-social ul li a[href*=paypal]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=trello]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=vimeo]:before {
+  content: "";
+  color: #1ab7ea;
+}
+.naturis-social ul li a[href*=youtube]:before {
+  content: "";
+  color: #cd201f;
+}
+.naturis-social ul li a[href*=apple]:before {
+  content: "";
+  color: #999999;
+}
+.naturis-social ul li a[href*=bitbucket]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=bitcoin]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=bluetooth]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=bity]:before {
+  content: "";
+}
+.naturis-social ul li a[href*="google/chrome"]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=drupal]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=html5]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=mailchimp]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=jenkins]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=spotify]:before {
+  content: "";
+  color: #2ebd59;
+}
+.naturis-social ul li a[href*=ebay]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=telegram]:before {
+  content: "";
+  color: #2CA5E0;
+}
+.naturis-social ul li a[href*=yoast]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=btc-e]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=discord]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=google]:before {
+  content: "";
+  color: #dd4b39;
+}
+.naturis-social ul li a[href*=google-plus]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=figma]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=joomla]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=opencart]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=pinterest]:before {
+  content: "";
+  color: #bd081c;
+}
+.naturis-social ul li a[href*=vimeo]:before {
+  content: "";
+  color: #1ab7ea;
+}
+.naturis-social ul li a[href*=centos]:before {
+  content: "";
+}
+.naturis-social ul li a[href*=whatsapp]:before {
+  content: "";
+}
+
+#comments .commentlist .bypostauthor > .comment-body cite::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 0.5407911001em;
+}
+#comments .commentlist .reply a::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 0.5407911001em;
+}
+#comments .commentlist .reply a.comment-edit-link::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+#respond #cancel-comment-reply-link::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  display: block;
+}
+
+.sticky .entry-title::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.5407911001em;
+}
+
+button.loading,
+input[type=button].loading,
+input[type=reset].loading,
+input[type=submit].loading,
+.button.loading,
+.wc-block-grid__products .wc-block-grid__product .wp-block-button__link.loading,
+.added_to_cart.loading {
+  position: relative;
+}
+button.loading::after,
+input[type=button].loading::after,
+input[type=reset].loading::after,
+input[type=submit].loading::after,
+.button.loading::after,
+.wc-block-grid__products .wc-block-grid__product .wp-block-button__link.loading::after,
+.added_to_cart.loading::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  animation: fa-spin 0.75s linear infinite;
+  height: 20px;
+  width: 20px;
+  line-height: 20px;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  display: block;
+}
+button.loading:before,
+input[type=button].loading:before,
+input[type=reset].loading:before,
+input[type=submit].loading:before,
+.button.loading:before,
+.wc-block-grid__products .wc-block-grid__product .wp-block-button__link.loading:before,
+.added_to_cart.loading:before {
+  opacity: 0;
+}
+
+.shop-action .blockUI.blockOverlay:before,
+.shop-action .loader:before {
+  top: 50%;
+  left: 50%;
+  opacity: 1 !important;
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  animation: fa-spin 0.75s linear infinite;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  position: absolute;
+  display: block !important;
+  margin-left: -10px;
+  margin-top: -10px;
+  color: #000;
+}
+
+.shop-action .blockUI.blockOverlay {
+  opacity: 1 !important;
+  overflow: hidden;
+  background-image: none !important;
+  background: #fff !important;
+}
+
+.main-navigtion ul li a::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.5407911001em;
+}
+
+.mobile-navigation ul li button::after, .mobile-navigation-categories ul li button::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+.mobile-navigation ul li button.toggled-on::after, .mobile-navigation-categories ul li button.toggled-on::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.site-main nav.navigation .nav-previous .reader-text::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 1em;
+  color: var(--text);
+  font-weight: 600;
+  margin-top: -2px;
+  font-size: 10px;
+}
+.site-main nav.navigation .nav-next .reader-text::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 1em;
+  color: var(--text);
+  font-weight: 600;
+  margin-top: -2px;
+  font-size: 10px;
+}
+
+.widget_search form::before,
+.widget_product_search form::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translate(0, -50%);
+  z-index: 1;
+}
+.widget_search.widget_block form::before,
+.widget_product_search.widget_block form::before {
+  content: none;
+}
+.widget_search.widget_block form .wp-block-search__inside-wrapper,
+.widget_product_search.widget_block form .wp-block-search__inside-wrapper {
+  position: relative;
+}
+.widget_search.widget_block form .wp-block-search__inside-wrapper:before,
+.widget_product_search.widget_block form .wp-block-search__inside-wrapper:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translate(0, -50%);
+  z-index: 1;
+}
+
+.elementor-widget-naturis-image-gallery .column-item a:after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.elementor-image-carousel a:after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.naturis-handheld-footer-bar ul li > a::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  line-height: 2;
+  font-size: 1.41575em;
+  text-indent: 0;
+  display: block;
+  cursor: pointer;
+}
+.naturis-handheld-footer-bar ul li.shop > a::before {
+  content: "";
+}
+.naturis-handheld-footer-bar ul li.search > a::before {
+  content: "";
+}
+.naturis-handheld-footer-bar ul li.my-account > a::before {
+  content: "";
+}
+.naturis-handheld-footer-bar ul li.cart > a::before {
+  content: "";
+}
+.naturis-handheld-footer-bar ul li.wishlist > a::before {
+  content: "";
+}
+
+.single-product .pswp__button {
+  background-color: transparent;
+}
+.single-product div.product .woocommerce-product-gallery .woocommerce-product-gallery__trigger {
+  text-indent: -999px;
+  overflow: hidden;
+}
+.single-product div.product .woocommerce-product-gallery .woocommerce-product-gallery__trigger::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  display: block;
+  line-height: 20px;
+  text-indent: 0;
+  font-size: 18px;
+}
+.single-product div.product .woocommerce-product-gallery .woocommerce-product-gallery__trigger img {
+  display: none !important;
+}
+.single-product div.product .entry-summary .yith-wcwl-add-to-wishlist > div > a:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+.single-product div.product .entry-summary .compare:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.stock::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  margin-right: 0.5407911001em;
+}
+.stock.in-stock::before {
+  content: "";
+}
+
+.content-area .naturis-dropdown-filter-wrap .widget_layered_nav ul {
+  margin-left: 0;
+}
+.content-area .naturis-dropdown-filter-wrap .widget_layered_nav ul li {
+  padding-left: 1.618em;
+}
+.content-area .naturis-dropdown-filter-wrap .widget_layered_nav ul li::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  margin-right: 0.5407911001em;
+  display: block;
+  float: left;
+  opacity: 0.35;
+  margin-left: -1.618em;
+  width: 1em;
+}
+.content-area .naturis-dropdown-filter-wrap .widget_layered_nav ul li .children {
+  margin-left: 0;
+}
+.content-area .naturis-dropdown-filter-wrap .widget_layered_nav li::before {
+  content: "";
+}
+.content-area .naturis-dropdown-filter-wrap .widget_layered_nav .chosen::before {
+  content: "";
+}
+
+.naturis-canvas-filter .naturis-canvas-filter-wrap .widget_layered_nav ul {
+  margin-left: 0;
+}
+.naturis-canvas-filter .naturis-canvas-filter-wrap .widget_layered_nav ul li {
+  padding-left: 1.618em;
+}
+.naturis-canvas-filter .naturis-canvas-filter-wrap .widget_layered_nav ul li::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  margin-right: 0.5407911001em;
+  display: block;
+  float: left;
+  opacity: 0.35;
+  margin-left: -1.618em;
+  width: 1em;
+}
+.naturis-canvas-filter .naturis-canvas-filter-wrap .widget_layered_nav ul li .children {
+  margin-left: 0;
+}
+.naturis-canvas-filter .naturis-canvas-filter-wrap .widget_layered_nav li::before {
+  content: "";
+}
+.naturis-canvas-filter .naturis-canvas-filter-wrap .widget_layered_nav .chosen::before {
+  content: "";
+}
+
+a.remove {
+  display: block;
+  width: 1.618em;
+  height: 1.618em;
+  line-height: 1.618;
+  font-weight: 400;
+  text-indent: -9999px;
+  position: relative;
+}
+a.remove::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: #999999;
+  line-height: 1.618;
+  text-indent: 0;
+  text-align: center;
+}
+
+.woocommerce-shipping-calculator > p:first-child a::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.3342343017em;
+}
+
+.blockUI::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  animation: fa-spin 0.75s linear infinite;
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  font-size: 30px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -15px;
+  margin-top: -15px;
+}
+
+.woocommerce-pagination .next,
+.woocommerce-pagination .prev {
+  display: inline-block;
+  position: relative;
+}
+#shipping_method li > label {
+  cursor: pointer;
+}
+#shipping_method li > label::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 0.5407911001em;
+  transition: color, ease, 0.2s;
+}
+#shipping_method li > input[type=radio]:first-child {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  word-wrap: normal !important;
+}
+#shipping_method li > input[type=radio]:first-child:checked + label::after {
+  font-weight: 700;
+  content: "";
+}
+
+#payment .payment_methods li > label {
+  cursor: pointer;
+}
+#payment .payment_methods li > label::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.5407911001em;
+  transition: color, ease, 0.2s;
+}
+#payment .payment_methods li > input[type=radio]:first-child {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  word-wrap: normal !important;
+}
+#payment .payment_methods li > input[type=radio]:first-child:checked + label::before {
+  font-weight: 700;
+  content: "";
+}
+
+.woocommerce-password-strength::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 0.5407911001em;
+}
+.woocommerce-password-strength.strong::after {
+  content: "";
+}
+.woocommerce-password-strength.good::after {
+  content: "";
+}
+
+.woocommerce-MyAccount-navigation ul li.is-active a::before {
+  opacity: 1;
+}
+.woocommerce-MyAccount-navigation ul li a::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  line-height: 1.618;
+  margin-left: 0.5407911001em;
+  width: 1.41575em;
+  text-align: right;
+  float: right;
+  opacity: 0.25;
+  font-weight: 700;
+}
+.woocommerce-MyAccount-navigation ul li a:hover::before {
+  opacity: 1;
+}
+.woocommerce-MyAccount-navigation ul li.woocommerce-MyAccount-navigation-link--dashboard a::before {
+  content: "";
+}
+.woocommerce-MyAccount-navigation ul li.woocommerce-MyAccount-navigation-link--orders a::before {
+  content: "";
+}
+.woocommerce-MyAccount-navigation ul li.woocommerce-MyAccount-navigation-link--downloads a::before {
+  content: "";
+}
+.woocommerce-MyAccount-navigation ul li.woocommerce-MyAccount-navigation-link--edit-address a::before {
+  content: "";
+}
+.woocommerce-MyAccount-navigation ul li.woocommerce-MyAccount-navigation-link--payment-methods a::before {
+  content: "";
+}
+.woocommerce-MyAccount-navigation ul li.woocommerce-MyAccount-navigation-link--edit-account a::before {
+  content: "";
+}
+.woocommerce-MyAccount-navigation ul li.woocommerce-MyAccount-navigation-link--customer-logout a::before {
+  content: "";
+}
+.woocommerce-MyAccount-navigation ul li.woocommerce-MyAccount-navigation-link--subscriptions a::before {
+  content: "";
+}
+
+.my_account_orders .button.view::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 0.5407911001em;
+}
+
+p.order-again .button::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 0.5407911001em;
+}
+
+.woocommerce-MyAccount-downloads .button::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 0.5407911001em;
+}
+
+.demo_store::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.5407911001em;
+}
+
+#reviews .commentlist li p.meta .verified {
+  display: inline-block;
+  height: 1.41575em;
+  width: 1.41575em;
+  position: relative;
+  text-indent: -9999px;
+}
+#reviews .commentlist li p.meta .verified::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  color: #0f834d;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1.41575em;
+  height: 1.41575em;
+  text-indent: 0;
+  text-align: center;
+  line-height: 1.618em;
+}
+
+/**
+ * Composite Products
+ */
+.single-product div.product .component_selections .clear_component_options::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.5407911001em;
+}
+
+/**
+ * Mix and Match
+ */
+.cart .mnm_table_item .mnm_table_item_indent::before,
+.shop_table .mnm_table_item .mnm_table_item_indent::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  transform: rotate(90deg);
+  margin-right: 0.3819820591em;
+  opacity: 0.25;
+}
+
+/**
+ * Quick view
+ */
+.quick-view-button::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.6180469716em;
+}
+
+/**
+ * Ship multiple addresses
+ */
+.woocommerce-page .ship_address .gift-form label::after,
+.woocommerce-page .no_shipping_address .gift-form label::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 0.5407911001em;
+}
+.woocommerce-page .ship_address .modify-address-button::before,
+.woocommerce-page .no_shipping_address .modify-address-button::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.5407911001em;
+}
+.woocommerce-page .addresses + .addresses header.title a::before {
+  content: "";
+}
+
+/**
+ * Product reviews pro
+ */
+.woocommerce .woocommerce-MyAccount-navigation li.woocommerce-MyAccount-navigation-link--contributions a::before,
+.woocommerce-page .woocommerce-MyAccount-navigation li.woocommerce-MyAccount-navigation-link--contributions a::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+/**
+ * Variation Swatches
+ */
+a#variations_clear::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.5407911001em;
+}
+
+/**
+ * Wishlists
+ */
+.wl-add-link::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.5407911001em;
+}
+
+.button.wl-create-new::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 0.5407911001em;
+}
+
+.site-header-cart .cart-contents::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.elementor-widget-naturis-vertiacl-menu .vertical-navigation .naturis-icon {
+  position: relative;
+}
+.elementor-widget-naturis-vertiacl-menu .vertical-navigation .naturis-icon::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  font-size: 20px;
+  transition: transform 0.2s;
+}
+.elementor-widget-naturis-vertiacl-menu .vertical-navigation .naturis-icon::before {
+  position: absolute;
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  font-size: 20px;
+  color: var(--primary);
+  transform: translate3d(0, 250%, 0);
+  transition: transform 0.2s;
+}
+.elementor-widget-naturis-vertiacl-menu .vertical-navigation:hover .naturis-icon::after {
+  transform: translate3d(0, -250%, 0);
+}
+.elementor-widget-naturis-vertiacl-menu .vertical-navigation:hover .naturis-icon::before {
+  transform: translate3d(0, 0, 0);
+}
+
+@media (min-width: 768px) {
+  .main-navigation ul.menu > li.menu-item-has-children > a:after, .main-navigation ul.menu > li.page_item_has_children > a:after, .main-navigation ul.menu > li.has-mega-menu > a:after,
+.main-navigation ul.nav-menu > li.menu-item-has-children > a:after,
+.main-navigation ul.nav-menu > li.page_item_has_children > a:after,
+.main-navigation ul.nav-menu > li.has-mega-menu > a:after {
+    font-family: "naturis-icon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: middle;
+    content: "";
+    margin-left: 5px;
+    font-size: 20px;
+    margin-bottom: 3px;
+  }
+  .gecko .main-navigation ul.menu > li.menu-item-has-children > a:after, .gecko .main-navigation ul.menu > li.page_item_has_children > a:after, .gecko .main-navigation ul.menu > li.has-mega-menu > a:after,
+.gecko .main-navigation ul.nav-menu > li.menu-item-has-children > a:after,
+.gecko .main-navigation ul.nav-menu > li.page_item_has_children > a:after,
+.gecko .main-navigation ul.nav-menu > li.has-mega-menu > a:after {
+    margin-bottom: 0;
+    vertical-align: sub;
+  }
+
+  .header-side .main-navigation ul.menu > li.menu-item-has-children > a::after, .header-side .main-navigation ul.menu > li.page_item_has_children > a::after, .header-side .main-navigation ul.menu > li.has-mega-menu > a::after,
+.header-side .main-navigation ul.nav-menu > li.menu-item-has-children > a::after,
+.header-side .main-navigation ul.nav-menu > li.page_item_has_children > a::after,
+.header-side .main-navigation ul.nav-menu > li.has-mega-menu > a::after {
+    font-family: "naturis-icon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: middle;
+    content: "";
+    margin-left: 1em;
+    margin-right: -25px;
+  }
+
+  .vertical-navigation ul.menu > li.menu-item-has-children > a::after, .vertical-navigation ul.menu > li.page_item_has_children > a::after, .vertical-navigation ul.menu > li.has-mega-menu > a::after,
+.vertical-navigation ul.nav-menu > li.menu-item-has-children > a::after,
+.vertical-navigation ul.nav-menu > li.page_item_has_children > a::after,
+.vertical-navigation ul.nav-menu > li.has-mega-menu > a::after {
+    font-family: "naturis-icon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: middle;
+    content: "";
+    margin-left: auto;
+    float: right;
+  }
+
+  .elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.menu > li.menu-item-has-children > a::after, .elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.menu > li.page_item_has_children > a::after, .elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.menu > li.has-mega-menu > a::after,
+.elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.nav-menu > li.menu-item-has-children > a::after,
+.elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.nav-menu > li.page_item_has_children > a::after,
+.elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.nav-menu > li.has-mega-menu > a::after {
+    font-family: "naturis-icon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: middle;
+    content: "";
+    margin-left: auto;
+    float: right;
+  }
+  .elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.menu > li.menu-item-has-children:last-child > a::after, .elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.menu > li.page_item_has_children:last-child > a::after, .elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.menu > li.has-mega-menu:last-child > a::after,
+.elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.nav-menu > li.menu-item-has-children:last-child > a::after,
+.elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.nav-menu > li.page_item_has_children:last-child > a::after,
+.elementor-widget-naturis-vertiacl-menu .style-2 .vertical-navigation ul.nav-menu > li.has-mega-menu:last-child > a::after {
+    font-family: "naturis-icon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: middle;
+    content: "";
+    margin-left: auto;
+    float: right;
+  }
+
+  .main-navigation ul.menu ul li.menu-item-has-children > a::after, .main-navigation ul.menu ul li.page_item_has_children > a::after,
+.main-navigation ul.nav-menu ul li.menu-item-has-children > a::after,
+.main-navigation ul.nav-menu ul li.page_item_has_children > a::after {
+    font-family: "naturis-icon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: middle;
+    content: "";
+    float: right;
+    margin-left: 10px;
+    line-height: 1.5;
+  }
+
+  .demo_store a.woocommerce-store-notice__dismiss-link::before {
+    font-family: "naturis-icon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: middle;
+    content: "";
+    margin-right: 0.3342343017em;
+  }
+
+  .addresses header.title a {
+    display: block;
+    width: 1em;
+    height: 1em;
+    text-indent: -9999px;
+    position: relative;
+    padding: 0.875em;
+    margin-top: 0.6180469716em;
+  }
+  .addresses header.title a::before {
+    font-family: "naturis-icon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: middle;
+    content: "";
+    line-height: 1.618;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    text-indent: 0;
+  }
+
+  /**
+   * Wishlists
+   */
+  #wl-wrapper .wl-tabs > li.active::after {
+    font-family: "naturis-icon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: middle;
+    content: "";
+    display: block !important;
+    position: absolute;
+    top: 50%;
+    height: 1em;
+    width: 1em;
+    margin-top: -0.5em;
+  }
+}
+ul.wishlist_table.mobile .remove_from_wishlist:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.slick-prev:before,
+.slick-next:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.slick-prev:before {
+  content: "";
+}
+[dir=rtl] .slick-prev:before {
+  content: "";
+}
+.woocommerce-product-gallery-vertical .slick-prev:before {
+  content: "";
+}
+.woocommerce-product-gallery-horizontal .slick-prev:before {
+  content: "";
+}
+
+.slick-next:before {
+  content: "";
+}
+[dir=rtl] .slick-next:before {
+  content: "";
+}
+.woocommerce-product-gallery-vertical .slick-next:before {
+  content: "";
+}
+.woocommerce-product-gallery-horizontal .slick-next:before {
+  content: "";
+}
+
+body.loading {
+  position: relative;
+}
+body.loading::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  animation: fa-spin 0.75s linear infinite;
+  height: 40px;
+  width: 40px;
+  line-height: 40px;
+  font-size: 40px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  display: block;
+  z-index: 999999;
+  color: #fff;
+}
+body.loading:before {
+  content: "";
+  display: block;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999998;
+}
+
+.woocommerce-cart .cart-empty:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  font-size: 164px;
+  color: var(--light);
+  display: block;
+}
+
+#yith-quick-view-close * {
+  display: none;
+}
+#yith-quick-view-close:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+div[class*=post-style-] .entry-content > a:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+h2.resp-accordion:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-right: 10px;
+}
+h2.resp-accordion.active:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.widget_product_categories .icon-minus {
+  float: right;
+  width: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+.widget_product_categories .icon-minus:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  font-size: 14px;
+}
+.widget_product_categories .icon-plus {
+  float: right;
+  width: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+.widget_product_categories .icon-plus:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  font-size: 14px;
+}
+
+.products-list-2 .product-caption-bottom a[class*=product_type_]:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.shop-action .woosc-btn:before,
+.shop-action .woosq-btn:before,
+.shop-action .woosw-btn:before, .product-list .woosc-btn:before,
+.product-list .woosq-btn:before,
+.product-list .woosw-btn:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+}
+.shop-action .woosw-btn:before, .product-list .woosw-btn:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+.shop-action .woosw-btn.woosw-added:before, .product-list .woosw-btn.woosw-added:before {
+  content: "";
+  color: red;
+  margin-right: 0;
+}
+.shop-action .woosw-btn.woosw-adding::after, .product-list .woosw-btn.woosw-adding::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  line-height: inherit;
+  content: "" !important;
+  animation: fa-spin 0.75s linear infinite;
+  height: 20px;
+  width: 20px;
+  line-height: 20px;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  display: block;
+  transform: translate(0);
+}
+.shop-action .woosw-btn.woosw-adding:before, .product-list .woosw-btn.woosw-adding:before {
+  opacity: 0;
+}
+.shop-action .woosc-btn:before, .product-list .woosc-btn:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+.shop-action .woosq-btn:before, .product-list .woosq-btn:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+.shop-action a[class*=product_type_]:before, .product-list a[class*=product_type_]:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.single-product div.product .entry-summary .woosc-btn:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  line-height: inherit;
+}
+.single-product div.product .entry-summary .woosw-btn:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  line-height: inherit;
+}
+.single-product div.product .entry-summary .woosw-btn.woosw-added:before {
+  content: "";
+}
+
+a.read-more:after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 5px;
+}
+
+.ajax-search .widget_product_search .woocommerce-product-search.loading button[type=submit]::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  animation: fa-spin 0.75s linear infinite;
+}
+
+.elementor-widget-naturis-language-switcher.language-switcher-style-mobile .naturis-language-switcher .language-switcher-head:after {
+  position: relative;
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 0.5em;
+  line-height: 12px;
+}
+
+.loading-quick-shop .product-transition::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.search-by-category .input-dropdown-inner > a:after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.popup-navigation ul.menu > li.menu-item-has-children > a:after, .popup-navigation ul.menu > li.page_item_has_children > a:after, .popup-navigation ul.menu > li.has-mega-menu > a:after,
+.popup-navigation ul.nav-menu > li.menu-item-has-children > a:after,
+.popup-navigation ul.nav-menu > li.page_item_has_children > a:after,
+.popup-navigation ul.nav-menu > li.has-mega-menu > a:after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  margin-left: 0.5em;
+  font-size: 16px;
+}
+
+.popup-navigation ul.menu ul li.menu-item-has-children > a::after, .popup-navigation ul.menu ul li.page_item_has_children > a::after,
+.popup-navigation ul.nav-menu ul li.menu-item-has-children > a::after,
+.popup-navigation ul.nav-menu ul li.page_item_has_children > a::after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  float: right;
+  margin-left: 0.5em;
+  line-height: 20px;
+  font-size: 14px;
+}
+
+.naturis-canvas-filter-wrap .widget_product_brands ul, .naturis-canvas-filter-wrap .widget_product_brands ol, #secondary .widget_product_brands ul, #secondary .widget_product_brands ol {
+  margin-left: 0;
+}
+.naturis-canvas-filter-wrap .widget_product_brands ul li, .naturis-canvas-filter-wrap .widget_product_brands ol li, #secondary .widget_product_brands ul li, #secondary .widget_product_brands ol li {
+  padding-left: 1em;
+}
+.naturis-canvas-filter-wrap .widget_product_brands ul li::before, .naturis-canvas-filter-wrap .widget_product_brands ol li::before, #secondary .widget_product_brands ul li::before, #secondary .widget_product_brands ol li::before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  margin-right: 0.5407911001em;
+  display: block;
+  float: left;
+  opacity: 0.35;
+  margin-left: -1em;
+  width: 1em;
+  line-height: inherit !important;
+}
+.naturis-canvas-filter-wrap .widget_product_brands ul li .children, .naturis-canvas-filter-wrap .widget_product_brands ol li .children, #secondary .widget_product_brands ul li .children, #secondary .widget_product_brands ol li .children {
+  margin-left: 0;
+}
+.naturis-canvas-filter-wrap .widget_product_brands li::before, #secondary .widget_product_brands li::before {
+  content: "";
+}
+.naturis-canvas-filter-wrap .widget_product_brands .chosen::before, .naturis-canvas-filter-wrap .widget_product_brands .current-cat::before, #secondary .widget_product_brands .chosen::before, #secondary .widget_product_brands .current-cat::before {
+  content: "";
+  opacity: 1;
+  color: #000000;
+}
+
+.related:before,
+.upsells:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  display: block;
+  text-align: center;
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+#comments .comment-list .reply a:before {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+}
+
+.elementor-widget-naturis-product-categories .layout-3 .cat-title:after {
+  font-family: "naturis-icon";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 5px;
+  font-size: 12px;
+  line-height: 2;
+}
+
+/*# sourceMappingURL=icons.css.map */

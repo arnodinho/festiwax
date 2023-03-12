@@ -17,6 +17,7 @@ use Google\Site_Kit\Core\Dismissals\Dismissed_Items;
 use Google\Site_Kit\Core\Modules\Module_With_Owner;
 use Google\Site_Kit\Core\Modules\Modules;
 use Google\Site_Kit\Core\REST_API\REST_Route;
+use Google\Site_Kit\Core\REST_API\REST_Routes;
 use Google\Site_Kit\Core\Storage\User_Options;
 use Google\Site_Kit\Core\Util\Feature_Flags;
 use WP_REST_Response;
@@ -41,6 +42,7 @@ final class Permissions {
 	const VIEW_WP_DASHBOARD_WIDGET = 'googlesitekit_view_wp_dashboard_widget';
 	const VIEW_ADMIN_BAR_MENU      = 'googlesitekit_view_admin_bar_menu';
 	const MANAGE_OPTIONS           = 'googlesitekit_manage_options';
+	const UPDATE_PLUGINS           = 'googlesitekit_update_plugins';
 
 
 	/*
@@ -171,6 +173,7 @@ final class Permissions {
 			// Allow administrators and up to manage options and set up the plugin.
 			self::MANAGE_OPTIONS           => 'manage_options',
 			self::SETUP                    => 'manage_options',
+			self::UPDATE_PLUGINS           => 'update_plugins',
 		);
 
 		$this->meta_to_core = array(
@@ -235,10 +238,14 @@ final class Permissions {
 		);
 
 		add_filter(
-			'googlesitekit_user_data',
-			function( $data ) {
-				$data['permissions'] = $this->check_all_for_current_user();
-				return $data;
+			'googlesitekit_apifetch_preload_paths',
+			function ( $paths ) {
+				return array_merge(
+					$paths,
+					array(
+						'/' . REST_Routes::REST_ROOT . '/core/user/data/permissions',
+					)
+				);
 			}
 		);
 
@@ -711,7 +718,7 @@ final class Permissions {
 							return new WP_REST_Response( $this->check_all_for_current_user() );
 						},
 						'permission_callback' => function() {
-							return current_user_can( Permissions::VIEW_SPLASH );
+							return current_user_can( Permissions::VIEW_SPLASH ) || current_user_can( Permissions::VIEW_DASHBOARD );
 						},
 					),
 				)
@@ -733,6 +740,7 @@ final class Permissions {
 			self::VIEW_POSTS_INSIGHTS,
 			self::VIEW_DASHBOARD,
 			self::MANAGE_OPTIONS,
+			self::UPDATE_PLUGINS,
 			self::VIEW_SPLASH,
 			self::VIEW_AUTHENTICATED_DASHBOARD,
 			self::VIEW_WP_DASHBOARD_WIDGET,

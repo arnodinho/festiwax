@@ -1111,17 +1111,17 @@
         },
         {
             "name": "woocommerce/subscriptions-core",
-            "version": "2.2.1",
-            "version_normalized": "2.2.1.0",
+            "version": "5.3.1",
+            "version_normalized": "5.3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Automattic/woocommerce-subscriptions-core.git",
-                "reference": "c4debb6c3150b0732eb29b2b897bcbaef8cc6f97"
+                "reference": "d9befd7c6c62ada15dab9bc095084ab8746b0fa9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Automattic/woocommerce-subscriptions-core/zipball/c4debb6c3150b0732eb29b2b897bcbaef8cc6f97",
-                "reference": "c4debb6c3150b0732eb29b2b897bcbaef8cc6f97",
+                "url": "https://api.github.com/repos/Automattic/woocommerce-subscriptions-core/zipball/d9befd7c6c62ada15dab9bc095084ab8746b0fa9",
+                "reference": "d9befd7c6c62ada15dab9bc095084ab8746b0fa9",
                 "shasum": ""
             },
             "require": {
@@ -1134,7 +1134,7 @@
                 "woocommerce/woocommerce-sniffs": "0.1.0",
                 "yoast/phpunit-polyfills": "1.0.3"
             },
-            "time": "2022-08-25T22:15:47+00:00",
+            "time": "2023-02-01T00:09:00+00:00",
             "type": "wordpress-plugin",
             "extra": {
                 "phpcodesniffer-search-depth": 2
@@ -1142,7 +1142,9 @@
             "installation-source": "dist",
             "archive": {
                 "exclude": [
-                    "!/build"
+                    "!/build",
+                    "*.zip",
+                    "node_modules"
                 ]
             },
             "scripts": {
@@ -1162,7 +1164,7 @@
             "description": "Sell products and services with recurring payments in your WooCommerce Store.",
             "homepage": "https://github.com/Automattic/woocommerce-subscriptions-core",
             "support": {
-                "source": "https://github.com/Automattic/woocommerce-subscriptions-core/tree/2.2.1",
+                "source": "https://github.com/Automattic/woocommerce-subscriptions-core/tree/5.3.1",
                 "issues": "https://github.com/Automattic/woocommerce-subscriptions-core/issues"
             },
             "install-path": "../woocommerce/subscriptions-core"
