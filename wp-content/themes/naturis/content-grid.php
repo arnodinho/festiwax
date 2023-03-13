@@ -16,4 +16,4 @@
             <?php echo '<div><a class="more-link" href="' . get_permalink() . '">' . esc_html__('Read More', 'naturis') . '</a></div>'; ?>
         </div>
     </div>
-</article><!-- #post-## -->
+</article><!-- #post-##  -->
