@@ -1,9 +1,11 @@
-jQuery( document ).ready(function( $ ) {
+(function( $ ) {
 
-	/* Click to Copy the Text */
-	$(document).on('click', '.wpos-copy-clipboard', function() {
-		var copyText = $(this);
-		copyText.select();
-		document.execCommand("copy");
-	});
-});
+	"use strict";
+
+		/* Click to Copy the Text */
+		$(document).on('click', '.wpos-copy-clipboard', function() {
+			var copyText = $(this);
+			copyText.select();
+			document.execCommand("copy");
+		});
+})(jQuery);

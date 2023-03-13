@@ -93,7 +93,7 @@ function the_post_thumbnail( $size = 'post-thumbnail', $attr = '' ) {
 }
 
 /**
- * Update cache for thumbnails in the current loop.
+ * Updates cache for thumbnails in the current loop.
  *
  * @since 3.2.0
  *
@@ -127,7 +127,7 @@ function update_post_thumbnail_cache( $wp_query = null ) {
 }
 
 /**
- * Retrieve the post thumbnail.
+ * Retrieves the post thumbnail.
  *
  * When a theme adds 'post-thumbnail' support, a special 'post-thumbnail' image size
  * is registered, which differs from the 'thumbnail' image size managed via the

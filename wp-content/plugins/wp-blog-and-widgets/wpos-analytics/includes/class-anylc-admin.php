@@ -8,7 +8,7 @@
  * @since 1.0
  */
 
-if ( !defined( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
@@ -49,7 +49,6 @@ class Wpos_Anylc_Admin {
     /**
 	 * Remove admin menus
 	 * 
-	 * @package Wpos Analytic
 	 * @since 1.0
 	 */
 	function wpos_anylc_remove_admin_menu() {
@@ -70,7 +69,6 @@ class Wpos_Anylc_Admin {
 	/**
 	 * Add menu
 	 * 
-	 * @package Wpos Analytic
 	 * @since 1.0
 	 */
 	function wpos_anylc_register_admin_menu() {
@@ -143,7 +141,6 @@ class Wpos_Anylc_Admin {
 	/**
 	 * Display Opt in form HTML
 	 * 
-	 * @package Wpos Analytic
 	 * @since 1.0
 	 */
 	function wpos_anylc_page_html() {
@@ -176,7 +173,6 @@ class Wpos_Anylc_Admin {
 	/**
 	 * Display Offers HTML
 	 * 
-	 * @package Wpos Analytic
 	 * @since 1.0
 	 */
 	function wpos_anylc_offers_html() {
@@ -202,7 +198,6 @@ class Wpos_Anylc_Admin {
 	/**
 	 * Add Action links
 	 * 
-	 * @package Wpos Analytic
 	 * @since 1.0
 	 */
 	function wpos_anylc_add_action_links( $actions, $plugin_file, $plugin_data, $context ) {
@@ -238,7 +233,6 @@ class Wpos_Anylc_Admin {
 	/**
 	 * Redirect plugin / theme on activation to its opt in menu
 	 * 
-	 * @package Wpos Analytic
 	 * @since 1.0
 	 */
 	function wpos_anylc_admin_init_process() {
@@ -267,7 +261,6 @@ class Wpos_Anylc_Admin {
 	/**
 	 * Display Analytic Optin notice
 	 * 
-	 * @package Wpos Analytic
 	 * @since 1.0
 	 */
 	function wpos_anylc_optin_notice() {
@@ -340,7 +333,6 @@ class Wpos_Anylc_Admin {
 	/**
 	 * Analytic Optout Popup HTML
 	 * 
-	 * @package Wpos Analytic
 	 * @since 1.0
 	 */
 	function wpos_anylc_optout_popup() {
@@ -376,7 +368,6 @@ class Wpos_Anylc_Admin {
 	/**
 	 * Analytic Action Process
 	 * 
-	 * @package Wpos Analytic
 	 * @since 1.0
 	 */
 	function wpos_anylc_action_process() {

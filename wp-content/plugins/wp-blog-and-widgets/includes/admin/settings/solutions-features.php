@@ -2,7 +2,7 @@
 /**
  * Plugin Solutions & Features Page
  *
- * @package Blog Designer - Post and Widget
+ * @package WP Blog and Widgets
  * @since 1.0.0
  */
 
@@ -17,6 +17,13 @@ $popup_add_link = add_query_arg( array( 'post_type' =>WPBAW_POST_TYPE ), admin_u
 <div id="wrap">
 	<div class="wpbaw-sf-wrap">
 		<div class="wpbaw-sf-inr">
+
+			<div style="text-align: center; background: #DCDCDC; margin: 30px 0; padding: 10px 30px 30px 30px;">
+				<p style="font-weight: bold !important; font-size:20px !important;"><span style="color: #50c621;">Essential Plugin Bundle</span> + Any Leading Builders (Avada / Elementor / Divi / <br>VC-WPBakery / Site Origin / Beaver) = <span style="background: #50c621;color: #fff;padding: 2px 10px;">WordPress Magic</span></p>
+				<h4 style="color: #333; font-size: 14px; font-weight: 700;">Over 15K+ Customers Using <span style="color: #50c621 !important;">Essential Plugin Bundle</span></h4>
+				<a href="<?php echo WPBAW_PLUGIN_LINK_WELCOME; ?>" target="_blank" class="wpbaw-sf-btn wpbaw-sf-btn-orange"><span class="dashicons dashicons-cart"></span> View Essential Plugin Bundle</a>
+			</div>
+
 			<!-- Start - Welcome Box -->
 			<div class="wpbaw-sf-welcome-wrap">
 				<div class="wpbaw-sf-welcome-inr">
@@ -24,7 +31,9 @@ $popup_add_link = add_query_arg( array( 'post_type' =>WPBAW_POST_TYPE ), admin_u
 						<div class="wpbaw-sf-subtitle">Getting Started</div>
 						<h2 class="wpbaw-sf-title">Welcome to Blog</h2>
 						<p class="wpbaw-sf-content">Display customizable blog layouts, vertical scrolling blog widgets in the most engaging and customized way.</p>
-						<a href="<?php echo esc_url( $popup_add_link ); ?>" class="wpbaw-sf-btn">Launch Blog and Widget</a></br> <b>OR</b> </br><a href="<?php echo WPBAW_PLUGIN_LINK_WELCOME; ?>"  target="_blank" class="wpbaw-sf-btn wpbaw-sf-btn-orange">Grab Now Pro Features</a>
+						<a href="<?php echo esc_url( $popup_add_link ); ?>" class="wpbaw-sf-btn">Launch Blog and Widget</a></br> <b>OR</b> </br>
+						<p style="font-size: 14px;"><span class="wpbaw-sf-blue">Blog </span>Including in <span class="wpbaw-sf-blue">Essential Plugin Bundle</span></p>
+						<a href="<?php echo WPBAW_PLUGIN_LINK_WELCOME; ?>" target="_blank" class="wpbaw-sf-btn wpbaw-sf-btn-orange"><span class="dashicons dashicons-cart"></span> View Bundle Deal</a>
 						<div class="wpbaw-rc-wrap">
 							<div class="wpbaw-rc-inr wpbaw-rc-bg-box">
 								<div class="wpbaw-rc-icon">
@@ -164,7 +173,8 @@ $popup_add_link = add_query_arg( array( 'post_type' =>WPBAW_POST_TYPE ), admin_u
 							Blog Masonry View</li>
 						</ul>
 					</div>
-					<a href="<?php echo WPBAW_PLUGIN_LINK_WELCOME; ?>" target="_blank" class="wpbaw-sf-btn wpbaw-sf-btn-orange"><span class="dashicons dashicons-cart"></span> Grab Now Pro Features</a>
+					<p style="font-size: 14px;"><span class="wpbaw-sf-blue">Blog </span>Including in <span class="wpbaw-sf-blue">Essential Plugin Bundle</span></p>
+					<a href="<?php echo WPBAW_PLUGIN_LINK_WELCOME; ?>" target="_blank" class="wpbaw-sf-btn wpbaw-sf-btn-orange"><span class="dashicons dashicons-cart"></span> View Bundle Deal</a>
 					<div class="wpbaw-rc-wrap">
 						<div class="wpbaw-rc-inr wpbaw-rc-bg-box">
 							<div class="wpbaw-rc-icon">
@@ -192,7 +202,7 @@ $popup_add_link = add_query_arg( array( 'post_type' =>WPBAW_POST_TYPE ), admin_u
 			<!-- Start - Testimonial Section -->
 			<div class="wpbaw-sf-testimonial-wrap">
 				<div class="wpbaw-center wpbaw-features-ttl">
-					<h2 class="wpbaw-sf-ttl">Looking for a Reason to Use Blog? Here are 15+...</h2>
+					<h2 class="wpbaw-sf-ttl">Looking for a Reason to Use Essential Plugin with Blog? Here are 15+...</h2>
 				</div>
 				<div class="wpbaw-testimonial-section-inr">
 					<div class="wpbaw-testimonial-box-wrap">
@@ -233,7 +243,9 @@ $popup_add_link = add_query_arg( array( 'post_type' =>WPBAW_POST_TYPE ), admin_u
 							<div class="wpbaw-testimonial-rating"><img src="<?php echo WPBAW_URL; ?>assets/images/rating.png" /></div>
 						</div>
 					</div>
-					<a href="https://wordpress.org/support/plugin/wp-blog-and-widgets/reviews/?filter=5" target="_blank" class="wpbaw-sf-btn"><span class="dashicons dashicons-star-filled"></span> View All Reviews</a> OR <a href="<?php echo WPBAW_PLUGIN_LINK_WELCOME; ?>"  target="_blank" class="wpbaw-sf-btn wpbaw-sf-btn-orange">Grab Now Pro Features</a>
+					<a href="https://wordpress.org/support/plugin/wp-blog-and-widgets/reviews/?filter=5" target="_blank" class="wpbaw-sf-btn"><span class="dashicons dashicons-star-filled"></span> View All Reviews</a><br /> OR 
+					<p style="font-size: 14px;"><span class="wpbaw-sf-blue">Blog </span>Including in <span class="wpbaw-sf-blue">Essential Plugin Bundle</span></p>
+					<a href="<?php echo WPBAW_PLUGIN_LINK_WELCOME; ?>"  target="_blank" class="wpbaw-sf-btn wpbaw-sf-btn-orange"><span class="dashicons dashicons-cart"></span> View Bundle Deal</a>
 					<div class="wpbaw-rc-wrap">
 						<div class="wpbaw-rc-inr wpbaw-rc-bg-box">
 							<div class="wpbaw-rc-icon">

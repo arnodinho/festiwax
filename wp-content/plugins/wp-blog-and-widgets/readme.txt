@@ -1,9 +1,9 @@
-﻿=== WP Blog and Widget  ===
+﻿=== WP Blog and Widgets ===
 Contributors:  wponlinesupport, anoopranawat, pratik-jain, piyushpatel123, ridhimashukla, patelketan
 Tags: blog design, blog layout, wordpress blog , custom blog template, blog layout design, custom blog layout, Free WordPress blog, blog custom post type, blog tab, blog menu, blog page with custom post type, blog, latest blog, custom post type, CPT, widget, wponlinesupport
 Requires at least: 4.0
-Tested up to: 5.9.2
-Stable tag: 2.2.6
+Tested up to: 6.1.1
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -186,6 +186,15 @@ add_filter( 'wpbaw_blog_registered_post_type_args', 'prefix_gutenberg_editor_sup
 
 == Changelog ==
 
+= 2.3.1 (05, Jan 2023) =
+* [*] Update - Update some escaping functions for better security.
+
+= 2.3 (04, Jan 2023) =
+* [*] Update - Use escaping functions for better security.
+* [*] Remove - Removed unnecessary files and images.
+* [*] Remove - Removed .po files from 'languages' folder.
+* [*] Tweak - Code optimization and performance improvements.
+
 = 2.2.6 (28, March 2022) =
 * [+] Added demo link
 * [-] Removed some unwanted code and files.
@@ -228,7 +237,7 @@ add_filter( 'wpbaw_blog_registered_post_type_args', 'prefix_gutenberg_editor_sup
 = 2.0 (23, Oct 2020) =
 * [*] Update - Regular plugin maintenance. Updated readme file.
 * [+] New - Click to copy the shortcode from the getting started page.
-* [*] Added - Added our other Popular Plugins under blog and widget --> Install Popular Plugins From WPOS. This will help you to save your time during creating a website.
+* [*] Added - Added our other Popular Plugins under blog and widget --> Install Popular Plugins From Us. This will help you to save your time during creating a website.
 
 = 1.9 (28, August 2020) =
 * [+] New - Added Gutenberg block support. Now use plugin easily with Gutenberg!

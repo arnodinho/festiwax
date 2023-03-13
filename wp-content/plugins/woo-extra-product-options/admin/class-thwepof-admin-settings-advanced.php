@@ -211,7 +211,8 @@ class THWEPOF_Admin_Settings_Advanced extends THWEPOF_Admin_Settings{
 			'OPTION_KEY_ADVANCED_SETTINGS' => $settings_advanced,
 		);
 
-		return base64_encode(serialize($plugin_settings));
+		// return base64_encode(serialize($plugin_settings));
+		return base64_encode(json_encode($plugin_settings));
 	}
 	
 	public function render_import_export_settings(){
@@ -275,12 +276,15 @@ class THWEPOF_Admin_Settings_Advanced extends THWEPOF_Admin_Settings{
 			$settings_data_encoded = sanitize_textarea_field(wp_unslash($_POST['i_settings_data']));
 			$base64_decoded = base64_decode($settings_data_encoded);
 
-			if(!is_serialized($base64_decoded)){
+			// if(!is_serialized($base64_decoded)){
+			if(!$this->is_json($base64_decoded,$return_data = false)){
 				$this->print_notices(__('The entered import settings data is invalid. Please try again with valid data.', 'woo-extra-product-options'), 'error', false);
 				return false;
 			}
 
-			$settings = unserialize($base64_decoded); 
+			// $settings = unserialize($base64_decoded);
+			// $settings = unserialize($base64_decoded, ['allowed_classes' => false]);
+			$settings = json_decode($base64_decoded,true);
 			
 			if($settings){	
 				foreach($settings as $key => $value){	
@@ -325,6 +329,12 @@ class THWEPOF_Admin_Settings_Advanced extends THWEPOF_Admin_Settings{
 	public function import_settings(){
 	
 	}
+
+	public function is_json($settings,$return_data = false) {
+		$data = json_decode($settings);
+		return (json_last_error() == JSON_ERROR_NONE) ? ($return_data ? $data : TRUE) : FALSE;
+	}
+	
     /**********************************************
 	 *-------- IMPORT & EXPORT SETTINGS - END -----
 	 **********************************************/

@@ -33,7 +33,7 @@ class WPOS_ESPBW_Admin {
 			foreach ($wpos_espbw_module as $module_key => $module_val) {
 				
 				// Dashboard Page
-				add_submenu_page( $module_val['menu'], __('Essential Plugins Bundle By WP OnlineSuport', 'espbw'), '<span style="color:#2ECC71;">'.__('Install Popular Plugins From WPOS', 'espbw').'</span>', 'manage_options', "{$module_val['prefix']}-espbw-dashboard", array($this, 'espbw_dashboard_page'), $module_val['position'] );
+				add_submenu_page( $module_val['menu'], __('Essential Plugins Bundle By WP OnlineSuport', 'espbw'), '<span style="color:#2ECC71;">'.__('Install Popular Plugins From Us', 'espbw').'</span>', 'manage_options', "{$module_val['prefix']}-espbw-dashboard", array($this, 'espbw_dashboard_page'), $module_val['position'] );
 			}
 		}
 	}

@@ -27,7 +27,7 @@ class WPOS_ESPBW_Script {
 	function espbw_admin_script_style( $hook ) {
 
 		// Taking pages array
-		$page = isset( $_GET['page'] ) ? $_GET['page'] : '';
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
 
 		// Registring admin css
 		wp_register_style( 'espbw-admin-css', WPOS_ESPBW_URL.'assets/css/admin-style.css', array(), WPOS_ESPBW_VERSION );

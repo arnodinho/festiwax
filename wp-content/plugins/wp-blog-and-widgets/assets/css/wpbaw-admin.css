@@ -9,7 +9,7 @@
 #wpbaw-post-metabox-pro tr.wpbaw-pro-feature th:first-child,
 #wpbaw-post-metabox-pro tr.wpbaw-pro-feature td:first-child{width:40%; }
 
-/************** Start - Solutions & Features Page CSS ****************/
+/***** Start - Solutions & Features Page CSS *****/
 .blog_post_page_wpbaw-solutions-features #wpcontent{padding: 0 0 40px; line-height: normal;}
 .wpbaw-sf-wrap .wpbaw-sf-inr{padding: 30px 40px 0;}
 .wpbaw-sf-wrap .wpbaw-sf-welcome-wrap{background-color: #fff; justify-content: space-between; box-shadow: 0 3px 2px rgba(0,0,0,.05); margin-bottom: 20px; position: relative; color: #23282d;}
@@ -43,6 +43,10 @@
 .wpbaw-rc-wrap .wpbaw-rc-inr p{margin: 0;}
 .wpbaw-rc-wrap .wpbaw-rc-bg-box{ background-color:#f1f1f1; border: 1px solid #d1d1d1; padding: 5px 10px; }
 
+.wpbaw-sf-heading{font-size: 28px;font-weight: 700;letter-spacing: -1px;text-align: center;margin-top: 30px; margin-bottom:5px;}
+.wpbaw-sf-team{margin-bottom:50px; border: 1px solid #e5ecf6; padding:10px 30px 30px 30px;}
+.wpbaw-sf-blue{color:#6c63ff; font-weight:bold;}
+
 .wpbaw-solutions-section{margin-bottom: 20px;}
 .wpbaw-solutions-box-wrap{display: -webkit-box; display: -ms-flexbox; display: flex; -ms-flex-wrap: wrap; flex-wrap: wrap; gap: 15px;}
 .wpbaw-solutions-box-wrap>*{flex: 1 0 21%;}
@@ -70,5 +74,4 @@ ul.wpbaw-features-box-grid .wpbaw-popup-icon img{width: 100%; max-width: 100%; h
 padding: 30px;text-align: center;display: flex;flex-direction: column;align-items: center;}
 .wpbaw-testimonial-box-wrap h3{margin-top:0px;}
 .wpbaw-testimonial-clnt{margin:15px 0 0 0; font-size:16px; font-weight:bold;}
-
-/************** End - Solutions & Features Page CSS ****************/
+/***** End - Solutions & Features Page CSS *****/

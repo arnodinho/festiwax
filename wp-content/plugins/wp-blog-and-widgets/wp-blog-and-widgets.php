@@ -1,18 +1,25 @@
 <?php
 /**
- * Plugin Name: WP Blog and Widget
+ * Plugin Name: WP Blog and Widgets
  * Plugin URL: https://www.essentialplugin.com/wordpress-plugin/wp-blog-and-widgets/
  * Text Domain: wp-blog-and-widgets
  * Domain Path: /languages/
  * Description: Display Blog on your website with list and in grid view. Also work with Gutenberg shortcode block.
- * Version: 2.2.6
+ * Version: 2.3.1
  * Author: WP OnlineSupport, Essential Plugin
  * Author URI: https://www.essentialplugin.com/wordpress-plugin/wp-blog-and-widgets/
- * Contributors: WP OnlineSupport
+ * Contributors: Essential Plugin
+ * 
+ * @package WP Blog and Widgets
+ * @author Essential Plugin
 */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 if( ! defined( 'WPBAW_VERSION' ) ) {
-	define( 'WPBAW_VERSION', '2.2.6' ); // Version of plugin
+	define( 'WPBAW_VERSION', '2.3.1' ); // Version of plugin
 }
 
 if( ! defined( 'WPBAW_Name' ) ) {
@@ -58,11 +65,11 @@ if( ! defined( 'WPBAW_PLUGIN_LINK_WELCOME' ) ) {
 if( ! defined( 'WPBAW_SITE_LINK' ) ) {
 	define('WPBAW_SITE_LINK','https://www.essentialplugin.com'); // Plugin link
 }
+
 /**
  * Load Text Domain and do stuff once all plugin is loaded
  * This gets the plugin ready for translation
  * 
- * @package WP Blog and Widgets
  * @since 1.0.0
  */
 function wpbaw_blog_load_textdomain() {
@@ -100,7 +107,6 @@ add_action('plugins_loaded', 'wpbaw_blog_load_textdomain');
  * 
  * Register plugin activation hook.
  * 
- * @package WP Blog and Widgets
  * @since 1.0.0
  */
 register_activation_hook( __FILE__, 'wpbaw_blog_install' );
@@ -110,7 +116,6 @@ register_activation_hook( __FILE__, 'wpbaw_blog_install' );
  * 
  * Register plugin deactivation hook.
  * 
- * @package WP Blog and Widgets
  * @since 1.0.0
  */
 register_deactivation_hook( __FILE__, 'wpbaw_blog_uninstall');
@@ -121,10 +126,9 @@ register_deactivation_hook( __FILE__, 'wpbaw_blog_uninstall');
  * Does the initial setup,
  * stest default values for the plugin options.
  * 
- * @package WP Blog and Widgets
  * @since 1.0.0
  */
-function wpbaw_blog_install(){
+function wpbaw_blog_install() {
 
 	wpbaw_register_post_type();
 	wpbaw_register_taxonomies();
@@ -132,20 +136,16 @@ function wpbaw_blog_install(){
 	// IMP need to flush rules for custom registered post type
 	flush_rewrite_rules();
 
-	if( is_plugin_active('wp-blog-and-widgets-pro/wp-blog-and-widgets.php') ){
+	if( is_plugin_active( 'wp-blog-and-widgets-pro/wp-blog-and-widgets.php') ) {
 	 	add_action('update_option_active_plugins', 'wpbaw_blog_deactivate_version');
 	}
-
-	// Add option for solutions & features
-	add_option( 'wpbaw_sf_optin', true );
 }
 
 /**
  * Plugin Setup (On Deactivation)
  * 
  * Delete  plugin options.
- * 
- * @package WP Blog and Widgets
+ *
  * @since 1.0.0
  */
 function wpbaw_blog_uninstall() {
@@ -157,32 +157,42 @@ function wpbaw_blog_uninstall() {
 /**
  * Deactivate free plugin
  * 
- * @package WP Blog and Widgets
  * @since 1.0.0
  */
 function wpbaw_blog_deactivate_version(){
-   deactivate_plugins('wp-blog-and-widgets-pro/wp-blog-and-widgets.php',true);
+   deactivate_plugins('wp-blog-and-widgets-pro/wp-blog-and-widgets.php', true);
 }
 
 /**
  * Function to display admin notice of activated plugin.
  * 
- * @package WP Blog and Widgets
  * @since 1.0.0
  */
 function wpbaw_blog_admin_notice() {
 
 	global $pagenow;
 
-	$dir = ABSPATH . 'wp-content/plugins/wp-blog-and-widgets-pro/wp-blog-and-widgets.php';
-	$notice_link        = add_query_arg( array('message' => 'wpbawh-plugin-notice'), admin_url('plugins.php') );
-	$notice_transient   = get_transient( 'wpbawh_install_notice' );
+	// If not plugin screen
+	if( 'plugins.php' != $pagenow ) {
+		return;
+	}
 
-	if( $notice_transient == false && $pagenow == 'plugins.php' && file_exists( $dir ) && current_user_can( 'install_plugins' ) ) {        
+	// Check Lite Version
+	$dir = plugin_dir_path( __DIR__ ) . 'wp-blog-and-widgets-pro/wp-blog-and-widgets.php';
+
+	if( ! file_exists( $dir ) ) {
+		return;
+	}
+
+	$notice_link		= add_query_arg( array('message' => 'wpbawh-plugin-notice'), admin_url('plugins.php') );
+	$notice_transient	= get_transient( 'wpbawh_install_notice' );
+
+	// If free plugin exist
+	if( $notice_transient == false && current_user_can( 'install_plugins' ) ) {
 		echo '<div class="updated notice" style="position:relative;">
 			<p>
 				<strong>'.sprintf( __('Thank you for activating %s', 'wp-blog-and-widgets'), 'WP Blog and Widget').'</strong>.<br/>
-				'.sprintf( __('It looks like you had PRO version %s of this plugin activated. To avoid conflicts the extra version has been deactivated and we recommend you delete it.', 'wp-blog-and-widgets'), '<strong>(<em>WP Blog and Widget Pro</em>)</strong>' ).'
+				'.sprintf( __('It looks like you had PRO version %s of this plugin activated. To avoid conflicts the extra version has been deactivated and we recommend you delete it.', 'wp-blog-and-widgets'), '<strong>WP Blog and Widget Pro</strong>' ).'
 			</p>
 			<a href="'.esc_url( $notice_link ).'" class="notice-dismiss" style="text-decoration:none;"></a>
 		</div>';
@@ -192,23 +202,23 @@ function wpbaw_blog_admin_notice() {
 // Action to display notice
 add_action( 'admin_notices', 'wpbaw_blog_admin_notice');
 
-//Blog Admin Class File
-require_once( WPBAW_DIR . '/includes/admin/class-wpbaw-admin.php' );
-
-//Custom Post Type File
-require_once( WPBAW_DIR . '/includes/wpbaw-post-types.php' );
-
-//Function File
-require_once( WPBAW_DIR . '/includes/class-wpbaw-script.php' );
-
-//Function File
+// Function File
 require_once( WPBAW_DIR . '/includes/wpbaw-functions.php' );
 
-//Blog Shortcode File
+// Custom Post Type File
+require_once( WPBAW_DIR . '/includes/wpbaw-post-types.php' );
+
+// Script Class File
+require_once( WPBAW_DIR . '/includes/class-wpbaw-script.php' );
+
+// Admin Class File
+require_once( WPBAW_DIR . '/includes/admin/class-wpbaw-admin.php' );
+
+// Shortcode File
 require_once( WPBAW_DIR . '/includes/shortcode/wpbaw-blog-shortcode.php' );
 require_once( WPBAW_DIR . '/includes/shortcode/wpbaw-recent-blog-shortcode.php' );
 
-//Blog Widget File
+// Widget File
 require_once( WPBAW_DIR . '/includes/widgets/class-wpbaw-blog.php' );
 
 // Gutenberg Block Initializer
@@ -221,7 +231,7 @@ if ( is_admin() ) {
 	require_once( WPBAW_DIR . '/wpos-plugins/wpos-recommendation.php' );
 
 	wpos_espbw_init_module( array(
-							'prefix'	=> 'wpbaw',
+							'prefix'		=> 'wpbaw',
 							'menu'		=> 'edit.php?post_type='.WPBAW_POST_TYPE,
 							'position'	=> 5,
 						));
@@ -229,23 +239,26 @@ if ( is_admin() ) {
 /* Recommended Plugins Ends */
 
 /* Plugin Wpos Analytics Data Starts */
-function wpos_analytics_anl22_load() {
+if( ! function_exists( 'wpbaw_blog_analytics_load' ) ) {
+	function wpbaw_blog_analytics_load() {
 
-	require_once dirname( __FILE__ ) . '/wpos-analytics/wpos-analytics.php';
+		require_once dirname( __FILE__ ) . '/wpos-analytics/wpos-analytics.php';
 
-	$wpos_analytics = wpos_anylc_init_module( array(
-							'id'			=> 22,
-							'file'			=> plugin_basename( __FILE__ ),
-							'name'			=> 'WP Blog and Widget',
-							'slug'			=> 'wp-blog-and-widget',
-							'type'			=> 'plugin',
-							'menu'			=> 'edit.php?post_type=blog_post',
-							'text_domain'	=> 'wp-blog-and-widgets',
-						));
+		$wpos_analytics =  wpos_anylc_init_module( array(
+								'id'					=> 22,
+								'file'				=> plugin_basename( __FILE__ ),
+								'name'				=> 'WP Blog and Widget',
+								'slug'				=> 'wp-blog-and-widget',
+								'type'				=> 'plugin',
+								'menu'				=> 'edit.php?post_type=blog_post',
+								'redirect_page'	=> 'edit.php?post_type=blog_post&page=wpbaw-solutions-features',
+								'text_domain'		=> 'wp-blog-and-widgets',
+							));
 
-	return $wpos_analytics;
+		return $wpos_analytics;
+	}
+
+	// Init Analytics
+	wpbaw_blog_analytics_load();
 }
-
-// Init Analytics
-wpos_analytics_anl22_load();
 /* Plugin Wpos Analytics Data Ends */

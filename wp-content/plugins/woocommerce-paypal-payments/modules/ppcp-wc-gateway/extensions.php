@@ -15,7 +15,7 @@ use WooCommerce\PayPalCommerce\Session\SessionHandler;
 use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
 use WooCommerce\WooCommerce\Logging\Logger\NullLogger;
 use WooCommerce\WooCommerce\Logging\Logger\WooCommerceLogger;
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 return array(
@@ -72,7 +72,6 @@ return array(
 		$settings                     = $container->get( 'wcgateway.settings' );
 		$intent                       = $settings->has( 'intent' ) && strtoupper( (string) $settings->get( 'intent' ) ) === 'AUTHORIZE' ? 'AUTHORIZE' : 'CAPTURE';
 		$application_context_repository = $container->get( 'api.repository.application-context' );
-		$pay_pal_request_id_repository              = $container->get( 'api.repository.paypal-request-id' );
 		$subscription_helper = $container->get( 'subscription.helper' );
 		return new OrderEndpoint(
 			$container->get( 'api.host' ),
@@ -82,8 +81,9 @@ return array(
 			$intent,
 			$logger,
 			$application_context_repository,
-			$pay_pal_request_id_repository,
 			$subscription_helper,
+			$container->get( 'wcgateway.is-fraudnet-enabled' ),
+			$container->get( 'wcgateway.fraudnet' ),
 			$bn_code
 		);
 	},
@@ -99,5 +99,18 @@ return array(
 		);
 	},
 
-	'wcgateway.settings.fields'      => require __DIR__ . '/connection-tab-settings.php',
+	'wcgateway.settings.fields'      => function ( ContainerInterface $container, array $fields ): array {
+		$path_to_settings_fields = __DIR__ . '/src/Settings/Fields';
+
+		$get_paypal_button_fields = require $path_to_settings_fields . '/paypal-smart-button-fields.php';
+		$paypal_button_fields = $get_paypal_button_fields( $container, $fields ) ?? array();
+
+		$get_connection_tab_fields = require $path_to_settings_fields . '/connection-tab-fields.php';
+		$connection_tab_fields = $get_connection_tab_fields( $container, $fields ) ?? array();
+
+		$get_pay_later_tab_fields = require $path_to_settings_fields . '/pay-later-tab-fields.php';
+		$pay_later_tab_fields = $get_pay_later_tab_fields( $container, $fields ) ?? array();
+
+		return array_merge( $paypal_button_fields, $connection_tab_fields, $pay_later_tab_fields );
+	},
 );

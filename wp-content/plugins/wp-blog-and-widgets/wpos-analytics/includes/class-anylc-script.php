@@ -23,7 +23,6 @@ class Wpos_Anylc_Script {
      /**
 	 * Enqueue script for backend
 	 * 
-	 * @package Wpos Analytic
 	 * @since 1.0
 	 */
     function wpos_anylc_admin_script_style( $hook ) {

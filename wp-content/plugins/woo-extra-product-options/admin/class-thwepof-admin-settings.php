@@ -38,6 +38,7 @@ abstract class THWEPOF_Admin_Settings{
 
 		add_action( 'admin_init', array( $this, 'wepo_notice_actions' ), 20 );
 		add_action( 'admin_notices', array($this, 'output_review_request_link'));
+		add_action( 'admin_head', array($this,'review_banner_custom_css'));
 	}
 
 	public function get_tabs(){
@@ -119,6 +120,12 @@ abstract class THWEPOF_Admin_Settings{
 			update_user_meta( get_current_user_id(), 'thwepo_reviewed', true );
 			update_user_meta( get_current_user_id(), 'thwepo_reviewed_time', $now );
 		}
+
+		$arr_params = array('thwepo_remind', 'thwepo_dissmis', 'thwepo_reviewed', 'thwepo_review_nonce');
+		$redirect_url = remove_query_arg($arr_params, false);
+
+		wp_safe_redirect($redirect_url);
+		exit;
 	}
 
 	public function output_review_request_link(){
@@ -127,10 +134,10 @@ abstract class THWEPOF_Admin_Settings{
 			return;
 		}
 
-		$current_screen = get_current_screen();
-		if($current_screen->id !== 'product_page_thwepof_extra_product_options'){
-			return;
-		}
+		$capability = THWEPOF_Utils::wepo_capability();
+		if (!current_user_can($capability)){
+            return;
+        }
 
 		$thwepo_reviewed = get_user_meta( get_current_user_id(), 'thwepo_reviewed', true );
 		if($thwepo_reviewed){
@@ -138,8 +145,8 @@ abstract class THWEPOF_Admin_Settings{
 		}
 
 		$now = time();
-		$dismiss_life  = apply_filters('thwepof_dismissed_review_request_notice_lifespan', 3 * MONTH_IN_SECONDS);
-		$reminder_life = apply_filters('thwepof_skip_review_request_notice_lifespan', 1 * DAY_IN_SECONDS);
+		$dismiss_life  = apply_filters('thwepof_dismissed_review_request_notice_lifespan', 6 * MONTH_IN_SECONDS);
+		$reminder_life = apply_filters('thwepof_skip_review_request_notice_lifespan', 7 * DAY_IN_SECONDS);
 
 		$is_dismissed   = get_user_meta( get_current_user_id(), 'thwepo_review_dismissed', true );
 		$dismisal_time  = get_user_meta( get_current_user_id(), 'thwepo_review_dismissed_time', true );
@@ -165,17 +172,22 @@ abstract class THWEPOF_Admin_Settings{
 			update_option('thwepof_since', $now, 'no' );
 		}
 
-		$this->render_review_request_notice();
+		$thwepof_since = $thwepof_since ? $thwepof_since : $now;
+		$render_time = apply_filters('thwepof_show_review_banner_render_time' , 7 * DAY_IN_SECONDS);
+
+		$render_time = $thwepof_since + $render_time;
+		if($now > $render_time ){
+			$this->render_review_request_notice();
+		}
 	}
 
 	private function render_review_request_notice(){
 		$current_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'general_settings';
 		$current_section = isset( $_GET['section'] ) ? sanitize_key( $_GET['section'] ) : '';
 
-		$admin_url   = $this->get_admin_url($current_tab, $current_section);
-		$remind_url  = $admin_url . '&thwepo_remind=true&thwepo_review_nonce=' . wp_create_nonce( 'thwepof_notice_security');
-		$dismiss_url = $admin_url . '&thwepo_dissmis=true&thwepo_review_nonce=' . wp_create_nonce( 'thwepof_notice_security');
-		$reviewed_url= $admin_url . '&thwepo_reviewed=true&thwepo_review_nonce=' . wp_create_nonce( 'thwepof_notice_security');
+		$remind_url = add_query_arg(array('thwepo_remind' => true, 'thwepo_review_nonce' => wp_create_nonce( 'thwepof_notice_security')));
+		$dismiss_url = add_query_arg(array('thwepo_dissmis' => true, 'thwepo_review_nonce' => wp_create_nonce( 'thwepof_notice_security')));
+		$reviewed_url= add_query_arg(array('thwepo_reviewed' => true, 'thwepo_review_nonce' => wp_create_nonce( 'thwepof_notice_security')));
 		?>
 
 		<div class="notice notice-info thpladmin-notice is-dismissible thwepo-review-wrapper" data-nonce="<?php echo wp_create_nonce( 'thwepof_notice_security'); ?>">
@@ -183,8 +195,10 @@ abstract class THWEPOF_Admin_Settings{
 				<img src="<?php echo esc_url(THWEPOF_URL .'admin/assets/css/review-left.png'); ?>" alt="themehigh">
 			</div>
 			<div class="thwepo-review-content">
-				<h3><?php _e('We heard you!', 'woo-extra-product-options'); ?></h3>
-				<p><?php _e('The free version of the WooCommerce Extra Product Options plugin is now loaded with more field types. We would love to know how you feel about the improvements we made just for you. Help us to serve you and others best by simply leaving a genuine review.', 'woo-extra-product-options'); ?></p>
+				<h3><?php _e('We would love to hear from you?', 'woo-extra-product-options'); ?></h3>
+				
+				<p><?php _e('We have a quick favor to ask. You have been our patron for the longest and would love to hear about your experience with us so far. Would you mind heading to WordPress and writing a quick review on our plugin? Review or not, we still love you!', 'woo-extra-product-options'); ?></p>
+				
 				<div class="action-row">
 			        <a class="thwepo-notice-action thwepo-yes" onclick="window.open('https://wordpress.org/support/plugin/woo-extra-product-options/reviews/?rate=5#new-post', '_blank')" style="margin-right:16px; text-decoration: none">
 			        	<?php _e("Yes, today", 'woo-extra-product-options'); ?>
@@ -213,6 +227,121 @@ abstract class THWEPOF_Admin_Settings{
 	    </div>
 
 		<?php
+	}
+
+	public function review_banner_custom_css(){
+		?>
+		<style type="text/css">
+
+			/* Review Banner CSS */
+			.thwepo-review-wrapper {
+			    padding: 15px 28px 5px 10px !important;
+			    margin-top: 35px;
+			}
+			.thwepo-review-image {
+			    float: left;
+			}
+			.thwepo-review-content {
+			    padding-right: 180px;
+			}
+			.thwepo-review-content p {
+			    padding-bottom: 6px;
+			}
+			.thwepo-notice-action{
+			    padding: 8px 18px 8px 18px;
+			    background: #fff;
+			    color: #007cba;
+			    border-radius: 5px;
+			    border: 1px solid  #007cba;
+			    display: inline-block;
+			    cursor: pointer;
+			}
+			.thwepo-notice-action.thwepo-yes {
+			    background-color: #007cba;
+			    color: #fff;
+			}
+			.thwepo-notice-action:hover:not(.thwepo-yes) {
+			    background-color: #f2f5f6;
+			}
+			.thwepo-notice-action.thwepo-yes:hover {
+			    opacity: .9;
+			}
+			.thwepo-notice-action .dashicons{
+			    display: none;
+			}
+			.thwepo-themehigh-logo {
+			    position: absolute;
+			    right: 20px;
+			    top: calc(50% - 13px);
+			}
+			.thwepo-notice-action {
+			    background-repeat: no-repeat;
+			    padding-left: 40px;
+			    background-position: 16px 10px;
+			    margin-bottom: 10px;
+			}
+			.thwepo-review-content h3 {
+			    margin-top: 5px;
+			    margin-bottom: 10px;
+			}
+			.thwepo-yes{
+			    background-image: url(<?php echo THWEPOF_URL; ?>admin/assets/css/tick.svg);
+			}
+			.thwepo-remind{
+			    background-image: url(<?php echo THWEPOF_URL; ?>admin/assets/css/reminder.svg);
+			}
+			.thwepo-dismiss{
+			    background-image: url(<?php echo THWEPOF_URL; ?>admin/assets/css/close.svg);
+			}
+			.thwepo-done{
+			    background-image: url(<?php echo THWEPOF_URL; ?>admin/assets/css/done.svg);
+			}
+			@media(min-width: 2000px){
+				.thwepo-review-image img{
+					max-width: 80%;
+				}
+			}
+			@media(max-width: 1180px){
+				.thwepo-notice-action {
+				    margin-right: 7px !important;
+				    background-image: none !important;
+				    padding: 5px 8px 5px 10px;
+				}
+			}
+			@media(max-width: 768px){
+				.thwepo-review-image {
+				    display: none;
+				}
+				.thwepo-review-content {
+				    padding-right: 0px;
+				}
+				.thwepo-themehigh-logo {
+				    position: relative;
+				    text-align: center;
+				    right: 0px;
+				}
+				.thwepo-themehigh-logo .logo {
+				    float: none !important;
+				}
+				.thwepo-review-content .action-row {
+				    text-align: center;
+				}
+			}
+			@media(max-width: 480px){
+				.thwepo-notice-action {
+				    margin-right: 5px !important;
+				    padding: 2px 5px;
+				    font-size: 13px;
+				}
+			}
+			@media(max-width: 425px){
+				.thwepo-notice-action {
+				    padding: 0px 4px;
+				    font-size: 11px;
+				}
+			}
+		</style>
+		<?php 
 	}
 
 	public function get_admin_url($tab = false, $section = false){

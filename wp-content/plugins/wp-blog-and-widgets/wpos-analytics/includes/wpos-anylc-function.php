@@ -13,7 +13,6 @@ if ( !defined( 'ABSPATH' ) ) {
 /**
  * Retrieve the translation of $text.
  *
- * @package Wpos Analytic
  * @since 1.0
  */
 function wpos_anylc_text( $text, $echo = false ) {
@@ -43,7 +42,6 @@ function wpos_anylc_clean( $var ) {
 /**
  * Check Multidimention Array
  *
- * @package Wpos Analytic
  * @since 1.0
  */
 function wpos_anylc_is_multi_arr( $arr ) {
@@ -54,7 +52,6 @@ function wpos_anylc_is_multi_arr( $arr ) {
 /**
  * Get site unique id
  * 
- * @package Wpos Analytic
  * @since 1.0.0
  */
 function wpos_anylc_site_uid() {
@@ -75,7 +72,6 @@ function wpos_anylc_site_uid() {
 /**
  * Get Optin Data
  * 
- * @package Wpos Analytic
  * @since 1.0.0
  */
 function wpos_anylc_optin_data( $anylc_pdt = false, $return_url = '' ) {
@@ -156,7 +152,6 @@ function wpos_anylc_optin_data( $anylc_pdt = false, $return_url = '' ) {
 /**
  * Get IP Address
  * 
- * @package Wpos Analytic
  * @since 1.0.0
  */
 function wpos_anylc_get_ip_address() {
@@ -175,7 +170,6 @@ function wpos_anylc_get_ip_address() {
 /**
  * Get Product Optin Data
  * 
- * @package Wpos Analytic
  * @since 1.0.0
  */
 function wpos_anylc_get_option( $key = '' ) {
@@ -192,7 +186,6 @@ function wpos_anylc_get_option( $key = '' ) {
 /**
  * Get Product Optin Data
  * 
- * @package Wpos Analytic
  * @since 1.0.0
  */
 function wpos_anylc_update_option( $key = '', $data = array() ) {
@@ -213,7 +206,6 @@ function wpos_anylc_update_option( $key = '', $data = array() ) {
 /**
  * Get Analytic Product Optin URL
  * 
- * @package Wpos Analytic
  * @since 1.0.0
  */
 function wpos_anylc_optin_url( $module_data = '', $optin_status = null ) {
@@ -249,7 +241,6 @@ function wpos_anylc_optin_url( $module_data = '', $optin_status = null ) {
 /**
  * Get Analytic Product Opt Out URL
  * 
- * @package Wpos Analytic
  * @since 1.0.0
  */
 function wpos_anylc_optout_url( $module_data = '', $optin_status = null, $redirect_url = false ) {
@@ -282,16 +273,17 @@ function wpos_anylc_optout_url( $module_data = '', $optin_status = null, $redire
 /**
  * Get Analytic Product URL
  * 
- * @package Wpos Analytic
  * @since 1.0.0
  */
 function wpos_anylc_pdt_url( $module_data = '', $type = false ) {
 
-	$redirect_url = false;
+	$redirect_url 	= false;
+	$redirect_page	= ! empty( $module_data['redirect_page'] ) ? $module_data['redirect_page'] : $module_data['menu'];
 
-	if( !empty( $module_data['menu'] ) ) {
-		$pos 			= strpos( $module_data['menu'], '?post_type' );
-		$redirect_url 	= ( $pos !== false ) ? admin_url( $module_data['menu'] ) : add_query_arg( array( 'page' => $module_data['menu'] ), admin_url('admin.php') );
+	if( ! empty( $redirect_page ) ) {
+
+		$pos 			= strpos( $redirect_page, '?post_type' );
+		$redirect_url 	= ( $pos !== false ) ? admin_url( $redirect_page ) : add_query_arg( array( 'page' => $redirect_page ), admin_url('admin.php') );
 
 		switch ( $type ) {
 			case 'promotion':

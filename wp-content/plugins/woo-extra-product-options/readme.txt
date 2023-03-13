@@ -3,9 +3,9 @@ Contributors: ThemeHigh
 Donate link: https://themehigh.com/
 Tags: Woocommerce Product Addons, WooCommerce Extra product fields, woocommerce extra product options, Extra Product Options, WooCommerce Custom Product Fields, WooCommerce Product Field Editor, woocommerce product customizer, product form customizer, product, WooCommerce product, product form designer, custom, custom product fields, custom product option, custom options, customize product, customize variation, extra options, extra product options, form editor, price fields, prices, product, product choices, product price, woocommerce
 Requires at least: 4.9
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 3.1.7
+Stable tag: 3.1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,7 +67,13 @@ Easily manage the display of custom fields values in different pages: You can de
 You can individually edit the add to cart button text for simple products, products having extra options and variable products.
 
 = ☞ Multiple Themes Compatibility =
-The plugin is compatible with the major themes like Divi, Sydney, Astra, Hestia, Avada etc.
+*   Divi
+*   Sydney
+*   Astra
+*   WoodMart - [Try Demo](https://flydemos.com/wepo-woodmart/shop/)
+*   Hestia
+*   Avada
+*   Flatsome etc..
 
 = ☞ Custom Hooks =
 The plugin is most developer-friendly so that you can easily add more functionalities if needed with our hooks.
@@ -254,6 +260,15 @@ Yes, it is compatible with Astra, Storefront. Also compatible with Avada, divi b
 17. Use html tags in field label.
 
 == Changelog ==
+
+= 3.1.9 =
+* Added WooCommerce 7.2.1 compatibility.
+* Added compatibility with [WoodMart](https://woodmart.xtemos.com/) theme.
+
+= 3.1.8 =
+* Added WooCommerce 7.1.0 compatibility.
+* Added WordPress 6.1 compatibility.
+
 = 3.1.7 =
 * Added Twenty Twenty-Two theme compatibility.
 * Added WooCommerce 6.8.2 compatibility.

@@ -55,9 +55,9 @@ if( ! current_user_can('install_plugins') ) {
 
 		<div class="espbw-dashboard-title">
 			<div class="espbw-dashboard-title-inr">
-				<div class="espbw-dashboard-logo"><a href="<?php echo WPBAW_SITE_LINK; ?>/?utm_source=wp&utm_medium=plugin&utm_campaign=essential-bundle" target="_blank"><img src="<?php echo esc_url( WPOS_ESPBW_URL ); ?>assets/images/essentialplugin-logo.png" alt="essentialplugin" /></a></div>
-				<h3 style="text-align:center;"><?php _e( 'Essential Plugin', 'espbw' ); ?></h3>
-				<em class="wpos-em">Installs directly from <b>wordpress.org</b> repository</em> <br />				
+				<div class="espbw-dashboard-logo"><a href="<?php echo esc_url( WPBAW_SITE_LINK.'/?utm_source=wp&utm_medium=plugin&utm_campaign=essential-bundle' ); ?>" target="_blank"><img src="<?php echo esc_url( WPOS_ESPBW_URL.'assets/images/essentialplugin-logo.png' ); ?>" alt="essentialplugin" /></a></div>
+				<h3 style="text-align:center;"><?php esc_html_e( 'Essential Plugin', 'espbw' ); ?></h3>
+				<em class="wpos-em"><?php echo sprintf( esc_html__( 'Installs directly from %s repository', 'espbw' ), '<b>wordpress.org</b>' ); ?></em> <br />
 			</div>
 		</div>
 		<br/>
@@ -224,13 +224,13 @@ if( ! current_user_can('install_plugins') ) {
 						);
 					?>
 
-					<div class="espbw-plugin-card-wrap <?php echo $extra_class; ?>" data-tags="<?php echo esc_attr( $plugin_tags ); ?>">
+					<div class="espbw-plugin-card-wrap <?php echo esc_attr( $extra_class ); ?>" data-tags="<?php echo esc_attr( $plugin_tags ); ?>">
 						<div class="plugin-card plugin-card-<?php echo sanitize_html_class( $plugin_data['slug'] ); ?>">
 							<div class="plugin-card-top">
 								<div class="name column-name">
 									<h3>
 										<a href="<?php echo esc_url( $details_link ); ?>" class="thickbox open-plugin-details-modal">
-											<span class="espbw-plugin-name"><?php echo $title; ?></span>
+											<span class="espbw-plugin-name"><?php echo wp_kses_post( $title ); ?></span>
 											<img src="<?php echo esc_url( $plugin_icon_url ); ?>" class="plugin-icon" alt="" />
 										</a>
 									</h3>
@@ -239,14 +239,14 @@ if( ! current_user_can('install_plugins') ) {
 								<div class="action-links">
 									<?php
 									if ( $action_links ) {
-										echo '<ul class="plugin-action-buttons"><li>' . implode( '</li><li>', $action_links ) . '</li></ul>';
+										echo wp_kses_post( '<ul class="plugin-action-buttons"><li>' . implode( '</li><li>', $action_links ) . '</li></ul>' );
 									}
 									?>
 								</div>
 
 								<div class="desc column-description">
-									<p><?php echo $description; ?></p>
-									<p class="authors"><?php echo $author; ?></p>
+									<p><?php echo wp_kses_post( $description ); ?></p>
+									<p class="authors"><?php echo wp_kses_post( $author ); ?></p>
 								</div>
 							</div><!-- end .plugin-card-top -->
 
@@ -265,7 +265,7 @@ if( ! current_user_can('install_plugins') ) {
 								</div>
 
 								<div class="column-updated">
-									<strong><?php _e( 'Last Updated:' ); ?></strong>
+									<strong><?php esc_html_e( 'Last Updated:' ); ?></strong>
 									<?php
 										/* translators: %s: Human-readable time difference. */
 										printf( __( '%s ago' ), human_time_diff( $last_updated_timestamp ) );

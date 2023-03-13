@@ -130,7 +130,7 @@ final class WPOS_ESPBW {
  * Use this function like you would a global variable, except without needing
  * to declare the global.
  *
- * Example: <?php $wpos_espbw = WPOS_ESPBW(); ?>
+ * Example: $wpos_espbw = WPOS_ESPBW();
  *
  * @since 1.0
  * @return object The one true Analytics Instance.

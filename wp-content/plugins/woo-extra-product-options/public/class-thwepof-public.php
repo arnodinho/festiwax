@@ -522,7 +522,7 @@ class THWEPOF_Public {
 				$passed = false;
 		}else if($minlegth && $word_count < $minlegth){
 			/* translators: %d: minimum lenght of value */
-			THWEPOF_Utils::wcpf_add_error('<strong>'. wp_kses_post($field_label) .':</strong> '. sprintf(__('The entered value less than the minimum length required for the field. The minimum number of character required is %d.', 'woo-extra-product-options'), $minlegth));
+			THWEPOF_Utils::wcpf_add_error('<strong>'. wp_kses_post($field_label) .':</strong> '. sprintf(__('La personnalisation du produit doit être renseignée. Minimum  %d caractères. Exemple : Laure', 'woo-extra-product-options'), $minlegth));
 				$passed = false;
 		}
 

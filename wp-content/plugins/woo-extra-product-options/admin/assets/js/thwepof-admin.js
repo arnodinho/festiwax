@@ -1477,6 +1477,36 @@ var thwepof_settings = (function($, window, document) {
 	  	});
 	}
 
+	function widgetPopUp() {
+		var x = document.getElementById("myDIV");
+    	var y = document.getElementById("myWidget");
+    	var th_animation=document.getElementById("th_quick_border_animation")
+    	var th_arrow = document.getElementById("th_arrow_head");
+
+    	if (x.style.display === "none" || !x.style.display) {
+        	x.style.display = "block";
+//         	y.style.background = "#D34156";
+        	th_arrow.style="transform:rotate(-12.5deg);";
+        	th_animation.style="box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);";
+        	th_animation.style.animation='none';
+    	} else {
+        	x.style.display = "none";
+//         	y.style.background = "#000000";
+        	th_arrow.style="transform:rotate(45deg);"
+        	th_animation.style.animation='pulse 1.5s infinite';
+    	}
+	}
+	function widgetClose() {
+    	var z = document.getElementById("myDIV");
+	    var za = document.getElementById("myWidget");
+		var th_animation=document.getElementById("th_quick_border_animation")
+	    var th_arrow = document.getElementById("th_arrow_head");
+	    z.style.display = "none";
+		th_arrow.style="transform:rotate(45deg);"
+	    th_animation.style.animation='pulse 1.5s infinite';
+	//     za.style.background = "black";
+	}
+
 	$(document).ready(function(){
 	   setTimeout(function(){
 	      $("#thwepof_review_request_notice").fadeIn(500);
@@ -1484,6 +1514,8 @@ var thwepof_settings = (function($, window, document) {
 	});
 	   				
 	return {
+		thwepofwidgetPopUp : widgetPopUp,
+		thwepofwidgetClose : widgetClose,
 		select_all_fields : select_all_fields,
 		remove_selected_fields : remove_selected_fields,
 		enable_disable_selected_fields : enable_disable_selected_fields,
@@ -1504,4 +1536,12 @@ function thwepofEnableSelectedFields(){
 
 function thwepofDisableSelectedFields(){
 	thwepof_settings.enable_disable_selected_fields(0);
+}
+
+function thwepofwidgetPopUp(){
+	thwepof_settings.thwepofwidgetPopUp();
+}
+
+function thwepofwidgetClose() {
+	thwepof_settings.thwepofwidgetClose();
 }

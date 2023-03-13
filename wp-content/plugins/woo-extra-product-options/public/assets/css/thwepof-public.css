@@ -290,6 +290,11 @@ form.cart table.thwepo-extra-options input.thwepof-colorpicker {
     border: 0.5px dashed #959595;
 }
 
+/* slider webkit apperance issue */
+.thwepof-range-field input[type="range"] {
+    -webkit-appearance: slider-horizontal;
+}
+
 /* twentytwentytwo style fixes  */
 .theme-twentytwentytwo table.thwepo-extra-options td {
     padding: 5px 0px;

@@ -13,10 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 function wpbaw_register_guten_block() {
 
 	// Block Editor Script
-	wp_register_script( 'wpbaw-block-js', WPBAW_URL.'assets/js/blocks.build.js', array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor', 'wp-components' ), WPBAW_VERSION, true );
+	wp_register_script( 'wpbaw-block-js', WPBAW_URL.'assets/js/blocks.build.js', array( 'wp-blocks', 'wp-block-editor', 'wp-i18n', 'wp-element', 'wp-components' ), WPBAW_VERSION, true );
 	wp_localize_script( 'wpbaw-block-js', 'Wpbawf_Block', array(
-																'pro_demo_link'		=> 'https://demo.wponlinesupport.com/prodemo/pro-blog-and-widgets-plugin-demo/',
-																'free_demo_link'	=> 'https://demo.wponlinesupport.com/blog-demo/',
+																'pro_demo_link'		=> 'https://demo.essentialplugin.com/prodemo/pro-blog-and-widgets-plugin-demo/',
+																'free_demo_link'	=> 'https://demo.essentialplugin.com/blog-demo/',
 																'pro_link'			=> WPBAW_PLUGIN_LINK_UNLOCK,
 															));
 
@@ -152,7 +152,6 @@ add_action( 'init', 'wpbaw_register_guten_block' );
 /**
  * Enqueue Gutenberg block assets for both frontend + backend.
  *
- * @package WP Blog and Widgets
  * @since 1.0
  */
 function wpbaw_block_assets() {	
@@ -167,7 +166,6 @@ add_action( 'enqueue_block_assets', 'wpbaw_block_assets' );
  * @uses {wp-i18n} to internationalize the block's text.
  * @uses {wp-editor} for WP editor styles.
  * 
- * @package WP Blog and Widgets
  * @since 1.0
  */
 function wpbaw_editor_assets() {
@@ -187,7 +185,6 @@ add_action( 'enqueue_block_editor_assets', 'wpbaw_editor_assets' );
 /**
  * Adds an extra category to the block inserter
  *
- * @package WP Blog and Widgets
  * @since 1.0
  */
 function wpbaw_add_block_category( $categories ) {
@@ -197,7 +194,7 @@ function wpbaw_add_block_category( $categories ) {
 	if( ! in_array( 'wpos_guten_block', $guten_cats ) ) {
 		$categories[] = array(
 							'slug'	=> 'wpos_guten_block',
-							'title'	=> __('WPOS Blocks', 'wp-blog-and-widgets'),
+							'title'	=> __('Essential Plugin Blocks', 'wp-blog-and-widgets'),
 							'icon'	=> null,
 						);
 	}
